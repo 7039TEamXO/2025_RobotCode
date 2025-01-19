@@ -72,9 +72,9 @@ public class RobotContainer
     // left stick controls translation
     // right stick controls the angular velocity of the robot
     Command driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
-        () -> MathUtil.applyDeadband(-SubsystemManager.getpsJoystick().getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-        () -> MathUtil.applyDeadband(-SubsystemManager.getpsJoystick().getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-        () -> -SubsystemManager.getpsJoystick().getRightX());
+        () -> MathUtil.applyDeadband(SubsystemManager.getpsJoystick().getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+        () -> MathUtil.applyDeadband(SubsystemManager.getpsJoystick().getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+        () -> SubsystemManager.getpsJoystick().getRightX());
         
 
     // Command driveFieldOrientedDirectAngleSim = SubsystemManager.getDriveBase().simDriveCommand(
@@ -136,7 +136,7 @@ public class RobotContainer
   {
     // An example command will be run in autonomous
     // return SubsystemManager.getDriveBase().getAutonomousCommand(Dashboard.getSelected().getAutoName());
-        return SubsystemManager.getDriveBase().getAutonomousCommand(Autos.MID_AUTO.getAutoName());
+        return SubsystemManager.getDriveBase().getAutonomousCommand("ExampleAuto");
   }
 
   public void setDriveMode()
