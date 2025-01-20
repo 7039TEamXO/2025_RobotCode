@@ -20,88 +20,76 @@ import com.pathplanner.lib.auto.NamedCommands;
  */
 public class RobotContainer
 {
-
   // Replace with CommandPS4Controller or CommandJoystick if needed
   // final CommandPS4Controller SubsystemManager.ps4Joystick = new CommandPS4Controller(0);
-
-
-  
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
 
+  // Applies deadbands and inverts controls because joysticks
+  // are back-right positive while robot
+  // controls are front-left positive
+  // left stick controls translation
+  // right stick controls the rotational velocity 
+  // buttons are quick rotation positions to different ways to face
+  // WARNING: default buttons are on the same buttons as the ones defined in configureBindings
+  // AbsoluteDriveAdv closedAbsoluteDriveAdv = new AbsoluteDriveAdv(SubsystemManager.getDriveBase(),
+  //                                                                () -> -MathUtil.applyDeadband(SubsystemManager.ps4Joystick.getLeftY(),
+  //                                                                                              OperatorConstants.LEFT_Y_DEADBAND),
+  //                                                                () -> -MathUtil.applyDeadband(SubsystemManager.ps4Joystick.getLeftX(),
+  //                                                                                              OperatorConstants.LEFT_X_DEADBAND),
+  //                                                                () -> -MathUtil.applyDeadband(-SubsystemManager.ps4Joystick.getRightX(),
+  //                                                                                              OperatorConstants.RIGHT_X_DEADBAND),
+  //                                                                SubsystemManager.ps4Joystick.povDown(),
+  //                                                                SubsystemManager.ps4Joystick.povUp(),
+  //                                                                SubsystemManager.ps4Joystick.povRight(),
+  //                                                                SubsystemManager.ps4Joystick.povLeft());
+
+  // // Applies deadbands and inverts controls because joysticksy
+  // // are back-right positive while robot
+  // // controls are front-left positive
+  // // left stick controls translation
+  // // right stick controls the desired angle NOT angular rotation
+  // Command driveFieldOrientedDirectAngle = SubsystemManager.getDriveBase().driveCommand(
+  //     () -> MathUtil.applyDeadband(-SubsystemManager.getpsJoystick().getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+  //     () -> MathUtil.applyDeadband(-SubsystemManager.getpsJoystick().getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+  //     () -> -SubsystemManager.getpsJoystick().getRightX(),
+  //     () -> -SubsystemManager.getpsJoystick().getRightY());
+
+  // Applies deadbands and inverts controls because joysticks
+  // are back-right positive while robot
+  // controls are front-left positive
+  // left stick controls translation
+  // right stick controls the angular velocity of the robot
+  Command driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
+      () -> MathUtil.applyDeadband(SubsystemManager.getpsJoystick().getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+      () -> MathUtil.applyDeadband(SubsystemManager.getpsJoystick().getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+      () -> SubsystemManager.getpsJoystick().getRightX());
+      
+
+  // Command driveFieldOrientedDirectAngleSim = SubsystemManager.getDriveBase().simDriveCommand(
+  //     () -> MathUtil.applyDeadband(SubsystemManager.ps4Joystick.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+  //     () -> MathUtil.applyDeadband(SubsystemManager.ps4Joystick.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+  //     () -> SubsystemManager.ps4Joystick.getRawAxis(2));
+
+  // drivebase.setDefaultCommand(
+  //     false ? driveFieldOrientedDirectAngle : driveFieldOrientedDirectAngleSim);
   
 
-  
+  // SubsystemManager.ps4Joystick.povUp().toggleOnTrue(closedAbsoluteDriveAdv);
+  // SubsystemManager.ps4Joystick.povLeft().toggleOnTrue(closedAbsoluteDriveAdv);
+  // SubsystemManager.ps4Joystick.povRight().toggleOnTrue(closedAbsoluteDriveAdv);
+  // SubsystemManager.ps4Joystick.povDown().toggleOnTrue(closedAbsoluteDriveAdv);
 
-
-    // Applies deadbands and inverts controls because joysticks
-    // are back-right positive while robot
-    // controls are front-left positive
-    // left stick controls translation
-    // right stick controls the rotational velocity 
-    // buttons are quick rotation positions to different ways to face
-    // WARNING: default buttons are on the same buttons as the ones defined in configureBindings
-    // AbsoluteDriveAdv closedAbsoluteDriveAdv = new AbsoluteDriveAdv(SubsystemManager.getDriveBase(),
-    //                                                                () -> -MathUtil.applyDeadband(SubsystemManager.ps4Joystick.getLeftY(),
-    //                                                                                              OperatorConstants.LEFT_Y_DEADBAND),
-    //                                                                () -> -MathUtil.applyDeadband(SubsystemManager.ps4Joystick.getLeftX(),
-    //                                                                                              OperatorConstants.LEFT_X_DEADBAND),
-    //                                                                () -> -MathUtil.applyDeadband(-SubsystemManager.ps4Joystick.getRightX(),
-    //                                                                                              OperatorConstants.RIGHT_X_DEADBAND),
-    //                                                                SubsystemManager.ps4Joystick.povDown(),
-    //                                                                SubsystemManager.ps4Joystick.povUp(),
-    //                                                                SubsystemManager.ps4Joystick.povRight(),
-    //                                                                SubsystemManager.ps4Joystick.povLeft());
-
-    // // Applies deadbands and inverts controls because joysticksy
-    // // are back-right positive while robot
-    // // controls are front-left positive
-    // // left stick controls translation
-    // // right stick controls the desired angle NOT angular rotation
-    // Command driveFieldOrientedDirectAngle = SubsystemManager.getDriveBase().driveCommand(
-    //     () -> MathUtil.applyDeadband(-SubsystemManager.getpsJoystick().getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-    //     () -> MathUtil.applyDeadband(-SubsystemManager.getpsJoystick().getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-    //     () -> -SubsystemManager.getpsJoystick().getRightX(),
-    //     () -> -SubsystemManager.getpsJoystick().getRightY());
-
-    // Applies deadbands and inverts controls because joysticks
-    // are back-right positive while robot
-    // controls are front-left positive
-    // left stick controls translation
-    // right stick controls the angular velocity of the robot
-    Command driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
-        () -> MathUtil.applyDeadband(SubsystemManager.getpsJoystick().getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-        () -> MathUtil.applyDeadband(SubsystemManager.getpsJoystick().getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-        () -> SubsystemManager.getpsJoystick().getRightX());
-        
-
-    // Command driveFieldOrientedDirectAngleSim = SubsystemManager.getDriveBase().simDriveCommand(
-    //     () -> MathUtil.applyDeadband(SubsystemManager.ps4Joystick.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-    //     () -> MathUtil.applyDeadband(SubsystemManager.ps4Joystick.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-    //     () -> SubsystemManager.ps4Joystick.getRawAxis(2));
-
-    // drivebase.setDefaultCommand(
-    //     false ? driveFieldOrientedDirectAngle : driveFieldOrientedDirectAngleSim);
-    
-
-    // SubsystemManager.ps4Joystick.povUp().toggleOnTrue(closedAbsoluteDriveAdv);
-    // SubsystemManager.ps4Joystick.povLeft().toggleOnTrue(closedAbsoluteDriveAdv);
-    // SubsystemManager.ps4Joystick.povRight().toggleOnTrue(closedAbsoluteDriveAdv);
-    // SubsystemManager.ps4Joystick.povDown().toggleOnTrue(closedAbsoluteDriveAdv);
-
-    public RobotContainer()
+  public RobotContainer()
   {
-
     // Configure the trigger bindings
     configureBindings();
 
     NamedCommands.registerCommand("Travel", SubsystemManager.travelCommand);
 
     SubsystemManager.setDefaultCommand(driveFieldOrientedAngularVelocity);
-
-
   }
 
   /**
@@ -113,8 +101,6 @@ public class RobotContainer
    */
   private void configureBindings()
   {
-
-
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
 
     SubsystemManager.getpsJoystick().PS().onTrue((Commands.runOnce(SubsystemManager.getDriveBase()::zeroGyro)));
@@ -148,8 +134,10 @@ public class RobotContainer
     SubsystemManager.getDriveBase().setMotorBrake(brake);
   }
 
+  /*
   private static double modifyAxis(double joystickInput) {
     double scaled_input = 1 - (1 - Math.abs(joystickInput)) * (1 - 0.5);
     return joystickInput * scaled_input;
   }
+  */
 }
