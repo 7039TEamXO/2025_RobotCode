@@ -84,6 +84,7 @@ public class SwerveSubsystem extends SubsystemBase
 
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+    
     try
     {
       swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.MAX_SPEED);
@@ -93,10 +94,14 @@ public class SwerveSubsystem extends SubsystemBase
     {
       throw new RuntimeException(e);
     }
+    swerveDrive.setMotorIdleMode(true);
     swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle.
     swerveDrive.setCosineCompensator(false); //!SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for simulations since it causes discrepancies not seen in real life.
     swerveDrive.setAngularVelocityCompensation(true, true, 0.1);
     swerveDrive.setModuleEncoderAutoSynchronize(false, 1);
+    
+    SwerveController controller = swerveDrive.getSwerveController();
+    controller.setMaximumChassisAngularVelocity(6);
     // if (visionDriveTest)
     // {
     //   setupPhotonVision();
@@ -129,7 +134,6 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void periodic()
   {
-    
     // When vision is enabled we must manually update odometry in SwerveDrive
     // if (visionDriveTest)
     // {
@@ -180,10 +184,11 @@ public class SwerveSubsystem extends SubsystemBase
               // PPHolonomicController is the built in path following controller for holonomic drive trains
               new PIDConstants(0.5, 0.0, 0.0),
               // Translation PID constants
-              new PIDConstants(0.5, 0.0, 0.0)
+              new PIDConstants(0.175, 0, 0.002)
               // Rotation PID constants
           ),
           config,
+
           // The robot configuration
           () -> {
             // Boolean supplier that controls when the path will be mirrored for the red alliance

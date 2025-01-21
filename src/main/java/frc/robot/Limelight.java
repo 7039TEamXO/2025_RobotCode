@@ -22,11 +22,9 @@ public class Limelight {
     private static NetworkTableEntry tx = table.getEntry("tx");
     private static NetworkTableEntry ty = table.getEntry("ty");
     private static NetworkTableEntry tv = table.getEntry("botpose_wpiblue");
-    private static int[] validIDs = {0,1,2,3,10 };
+    private static int[] validIDs = {0, 1, 2, 3, 10};
 
-
- 
-    public static void update(){
+    public static void update() {
         // get current id for apriltag(get minimal tag)
         // System.out.println("current id : " + NetworkTableInstance.getDefault().getTable("limelight").getEntry("t2d").getDoubleArray(new Double[]{})[9]);
         // LimelightHelpers.SetFiducialIDFiltersOverride("", validIDs);
@@ -36,24 +34,17 @@ public class Limelight {
         // boolean hasTarget = LimelightHelpers.getTV("limelight"); 
         // System.out.println(hasTarget);
 
-        System.out.println(SubsystemManager.getDriveBase().getPose().getRotation().getDegrees());
+        //System.out.println(SubsystemManager.getDriveBase().getPose().getRotation().getDegrees());
 
      }
 
     public static void updatePosition() {
-
-        // if(tx.getDouble(0) != 0 && ty.getDouble(0) != 0){
-        //     SubsystemManager.getDriveBase().resetOdometry(new Pose2d(tv.getDoubleArray(new Double[]{})[0],tv.getDoubleArray(new Double[]{})[1], new Rotation2d(Math.toRadians(tv.getDoubleArray(new Double[]{})[5]))));
-        // }
-        
-        // System.out.println(SubsystemManager.getDriveBase().getPose());
+        if(tx.getDouble(0) != 0 && ty.getDouble(0) != 0){
+            SubsystemManager.getDriveBase().resetOdometry(new Pose2d(tv.getDoubleArray(new Double[]{})[0],tv.getDoubleArray(new Double[]{})[1], new Rotation2d(Math.toRadians(tv.getDoubleArray(new Double[]{})[5]))));
+        }
     }
 
-
-
-
-
-   // private static final SwerveDrivePoseEstimator m_poseEstimator =
+    // private static final SwerveDrivePoseEstimator m_poseEstimator =
     // new SwerveDrivePoseEstimator(
     //     SubsystemManager.getDriveBase().getKinematics(), 
     //     SubsystemManager.getDriveBase().getHeading(), 
