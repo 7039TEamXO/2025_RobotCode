@@ -104,7 +104,7 @@ public class AbsoluteDrive extends Command
     // Make the robot move
     swerve.drive(translation, desiredSpeeds.omegaRadiansPerSecond, true);
 
-    System.out.println(translation.getX());
+    //System.out.println(translation.getX());
 
   }
   

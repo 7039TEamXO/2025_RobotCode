@@ -5,6 +5,8 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -76,7 +78,6 @@ public class RobotContainer
   // drivebase.setDefaultCommand(
   //     false ? driveFieldOrientedDirectAngle : driveFieldOrientedDirectAngleSim);
   
-
   // SubsystemManager.ps4Joystick.povUp().toggleOnTrue(closedAbsoluteDriveAdv);
   // SubsystemManager.ps4Joystick.povLeft().toggleOnTrue(closedAbsoluteDriveAdv);
   // SubsystemManager.ps4Joystick.povRight().toggleOnTrue(closedAbsoluteDriveAdv);
@@ -102,12 +103,15 @@ public class RobotContainer
   private void configureBindings()
   {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
+    Command driveToPos = SubsystemManager.getDriveBase().driveToPose(new Pose2d(4, 0, Rotation2d.fromDegrees(0.0)));
 
     SubsystemManager.getpsJoystick().PS().onTrue((Commands.runOnce(SubsystemManager.getDriveBase()::zeroGyro)));
+    SubsystemManager.getpsJoystick().square().whileTrue(driveToPos);
+    SubsystemManager.getpsJoystick().triangle().onTrue(Commands.runOnce(() -> SubsystemManager.getDriveBase().resetOdometry(new Pose2d(0, 0, new Rotation2d (0)))));
     // SubsystemManager.ps4Joystick.square().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
     // SubsystemManager.ps4Joystick.circle().whileTrue(
     //     Commands.deferredProxy(() -> drivebase.driveToPose(
-    //                                new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
+                                  //  new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
     //                           ));
     // SubsystemManager.ps4Joystick.triangle().whileTrue(drivebase.aimAtSpeaker(2));
     // driverXbox.x().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
