@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -65,9 +66,9 @@ public class RobotContainer
   // left stick controls translation
   // right stick controls the angular velocity of the robot
   Command driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
-      () -> MathUtil.applyDeadband(SubsystemManager.getpsJoystick().getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-      () -> MathUtil.applyDeadband(SubsystemManager.getpsJoystick().getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-      () -> SubsystemManager.getpsJoystick().getRightX());
+      () -> MathUtil.applyDeadband(-SubsystemManager.getpsJoystick().getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+      () -> MathUtil.applyDeadband(-SubsystemManager.getpsJoystick().getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+      () -> -SubsystemManager.getpsJoystick().getRightX());
       
 
   // Command driveFieldOrientedDirectAngleSim = SubsystemManager.getDriveBase().simDriveCommand(
@@ -103,10 +104,10 @@ public class RobotContainer
   private void configureBindings()
   {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    Command driveToPos = SubsystemManager.getDriveBase().driveToPose(new Pose2d(4, 0, Rotation2d.fromDegrees(0.0)));
+    Command driveToPos = SubsystemManager.getDriveBase().driveToPose(new Pose2d(new Translation2d(4, 0) , Rotation2d.fromDegrees(0.01)));
 
     SubsystemManager.getpsJoystick().PS().onTrue((Commands.runOnce(SubsystemManager.getDriveBase()::zeroGyro)));
-    SubsystemManager.getpsJoystick().square().whileTrue(driveToPos);
+    SubsystemManager.getpsJoystick().square().whileTrue(SubsystemManager.getDriveBase().driveToPose(new Pose2d(new Translation2d(4, 0) , Rotation2d.fromDegrees(0.01))));
     SubsystemManager.getpsJoystick().triangle().onTrue(Commands.runOnce(() -> SubsystemManager.getDriveBase().resetOdometry(new Pose2d(0, 0, new Rotation2d (0)))));
     // SubsystemManager.ps4Joystick.square().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
     // SubsystemManager.ps4Joystick.circle().whileTrue(

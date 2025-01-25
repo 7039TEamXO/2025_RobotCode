@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.util.Color;
 public class LED {
     private static AddressableLEDBuffer buffer = new AddressableLEDBuffer(2000);
     private static Color color = Color.kOrangeRed;
-    private static AddressableLED channel = new AddressableLED(8);
+    private static AddressableLED channel = new AddressableLED(9);// return to 8
 
 
     public static void init(){

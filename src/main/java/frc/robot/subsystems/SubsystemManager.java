@@ -13,6 +13,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 //import frc.robot.Robot;
 import frc.robot.RobotState;
+import frc.robot.subsystems.Elevator.ElevatorState;
+import frc.robot.subsystems.Handler.HandlerState;
+import frc.robot.subsystems.Handler.Handler;
+import frc.robot.subsystems.Wrist.WristState;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 public class SubsystemManager {
@@ -29,6 +33,11 @@ public class SubsystemManager {
 
     private static RobotState state;
     private static RobotState lastState;
+
+    private static ElevatorState elevatorState = ElevatorState.BASE;
+    private static HandlerState handlerState = HandlerState.STOP;
+
+    
 
    
     public static Command travelCommand = Commands.run(() -> operateAuto(RobotState.TRAVEL));
@@ -55,16 +64,37 @@ public class SubsystemManager {
         
         switch (state) {
             case TRAVEL:
+                handlerState = HandlerState.STOP;
+                isLocked = false;
 
-            isLocked = false;
+                break;
+
+            case CLIMB:
+                handlerState = HandlerState.STOP;
+
+                break;
+
+            case DEPLETE:
+                handlerState = HandlerState.DEPLETE;
+                break;
+
+            case INTAKE:
+                handlerState = HandlerState.INTAKE;
 
                 break;
         }
+
+        DeliveryManger.operate(elevatorState);
+        Handler.operate(handlerState);
 
         lastState = state;
 
         if (isLocked) drivebase.lock();
     }
+
+    
+
+
 
     private static void operateAuto(RobotState chosenState) {
         state = chosenState;

@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 //import edu.wpi.first.math.geometry.Pose2d;
 //import edu.wpi.first.math.kinematics.Odometry;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -159,6 +160,11 @@ public class Robot extends TimedRobot
   @Override
   public void teleopPeriodic()
   {
+    // SubsystemManager.getDriveBase().resetOdometry( new Pose2d(
+    //   Math.abs(SubsystemManager.getDriveBase().getPose().getX()),
+    //   Math.abs(SubsystemManager.getDriveBase().getPose().getX()),
+    //   SubsystemManager.getDriveBase().getPose().getRotation()
+    // ));
     //System.out.println("x - " + Limelight.getTx() + "y - " + Limelight.getTy());
     SubsystemManager.operate(false);
     // System.out.println();
