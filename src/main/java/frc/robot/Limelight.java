@@ -5,6 +5,7 @@ import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.util.Units;
@@ -22,7 +23,7 @@ public class Limelight {
     private static NetworkTableEntry tx = table.getEntry("tx");
     private static NetworkTableEntry ty = table.getEntry("ty");
     private static NetworkTableEntry tv = table.getEntry("botpose_wpiblue");
-    private static int[] validIDs = {0, 1, 2, 3, 10};
+    //private static int[] validIDs = {0, 1, 2, 3, 10};
 
     public static void update() {
         // get current id for apriltag(get minimal tag)
@@ -40,8 +41,10 @@ public class Limelight {
 
     public static void updatePosition() {
         if(tx.getDouble(0) != 0 && ty.getDouble(0) != 0){
-            SubsystemManager.getDriveBase().resetOdometry(new Pose2d(tv.getDoubleArray(new Double[]{})[0],tv.getDoubleArray(new Double[]{})[1], new Rotation2d(Math.toRadians(tv.getDoubleArray(new Double[]{})[5]))));
+            SubsystemManager.getDriveBase().resetOdometry(new Pose2d(new Translation2d(LimelightHelpers.getBotPose2d_wpiRed("limelight").getX(), LimelightHelpers.getBotPose2d_wpiRed("limelight").getY()), Rotation2d.fromDegrees(LimelightHelpers.getBotPose2d_wpiRed("limelight").getRotation().getDegrees())));   
         }
+        System.out.println("X___" + SubsystemManager.getDriveBase().getPose().getX() + " Y___" + SubsystemManager.getDriveBase().getPose().getY() + "  Rot___" + SubsystemManager.getDriveBase().getPose().getRotation());
+        
     }
 
     // private static final SwerveDrivePoseEstimator m_poseEstimator =

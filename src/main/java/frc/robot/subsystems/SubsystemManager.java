@@ -2,6 +2,9 @@ package frc.robot.subsystems;
 
 import java.io.File;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+
 //import javax.xml.transform.Source;
 
 //import edu.wpi.first.math.geometry.Pose2d;
@@ -109,7 +112,12 @@ public class SubsystemManager {
         drivebase.setDefaultCommand(defultCommand);
     }
 
-    public static CommandPS4Controller getpsJoystick(){
+    public static CommandPS4Controller getpsJoystick() {
         return ps4Joystick;
+    } 
+
+    public static void initDriveBase() {
+        drivebase.resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(180)));
+        
     }
 }

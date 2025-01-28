@@ -613,7 +613,7 @@ public class LimelightHelpers {
      * @param inData Array containing pose data [x, y, z, roll, pitch, yaw]
      * @return Pose2d object representing the pose, or empty Pose2d if invalid data
      */
-    public static Pose2d toPose2D(double[] inData){
+    public static Pose2d toPose2D(double[] inData) {
         if(inData.length < 6)
         {
             //System.err.println("Bad LL 2D Pose Data!");
