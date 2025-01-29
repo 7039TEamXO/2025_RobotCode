@@ -68,7 +68,7 @@ public class RobotContainer
   Command driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
       () -> MathUtil.applyDeadband(-SubsystemManager.getpsJoystick().getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
       () -> MathUtil.applyDeadband(-SubsystemManager.getpsJoystick().getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-      () -> SubsystemManager.getpsJoystick().getRightX());
+      () -> -SubsystemManager.getpsJoystick().getRightX());
       
 
   // Command driveFieldOrientedDirectAngleSim = SubsystemManager.getDriveBase().simDriveCommand(
@@ -106,7 +106,7 @@ public class RobotContainer
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     Command driveToPos = SubsystemManager.getDriveBase().driveToPose(new Pose2d(new Translation2d(4, 0) , Rotation2d.fromDegrees(0.01)));
 
-    //SubsystemManager.getpsJoystick().PS().onTrue((Commands.runOnce(SubsystemManager.getDriveBase()::zeroGyro))); if we will use it, in case if driver push this buttom, our rotation will be messed up
+    SubsystemManager.getpsJoystick().PS().onTrue((Commands.runOnce(SubsystemManager.getDriveBase()::zeroGyro)));// if we will use it, in case if driver push this buttom, our rotation will be messed up
     SubsystemManager.getpsJoystick().square().whileTrue(SubsystemManager.getDriveBase().driveToPose(new Pose2d(new Translation2d(4, 0) , Rotation2d.fromDegrees(0.01))));
     SubsystemManager.getpsJoystick().triangle().onTrue(Commands.runOnce(() -> SubsystemManager.getDriveBase().resetOdometry(new Pose2d(0, 0, new Rotation2d (0)))));
     // SubsystemManager.ps4Joystick.square().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));

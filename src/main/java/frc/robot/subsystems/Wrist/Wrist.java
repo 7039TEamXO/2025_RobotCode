@@ -15,6 +15,8 @@ public class Wrist {
     private static final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
     
     public static void init(){
+        master.setPosition(0);
+
         var talonFXConfigs = new TalonFXConfiguration();
         var slot0Configs = talonFXConfigs.Slot0;
         slot0Configs.kS = 0.25; // Add 0.25 V output to overcome static friction
@@ -45,6 +47,10 @@ public class Wrist {
                 break;
 
             case INTAKE_ALGAE:
+                wristPosition = 0;
+                break;
+                
+            case DEPLETE_CORAL:
                 wristPosition = 0;
                 break;
 

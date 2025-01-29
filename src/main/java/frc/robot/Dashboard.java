@@ -6,12 +6,14 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 //import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.SubsystemManager;
+import frc.robot.subsystems.Elevator.Elevator;
 
 
 public class Dashboard {
     private final static SendableChooser<String> m_chooser = new SendableChooser<>();
     private static String m_autoSelected;
     private static ShuffleboardTab driver = Shuffleboard.getTab("Driver");
+    private static ShuffleboardTab subsystemsInformation = Shuffleboard.getTab("SubsystemsInformation");
     private static ShuffleboardTab telemetry = Shuffleboard.getTab("Telemetry");
     private static HttpCamera limelightcamera = new HttpCamera("limelight", "http://10.70.39.11:5800");
 
@@ -34,6 +36,8 @@ public class Dashboard {
         driver.add("Autos", m_chooser).withPosition(0, 0).withSize(5, 3);
         driver.add("Limelight Camera", limelightcamera).withPosition(17, 0).withSize(9, 6);
 
+
+        subsystemsInformation.addNumber("Elevatot raw encoder", () -> Elevator.getCurrentPosition()).withPosition(0, 0).withSize(5, 3);
         // telemetry.add("Robot Pose", m_robotPose).withPosition(0, 0).withSize(5, 3);
 
         telemetry.addNumber("X", () -> SubsystemManager.getDriveBase().getPose().getX()).withPosition(0, 0).withSize(8, 3);

@@ -39,18 +39,12 @@ public class SubsystemManager {
 
     private static ElevatorState elevatorState = ElevatorState.BASE;
     private static HandlerState handlerState = HandlerState.STOP;
-
-    
-
    
     public static Command travelCommand = Commands.run(() -> operateAuto(RobotState.TRAVEL));
 
-
     public static void init() {
-
         state = RobotState.TRAVEL;
         lastState = RobotState.TRAVEL;
- 
     }
 
     public static void operate(boolean onAuto) {
@@ -62,8 +56,7 @@ public class SubsystemManager {
             // else{
             //     state = lastState;
             // }
-
-        }   
+        }
         
         switch (state) {
             case TRAVEL:
@@ -95,10 +88,6 @@ public class SubsystemManager {
         if (isLocked) drivebase.lock();
     }
 
-    
-
-
-
     private static void operateAuto(RobotState chosenState) {
         state = chosenState;
         operate(true);
@@ -117,7 +106,6 @@ public class SubsystemManager {
     } 
 
     public static void initDriveBase() {
-        drivebase.resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(180)));
-        
+        drivebase.resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(180))); 
     }
 }
