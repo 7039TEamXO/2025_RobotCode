@@ -170,6 +170,7 @@ public class Robot extends TimedRobot
     SubsystemManager.operate(false);
     // System.out.println();
     Limelight.updatePosition();
+    Limelight.teamColor();
     Limelight.update();
     
     // the robot moves in SwerveSubsystem.driveCommand

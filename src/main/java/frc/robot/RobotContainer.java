@@ -4,16 +4,23 @@
 
 package frc.robot;
 
+import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.SubsystemManager;
+
+import java.util.Map;
+import java.util.Optional;
+
 import com.pathplanner.lib.auto.NamedCommands;
 
 /**
@@ -145,6 +152,12 @@ public class RobotContainer
   public void setMotorBrake(boolean brake)
   {
     SubsystemManager.getDriveBase().setMotorBrake(brake);
+    
+  }
+
+  public static boolean teamColorIsBlue() {
+  Optional<Alliance> color = DriverStation.getAlliance();
+	return color.get() == DriverStation.Alliance.Blue;
   }
 
   /*

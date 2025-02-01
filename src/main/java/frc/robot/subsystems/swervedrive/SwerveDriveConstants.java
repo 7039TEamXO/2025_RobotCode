@@ -1,11 +1,4 @@
 package frc.robot.subsystems.swervedrive;
-import javax.lang.model.util.Elements.Origin;
-
-import edu.wpi.first.apriltag.AprilTag;
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.geometry.Pose2d;
-
 
 /*
       -----------DRIVER STATION-----------

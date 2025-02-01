@@ -62,6 +62,7 @@ public class SwerveSubsystem extends SubsystemBase
    */
   private final SwerveDrive swerveDrive;
   private static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+  private static Pose3d tag_pos = null;
 
 
   /**
@@ -107,7 +108,6 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.setCosineCompensator(false); //!SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for simulations since it causes discrepancies not seen in real life.
     swerveDrive.setAngularVelocityCompensation(true, true, 0.1);
     swerveDrive.setModuleEncoderAutoSynchronize(false, 1);
-    
     SwerveController controller = swerveDrive.getSwerveController();
     controller.setMaximumChassisAngularVelocity(6);
     // if (visionDriveTest)
@@ -145,8 +145,10 @@ public class SwerveSubsystem extends SubsystemBase
     // When vision is enabled we must manually update odometry in SwerveDrive
     // if (visionDriveTest)
     // {
-      System.out.println("pose: " + getClosestReefFace(swerveDrive.getPose()));
-
+      tag_pos = getClosestReefFace(swerveDrive.getPose());
+      tag_pos.getTranslation().getX();
+      tag_pos.getTranslation().getY();
+      tag_pos.getRotation().getAngle();
       swerveDrive.updateOdometry();
     //   vision.updatePoseEstimation(swerveDrive);
     // }
@@ -718,6 +720,7 @@ public class SwerveSubsystem extends SubsystemBase
           double reefFaceX = reefFacePose.getTranslation().getX();
           double reefFaceY = reefFacePose.getTranslation().getY();
           
+          
           double dist = Math.pow(reefFaceX - currentX, 2) + Math.pow(reefFaceY - currentY, 2);
                 
           if (dist < minDist){
@@ -748,7 +751,7 @@ public class SwerveSubsystem extends SubsystemBase
               }
         }
       }
-        System.out.println(selected_face);
+        //System.out.println(selected_face);
         return closestReefFace;
       
 

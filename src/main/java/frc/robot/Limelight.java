@@ -58,7 +58,7 @@ public class Limelight {
         0.2,    // Height offset (meters)
         180.0,    // Roll (degrees)
         35,   // Pitch (degrees)
-        180.0     // Yaw (degrees)
+        0.0     // Yaw (degrees)
         );
     }
 
@@ -104,12 +104,21 @@ public class Limelight {
             // SubsystemManager.getDriveBase().resetOdometry(new Pose2d(new Translation2d(LimelightHelpers.getBotPose2d_wpiRed("limelight").getX(),
             //  LimelightHelpers.getBotPose2d_wpiRed("limelight").getY()),
             //   Rotation2d.fromDegrees(LimelightHelpers.getBotPose2d_wpiRed("limelight").getRotation().getDegrees())));
-        //     SubsystemManager.getDriveBase().resetOdometry(new Pose2d(
-        //         tv.getDoubleArray(new Double[]{})[0],
-        //         tv.getDoubleArray(new Double[]{})[1], 
-        //             SubsystemManager.getDriveBase().getHeading()));  
+            // SubsystemManager.getDriveBase().resetOdometry(new Pose2d(
+            //     tv.getDoubleArray(new Double[]{})[0],
+            //     tv.getDoubleArray(new Double[]{})[1], 
+            //         SubsystemManager.getDriveBase().getHeading()));  
         }
-        System.out.println("X___" + SubsystemManager.getDriveBase().getPose().getX() + " Y___" + SubsystemManager.getDriveBase().getPose().getY() + "  Rot___" + SubsystemManager.getDriveBase().getPose().getRotation());
+        //System.out.println("X___" + SubsystemManager.getDriveBase().getPose().getX() + " Y___" + SubsystemManager.getDriveBase().getPose().getY() + "  Rot___" + SubsystemManager.getDriveBase().getPose().getRotation());
+        
+    }
+    public static void teamColor() {
+        if (RobotContainer.teamColorIsBlue()) {
+            System.out.println("team color blue");
+        }
+        else{
+            System.out.println("team color red");
+        }
         
     }
 }
