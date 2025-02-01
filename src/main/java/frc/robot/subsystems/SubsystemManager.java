@@ -35,35 +35,56 @@ public class SubsystemManager {
     private static boolean isLocked = false;
 
     private static RobotState state;
-    private static RobotState lastState;
+
+    
 
     private static ElevatorState elevatorState = ElevatorState.BASE;
+    
     private static HandlerState handlerState = HandlerState.STOP;
     private static Gamepiece gamepiece = Gamepiece.NONE; // gamepiece in robot
 
    
-    public static Command travelCommand = Commands.run(() -> operateAuto(RobotState.TRAVEL));
+    public static Command travelCommand = Commands.run(() -> operateAuto(RobotState.TRAVEL, null));
+    public static Command intakeCoralCommand = Commands.run(() -> operateAuto(RobotState.INTAKE, ElevatorState.BASE));
+    public static Command intakeAlgaeLowCommand = Commands.run(() -> operateAuto(RobotState.INTAKE, ElevatorState.ALGAE_LOW));
+    public static Command intakeAlgaeHighCommand = Commands.run(() -> operateAuto(RobotState.INTAKE, ElevatorState.ALGAE_HIGH));
+    public static Command level0Command = Commands.run(() -> operateAuto(RobotState.TRAVEL, ElevatorState.LEVEL0));
+    public static Command level1Command = Commands.run(() -> operateAuto(RobotState.TRAVEL, ElevatorState.LEVEL1));
+    public static Command level2Command = Commands.run(() -> operateAuto(RobotState.TRAVEL, ElevatorState.LEVEL2));
+    public static Command level3Command = Commands.run(() -> operateAuto(RobotState.TRAVEL, ElevatorState.LEVEL3));
+    public static Command depleteCommand = Commands.run(() -> operateAuto(RobotState.TRAVEL, null));
 
     public static void init() {
         state = RobotState.TRAVEL;
-        lastState = RobotState.TRAVEL;
+        
     }
 
     public static void operate(boolean onAuto) {
         if (!onAuto) {
-            state = psController_HID.getCircleButtonPressed() ? RobotState.TRAVEL : lastState;
+            state = psController_HID.getL2Button() ? RobotState.DEPLETE 
+            : psController_HID.getR2Button() ? RobotState.INTAKE :
+            psController_HID.getRawButton(12) ? RobotState.TRAVEL: // right stick
+            state;
+
+            elevatorState = psController_HID.getCrossButton() ? ElevatorState.BASE:
+            psController_HID.getSquareButton() ? ElevatorState.LEVEL1:
+            psController_HID.getTriangleButton() ? ElevatorState.LEVEL3:
+            psController_HID.getCircleButton() ? ElevatorState.LEVEL2:
+            psController_HID.getPOV(0) == 90 ? ElevatorState.ALGAE_HIGH: //right
+            psController_HID.getPOV(0) == 180 ? ElevatorState.LEVEL0: // down
+            psController_HID.getPOV(0) == 270 ? ElevatorState.ALGAE_LOW: // left
+            elevatorState;
+            
         }
         
         switch (state) {
             case TRAVEL:
                 handlerState = HandlerState.STOP;
                 isLocked = false;
-
                 break;
 
             case CLIMB:
                 handlerState = HandlerState.STOP;
-
                 break;
 
             case DEPLETE:
@@ -77,14 +98,18 @@ public class SubsystemManager {
 
             case INTAKE:
                 handlerState = HandlerState.INTAKE;
+                break;
 
+            case INTAKE_CORAL:
+                handlerState = HandlerState.INTAKE;
+                elevatorState = ElevatorState.BASE;
                 break;
         }
 
         DeliveryManger.operate(elevatorState);
         Handler.operate(handlerState);
 
-        lastState = state;
+        
 
         if (isLocked) drivebase.lock();
 
@@ -112,8 +137,9 @@ public class SubsystemManager {
 
     }
 
-    private static void operateAuto(RobotState chosenState) {
-        state = chosenState;
+    private static void operateAuto(RobotState chosenState, ElevatorState choosenElevatorState) {
+        state = chosenState == null ? state : chosenState;
+        elevatorState = choosenElevatorState == null ? elevatorState : choosenElevatorState;
         operate(true);
     }
 

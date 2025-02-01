@@ -90,6 +90,14 @@ public class RobotContainer
     configureBindings();
 
     NamedCommands.registerCommand("Travel", SubsystemManager.travelCommand);
+    NamedCommands.registerCommand("IntakeCoral", SubsystemManager.intakeCoralCommand);
+    NamedCommands.registerCommand("IntakeAlgaeLow", SubsystemManager.intakeAlgaeLowCommand);
+    NamedCommands.registerCommand("IntakeAlgaeHigh", SubsystemManager.intakeAlgaeHighCommand);
+    NamedCommands.registerCommand("Level_0", SubsystemManager.level0Command);
+    NamedCommands.registerCommand("Level_1", SubsystemManager.level1Command);
+    NamedCommands.registerCommand("Level_2", SubsystemManager.level2Command);
+    NamedCommands.registerCommand("Level_3", SubsystemManager.level3Command);
+    NamedCommands.registerCommand("Deplete", SubsystemManager.depleteCommand);
 
     SubsystemManager.setDefaultCommand(driveFieldOrientedAngularVelocity);
   }
@@ -107,8 +115,8 @@ public class RobotContainer
     Command driveToPos = SubsystemManager.getDriveBase().driveToPose(new Pose2d(new Translation2d(4, 0) , Rotation2d.fromDegrees(0.01)));
 
     SubsystemManager.getpsJoystick().PS().onTrue((Commands.runOnce(SubsystemManager.getDriveBase()::zeroGyro)));// if we will use it, in case if driver push this buttom, our rotation will be messed up
-    SubsystemManager.getpsJoystick().square().whileTrue(SubsystemManager.getDriveBase().driveToPose(new Pose2d(new Translation2d(4, 0) , Rotation2d.fromDegrees(0.01))));
-    SubsystemManager.getpsJoystick().triangle().onTrue(Commands.runOnce(() -> SubsystemManager.getDriveBase().resetOdometry(new Pose2d(0, 0, new Rotation2d (0)))));
+    //SubsystemManager.getpsJoystick().square().whileTrue(SubsystemManager.getDriveBase().driveToPose(new Pose2d(new Translation2d(4, 0) , Rotation2d.fromDegrees(0.01))));
+    //SubsystemManager.getpsJoystick().triangle().onTrue(Commands.runOnce(() -> SubsystemManager.getDriveBase().resetOdometry(new Pose2d(0, 0, new Rotation2d (0)))));
     // SubsystemManager.ps4Joystick.square().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
     // SubsystemManager.ps4Joystick.circle().whileTrue(
     //     Commands.deferredProxy(() -> drivebase.driveToPose(
