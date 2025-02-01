@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
+import frc.robot.Gamepiece;
 //import frc.robot.Robot;
 import frc.robot.RobotState;
 import frc.robot.subsystems.Elevator.ElevatorState;
@@ -29,7 +30,6 @@ public class SubsystemManager {
                                                                          "swerve/falcon"));
 
     private static final CommandPS4Controller ps4Joystick = new CommandPS4Controller(0);
-
     private static final PS4Controller psController_HID = ps4Joystick.getHID();
 
     private static boolean isLocked = false;
@@ -39,6 +39,8 @@ public class SubsystemManager {
 
     private static ElevatorState elevatorState = ElevatorState.BASE;
     private static HandlerState handlerState = HandlerState.STOP;
+    private static Gamepiece gamepiece = Gamepiece.NONE; // gamepiece in robot
+
    
     public static Command travelCommand = Commands.run(() -> operateAuto(RobotState.TRAVEL));
 
@@ -50,12 +52,6 @@ public class SubsystemManager {
     public static void operate(boolean onAuto) {
         if (!onAuto) {
             state = psController_HID.getCircleButtonPressed() ? RobotState.TRAVEL : lastState;
-            // if (psController_HID.getCircleButtonPressed()){
-            //     state = RobotState.TRAVEL;
-            // }
-            // else{
-            //     state = lastState;
-            // }
         }
         
         switch (state) {
@@ -71,7 +67,12 @@ public class SubsystemManager {
                 break;
 
             case DEPLETE:
-                handlerState = HandlerState.DEPLETE;
+                if (elevatorState == ElevatorState.BASE || elevatorState == ElevatorState.LEVEL3) {
+                    handlerState = HandlerState.DEPLETE;
+                }
+                else {
+                    handlerState = HandlerState.INTAKE;
+                }
                 break;
 
             case INTAKE:
@@ -86,6 +87,29 @@ public class SubsystemManager {
         lastState = state;
 
         if (isLocked) drivebase.lock();
+
+        //check if we have a algae
+        if ((elevatorState == ElevatorState.ALGAE_LOW || elevatorState == ElevatorState.ALGAE_HIGH)
+         &&  Handler.isGamePieceIn()
+         && gamepiece == Gamepiece.NONE) {
+            gamepiece = Gamepiece.ALGAE;
+        }
+        //check if we have a coral
+        if (elevatorState == ElevatorState.BASE 
+        &&  Handler.isGamePieceIn() 
+        && gamepiece == Gamepiece.NONE) {
+            gamepiece = Gamepiece.CORAL;
+        }
+
+        // check if we dont have a gamepiece
+        if (elevatorState == ElevatorState.BASE && !Handler.isGamePieceIn()) {
+            gamepiece = Gamepiece.NONE;
+        }
+        if ((elevatorState == ElevatorState.ALGAE_LOW || elevatorState == ElevatorState.ALGAE_HIGH) 
+        && !Handler.isGamePieceIn()) {
+            gamepiece = Gamepiece.NONE;
+        }
+
     }
 
     private static void operateAuto(RobotState chosenState) {
@@ -107,5 +131,9 @@ public class SubsystemManager {
 
     public static void initDriveBase() {
         drivebase.resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(180))); 
+    }
+
+    public static Gamepiece getGamepiece() {
+        return gamepiece;
     }
 }

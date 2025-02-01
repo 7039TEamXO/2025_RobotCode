@@ -26,10 +26,10 @@ import swervelib.imu.SwerveIMU;
 import java.util.Arrays;
 
 public class Limelight {
-    private static NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-    private static NetworkTableEntry tx = table.getEntry("tx");
-    private static NetworkTableEntry ty = table.getEntry("ty");
-    private static NetworkTableEntry tv = table.getEntry("botpose_wpired");
+    private static NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
+    private static NetworkTableEntry tx = limelightTable.getEntry("tx");
+    private static NetworkTableEntry ty = limelightTable.getEntry("ty");
+    private static NetworkTableEntry tv = limelightTable.getEntry("botpose_orb_wpiblue");
     //private static int[] validIDs = {0, 1, 2, 3, 10};
     
     // private static final SwerveDrivePoseEstimator m_poseEstimator =
@@ -98,6 +98,9 @@ public class Limelight {
 
     public static void updatePosition() {
         if(tx.getDouble(0) != 0 && ty.getDouble(0) != 0){
+            // SubsystemManager.getDriveBase().resetOdometry(new Pose2d(new Translation2d(LimelightHelpers.getBotPose2d_wpiRed("limelight").getX(),
+            //  LimelightHelpers.getBotPose2d_wpiRed("limelight").getY()),
+            //   Rotation2d.fromDegrees(LimelightHelpers.getBotPose2d_wpiRed("limelight").getRotation().getDegrees())));
             SubsystemManager.getDriveBase().resetOdometry(new Pose2d(
                 tv.getDoubleArray(new Double[]{})[0],
                 tv.getDoubleArray(new Double[]{})[1], 

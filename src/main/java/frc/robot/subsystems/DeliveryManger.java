@@ -1,12 +1,13 @@
 package frc.robot.subsystems;
 
+import frc.robot.Gamepiece;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.Wrist.WristState;
 
 public class DeliveryManger {
 
     private static ElevatorState elevatorState = ElevatorState.BASE;
-    private static WristState wristStateState = WristState.BASE;
+    private static WristState wristState = WristState.BASE;
 
     public static void init(){
 
@@ -16,35 +17,36 @@ public class DeliveryManger {
         elevatorState = state;
         switch (state) {
             case BASE:
-                wristStateState = WristState.BASE;
+                wristState = WristState.BASE;
                 break;
 
             case ALGAE_HIGH:
-                wristStateState = WristState.INTAKE_ALGAE;
+                wristState = WristState.INTAKE_ALGAE;
                 break;
 
             case ALGAE_LOW:
-                wristStateState = WristState.INTAKE_ALGAE;
+                wristState = WristState.INTAKE_ALGAE;
                 break;
 
             case LEVEL0:
-                wristStateState = WristState.BASE;
+                wristState = WristState.BASE;
                 break;
 
             case LEVEL1:
-                wristStateState = WristState.BASE;
+                wristState = WristState.BASE;
                 break;
 
             case LEVEL2:
-                wristStateState = WristState.BASE;
+                wristState = WristState.BASE;
                 break;
 
             case LEVEL3:
-                wristStateState = WristState.HIGH;
+                wristState = WristState.HIGH;
                 break;
-        
-
         }
+
+        wristState = SubsystemManager.getGamepiece() == Gamepiece.ALGAE ? WristState.INTAKE_ALGAE : wristState;
+        
         
 
     }
