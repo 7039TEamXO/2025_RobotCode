@@ -6,6 +6,7 @@ package frc.robot.subsystems.swervedrive;
 
 import static edu.wpi.first.units.Units.Meter;
 
+import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.config.PIDConstants;
@@ -13,9 +14,13 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 //import edu.wpi.first.apriltag.AprilTagFieldLayout;
 //import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 //import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -56,6 +61,9 @@ public class SwerveSubsystem extends SubsystemBase
    * Swerve drive object.
    */
   private final SwerveDrive swerveDrive;
+  private static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+
+
   /**
    * AprilTag field layout.
    */
@@ -137,6 +145,8 @@ public class SwerveSubsystem extends SubsystemBase
     // When vision is enabled we must manually update odometry in SwerveDrive
     // if (visionDriveTest)
     // {
+      System.out.println("pose: " + getClosestReefFace(swerveDrive.getPose()));
+
       swerveDrive.updateOdometry();
     //   vision.updatePoseEstimation(swerveDrive);
     // }
@@ -680,10 +690,68 @@ public class SwerveSubsystem extends SubsystemBase
    */
   // public void addFakeVisionReading()
   // {
-  //   swerveDrive.addVisionMeasurement(new Pose2d(3, 3, Rotation2d.fromDegrees(65)), Timer.getFPGATimestamp());
+  //   swerveDrive.addVisionMeasurement(new Pose2d(3, 3, Rotation2d.frPomDegrees(65)), Timer.getFPGATimestamp());
   // }
 
   public void print(){
     // System.out.println(swerveDrive.getPose().getX());
+  }
+
+  private static Pose3d getClosestReefFace(Pose2d currentRobotPose2d){
+    Pose3d closestReefFace = null;
+    double minDist = Double.MAX_VALUE;
+    var selected_face = -1;
+
+    var currentAllianceOptional = DriverStation.getAlliance();
+    double currentX = currentRobotPose2d.getX();
+    double currentY = currentRobotPose2d.getY();
+    
+    if (currentAllianceOptional.isPresent()){
+      var currentAlliance = currentAllianceOptional.get();
+
+      if (currentAlliance == DriverStation.Alliance.Blue){
+        
+        for (int i = 0; i < SwerveDriveConstants.BLUE_RIFF_TAGS_ARRAY.length; i++){
+          var reefFace = SwerveDriveConstants.BLUE_RIFF_TAGS_ARRAY[i];
+          
+          var reefFacePose = fieldLayout.getTagPose(reefFace).get();
+          double reefFaceX = reefFacePose.getTranslation().getX();
+          double reefFaceY = reefFacePose.getTranslation().getY();
+          
+          double dist = Math.pow(reefFaceX - currentX, 2) + Math.pow(reefFaceY - currentY, 2);
+                
+          if (dist < minDist){
+              minDist = dist;
+              selected_face = reefFace;
+              closestReefFace = reefFacePose; 
+          }
+        }
+      }
+        else if (currentAlliance == DriverStation.Alliance.Red) {
+
+        for (int i = 0; i < SwerveDriveConstants.RED_RIFF_TAGS_ARRAY.length; i++){
+            var reefFace = SwerveDriveConstants.RED_RIFF_TAGS_ARRAY[i];
+            var reefFacePoseOptional = fieldLayout.getTagPose(reefFace);
+            
+            if (reefFacePoseOptional.isPresent()) {
+                var reefFacePose = reefFacePoseOptional.get();
+                double reefFaceX = reefFacePose.getTranslation().getX();
+                double reefFaceY = reefFacePose.getTranslation().getY();
+                double dist = Math.pow(reefFaceX - currentX, 2) + Math.pow(reefFaceY - currentY, 2);
+                
+                if (dist < minDist){
+                    minDist = dist;
+                    selected_face = reefFace;
+                    closestReefFace = reefFacePose;
+                  }
+                }
+              }
+        }
+      }
+        System.out.println(selected_face);
+        return closestReefFace;
+      
+
+
   }
 }
