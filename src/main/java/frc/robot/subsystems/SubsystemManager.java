@@ -106,7 +106,7 @@ public class SubsystemManager {
                 break;
         }
 
-        DeliveryManger.operate(elevatorState);
+        DeliveryManager.operate(elevatorState);
         Handler.operate(handlerState);
 
         

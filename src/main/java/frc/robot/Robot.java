@@ -78,6 +78,7 @@ public class Robot extends TimedRobot
   @Override
   public void robotPeriodic()
   {
+    Limelight.update();
     LED.setLedData();
     // m_robotContainer.print();
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
@@ -141,8 +142,7 @@ public class Robot extends TimedRobot
   @Override
   public void teleopInit()
   {
-    SubsystemManager.init();
-    
+    SubsystemManager.init();    
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -169,9 +169,6 @@ public class Robot extends TimedRobot
     //System.out.println("x - " + Limelight.getTx() + "y - " + Limelight.getTy());
     SubsystemManager.operate(false);
     // System.out.println();
-    Limelight.updatePosition();
-    Limelight.teamColor();
-    Limelight.update();
     
     // the robot moves in SwerveSubsystem.driveCommand
   }

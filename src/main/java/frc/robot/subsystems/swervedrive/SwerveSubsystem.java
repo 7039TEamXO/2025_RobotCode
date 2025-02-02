@@ -62,7 +62,7 @@ public class SwerveSubsystem extends SubsystemBase
    */
   private final SwerveDrive swerveDrive;
   private static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
-  private static Pose3d tag_pos = null;
+  private static Pose2d tag_pos = null;
 
 
   /**
@@ -148,7 +148,7 @@ public class SwerveSubsystem extends SubsystemBase
       tag_pos = getClosestReefFace(swerveDrive.getPose());
       tag_pos.getTranslation().getX();
       tag_pos.getTranslation().getY();
-      tag_pos.getRotation().getAngle();
+      tag_pos.getRotation().getDegrees();
       swerveDrive.updateOdometry();
     //   vision.updatePoseEstimation(swerveDrive);
     // }
@@ -194,9 +194,9 @@ public class SwerveSubsystem extends SubsystemBase
           // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
           new PPHolonomicDriveController(
               // PPHolonomicController is the built in path following controller for holonomic drive trains
-              new PIDConstants(0.5, 0.0, 0.0),
+              Constants.AutoConstants.TRANSLATION_PID,
               // Translation PID constants
-              new PIDConstants(0.175, 0, 0.002)
+              Constants.AutoConstants.ANGLE_PID
               // Rotation PID constants
           ),
           config,
@@ -695,12 +695,12 @@ public class SwerveSubsystem extends SubsystemBase
   //   swerveDrive.addVisionMeasurement(new Pose2d(3, 3, Rotation2d.frPomDegrees(65)), Timer.getFPGATimestamp());
   // }
 
-  public void print(){
+  public void print() {
     // System.out.println(swerveDrive.getPose().getX());
   }
 
-  private static Pose3d getClosestReefFace(Pose2d currentRobotPose2d){
-    Pose3d closestReefFace = null;
+  private static Pose2d getClosestReefFace(Pose2d currentRobotPose2d){
+    Pose2d closestReefFace = null;
     double minDist = Double.MAX_VALUE;
     var selected_face = -1;
 
@@ -708,15 +708,14 @@ public class SwerveSubsystem extends SubsystemBase
     double currentX = currentRobotPose2d.getX();
     double currentY = currentRobotPose2d.getY();
     
-    if (currentAllianceOptional.isPresent()){
+    if (currentAllianceOptional.isPresent()) {
       var currentAlliance = currentAllianceOptional.get();
 
-      if (currentAlliance == DriverStation.Alliance.Blue){
-        
-        for (int i = 0; i < SwerveDriveConstants.BLUE_RIFF_TAGS_ARRAY.length; i++){
+      if (currentAlliance == DriverStation.Alliance.Blue) {
+        for (int i = 0; i < SwerveDriveConstants.BLUE_RIFF_TAGS_ARRAY.length; i++) {
           var reefFace = SwerveDriveConstants.BLUE_RIFF_TAGS_ARRAY[i];
           
-          var reefFacePose = fieldLayout.getTagPose(reefFace).get();
+          var reefFacePose = fieldLayout.getTagPose(reefFace).get().toPose2d();
           double reefFaceX = reefFacePose.getTranslation().getX();
           double reefFaceY = reefFacePose.getTranslation().getY();
           
@@ -724,37 +723,33 @@ public class SwerveSubsystem extends SubsystemBase
           double dist = Math.pow(reefFaceX - currentX, 2) + Math.pow(reefFaceY - currentY, 2);
                 
           if (dist < minDist){
-              minDist = dist;
-              selected_face = reefFace;
-              closestReefFace = reefFacePose; 
+            minDist = dist;
+            selected_face = reefFace;
+            closestReefFace = reefFacePose; 
           }
         }
       }
-        else if (currentAlliance == DriverStation.Alliance.Red) {
-
-        for (int i = 0; i < SwerveDriveConstants.RED_RIFF_TAGS_ARRAY.length; i++){
-            var reefFace = SwerveDriveConstants.RED_RIFF_TAGS_ARRAY[i];
-            var reefFacePoseOptional = fieldLayout.getTagPose(reefFace);
+      else if (currentAlliance == DriverStation.Alliance.Red) {
+        for (int i = 0; i < SwerveDriveConstants.RED_RIFF_TAGS_ARRAY.length; i++) {
+          var reefFace = SwerveDriveConstants.RED_RIFF_TAGS_ARRAY[i];
+          var reefFacePoseOptional = fieldLayout.getTagPose(reefFace);
+          
+          if (reefFacePoseOptional.isPresent()) {
+            var reefFacePose = reefFacePoseOptional.get().toPose2d();
+            double reefFaceX = reefFacePose.getTranslation().getX();
+            double reefFaceY = reefFacePose.getTranslation().getY();
+            double dist = Math.pow(reefFaceX - currentX, 2) + Math.pow(reefFaceY - currentY, 2);
             
-            if (reefFacePoseOptional.isPresent()) {
-                var reefFacePose = reefFacePoseOptional.get();
-                double reefFaceX = reefFacePose.getTranslation().getX();
-                double reefFaceY = reefFacePose.getTranslation().getY();
-                double dist = Math.pow(reefFaceX - currentX, 2) + Math.pow(reefFaceY - currentY, 2);
-                
-                if (dist < minDist){
-                    minDist = dist;
-                    selected_face = reefFace;
-                    closestReefFace = reefFacePose;
-                  }
-                }
-              }
+            if (dist < minDist) {
+                minDist = dist;
+                selected_face = reefFace;
+                closestReefFace = reefFacePose;
+            }
+          }
         }
       }
-        //System.out.println(selected_face);
-        return closestReefFace;
-      
-
-
+    }
+    // System.out.println(selected_face);
+    return closestReefFace;
   }
 }

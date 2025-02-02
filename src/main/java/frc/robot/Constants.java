@@ -27,10 +27,10 @@ public final class Constants
         // Maximum speed of the robot in meters per second, used to limit acceleration.
   public static final double MAX_SPEED  = Units.feetToMeters(10); //v14.5
 
-  public static final class AutonConstants
+  public static final class AutoConstants
   { 
-    public static final PIDConstants TRANSLATION_PID = new PIDConstants(0, 0, 0); //0.7
-    public static final PIDConstants ANGLE_PID       = new PIDConstants(0, 0, 0); //0.4,0,0.01
+    public static final PIDConstants TRANSLATION_PID = new PIDConstants(3, 0.0, 0.0); //0.7
+    public static final PIDConstants ANGLE_PID       = new PIDConstants(5, 0, 0); //0.4,0,0.01
   }
 
   public static final class DrivebaseConstants
@@ -51,7 +51,4 @@ public final class Constants
     
   }
 
-  // Limelight
-  public static final double wantedTY = 19.0;
-  public static final double tyTolerance = 0.3;
 }

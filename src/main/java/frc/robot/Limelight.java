@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants.DrivebaseConstants;
 import frc.robot.LimelightHelpers.LimelightResults;
 import frc.robot.subsystems.SubsystemManager;
+import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import swervelib.SwerveDrive;
 import swervelib.imu.SwerveIMU;
 
@@ -85,7 +86,12 @@ public class Limelight {
           m_poseEstimator.addVisionMeasurement(
               mt2.pose,
               mt2.timestampSeconds);
+              updatePosition();
         }
+
+        printRobotPose();
+
+        
         // get current id for apriltag(get minimal tag)
         // System.out.println("current id : " + NetworkTableInstance.getDefault().getTable("limelight").getEntry("t2d").getDoubleArray(new Double[]{})[9]);
         // LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIDs);
@@ -99,26 +105,31 @@ public class Limelight {
     }
 
     public static void updatePosition() {
+
         if(tx.getDouble(0) != 0 && ty.getDouble(0) != 0){
             
             // SubsystemManager.getDriveBase().resetOdometry(new Pose2d(new Translation2d(LimelightHelpers.getBotPose2d_wpiRed("limelight").getX(),
             //  LimelightHelpers.getBotPose2d_wpiRed("limelight").getY()),
             //   Rotation2d.fromDegrees(LimelightHelpers.getBotPose2d_wpiRed("limelight").getRotation().getDegrees())));
-            // SubsystemManager.getDriveBase().resetOdometry(new Pose2d(
-            //     tv.getDoubleArray(new Double[]{})[0],
-            //     tv.getDoubleArray(new Double[]{})[1], 
-            //         SubsystemManager.getDriveBase().getHeading()));  
+            SubsystemManager.getDriveBase().resetOdometry(new Pose2d(
+                tv.getDoubleArray(new Double[]{})[0],
+                tv.getDoubleArray(new Double[]{})[1], 
+                    SubsystemManager.getDriveBase().getHeading()));  
         }
         //System.out.println("X___" + SubsystemManager.getDriveBase().getPose().getX() + " Y___" + SubsystemManager.getDriveBase().getPose().getY() + "  Rot___" + SubsystemManager.getDriveBase().getPose().getRotation());
         
     }
-    public static void teamColor() {
-        if (RobotContainer.teamColorIsBlue()) {
-            System.out.println("team color blue");
-        }
-        else{
-            System.out.println("team color red");
-        }
+    private static void printRobotPose() {
+        System.out.println("x: " +  SubsystemManager.getDriveBase().getPose().getX());
+        System.out.println("y: " +  SubsystemManager.getDriveBase().getPose().getY());
+        System.out.println("angle: " +  SubsystemManager.getDriveBase().getHeading().getDegrees());
+
+        // if (RobotContainer.teamColorIsBlue()) {
+        //     System.out.println("team color blue");
+        // }
+        // else{
+        //     System.out.println("team color red");
+        // }
         
     }
 }

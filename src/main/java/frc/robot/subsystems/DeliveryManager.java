@@ -4,12 +4,12 @@ import frc.robot.Gamepiece;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.Wrist.WristState;
 
-public class DeliveryManger {
+public class DeliveryManager {
 
     private static ElevatorState elevatorState = ElevatorState.BASE;
     private static WristState wristState = WristState.BASE;
 
-    public static void init(){
+    public static void init() {
 
     }
 
