@@ -31,7 +31,7 @@ public final class Constants
   public static final class AutoConstants
   { 
     public static final PIDConstants TRANSLATION_PID = new PIDConstants(3, 0.0, 0.0); //0.7
-    public static final PIDConstants ANGLE_PID       = new PIDConstants(2, 0, 0); //0.4,0,0.01
+    public static final PIDConstants ANGLE_PID       = new PIDConstants(3.5, 0, 0); //0.4,0,0.01
   }
 
   public static final class DrivebaseConstants

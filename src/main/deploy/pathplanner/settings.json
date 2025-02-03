@@ -1,10 +1,12 @@
 {
-  "robotWidth": 0.76,
-  "robotLength": 0.76,
+  "robotWidth": 0.9,
+  "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
-    "BlueLeft",
-    "Example"
+    "TBDDeleteEmptyFolder",
+    "Example",
+    "QuadCoral",
+    "TripleAlgae"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,
