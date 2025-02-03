@@ -5,13 +5,13 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "NewPath"
+                  "pathName": "NewPath1"
                 }
               },
               {

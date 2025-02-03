@@ -26,11 +26,12 @@ public final class Constants
   public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
         // Maximum speed of the robot in meters per second, used to limit acceleration.
   public static final double MAX_SPEED  = Units.feetToMeters(10); //v14.5
+  public static final double DEG_TO_RAD = Math.PI / 180;
 
   public static final class AutoConstants
   { 
     public static final PIDConstants TRANSLATION_PID = new PIDConstants(3, 0.0, 0.0); //0.7
-    public static final PIDConstants ANGLE_PID       = new PIDConstants(5, 0, 0); //0.4,0,0.01
+    public static final PIDConstants ANGLE_PID       = new PIDConstants(2, 0, 0); //0.4,0,0.01
   }
 
   public static final class DrivebaseConstants

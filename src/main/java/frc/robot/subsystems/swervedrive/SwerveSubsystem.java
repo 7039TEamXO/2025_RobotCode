@@ -37,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 //import frc.robot.subsystems.swervedrive.Vision.Cameras;
 import java.io.File;
+import java.lang.System.Logger;
 import java.util.function.DoubleSupplier;
 import org.photonvision.PhotonCamera;
 //import org.photonvision.targeting.PhotonPipelineResult;
@@ -751,5 +752,25 @@ public class SwerveSubsystem extends SubsystemBase
     }
     // System.out.println(selected_face);
     return closestReefFace;
+  }
+
+  public double convertDegToRag(double deg){
+    /* Gets: degrees 0-360 
+     * Returns" 
+     */
+    if(deg > 360){
+      return 0;
+    }
+    return deg * Constants.DEG_TO_RAD;
+  }
+
+  public double convertRadToDeg(double rad){
+    /*Gets: radians 0-2pi
+     * Returns: degrees: 0-360
+     */
+    if(rad > Math.PI * 2){
+      return 0;
+    }
+    return rad / Constants.DEG_TO_RAD;
   }
 }
