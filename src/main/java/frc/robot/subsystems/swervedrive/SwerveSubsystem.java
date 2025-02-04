@@ -64,6 +64,11 @@ public class SwerveSubsystem extends SubsystemBase
   private final SwerveDrive swerveDrive;
   private static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
   private static Pose2d tag_pos = null;
+  double currentTagX = 0;
+  double currentTagY = 0;
+  double currentTagAngle = 0;
+  Pose2d currentLeftReefPos = null;
+  Pose2d currentRightReefPos = null;
 
 
   /**
@@ -147,9 +152,16 @@ public class SwerveSubsystem extends SubsystemBase
     // if (visionDriveTest)
     // {
       tag_pos = getClosestReefFace(swerveDrive.getPose());
-      tag_pos.getTranslation().getX();
-      tag_pos.getTranslation().getY();
-      tag_pos.getRotation().getDegrees();
+      
+      currentTagX = tag_pos.getTranslation().getX();
+      currentTagY = tag_pos.getTranslation().getY();
+      currentTagAngle = tag_pos.getRotation().getDegrees();
+      
+      double reefPoints[] = calculateLeftAndRightReefPointsFromTag(x=currentTagX, y=currentTagY, deg=currentTagAngle)
+      
+      currentLeftReefPos = reefPoints[0]
+      currentRightReefPos = reefPoints[1]
+      
       swerveDrive.updateOdometry();
     //   vision.updatePoseEstimation(swerveDrive);
     // }
@@ -177,7 +189,7 @@ public class SwerveSubsystem extends SubsystemBase
           // Robot pose supplier
           this::resetOdometry,
           // Method to reset odometry (will be called if your auto has a starting pose)
-          this::getRobotVelocity,
+          this::getRobotVelocity,>
           // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
           (speedsRobotRelative, moduleFeedForwards) -> {
             if (enableFeedforward)
@@ -436,7 +448,7 @@ public class SwerveSubsystem extends SubsystemBase
     });
   }
 
-  /**
+  /**>
    * The primary method for controlling the drivebase.  Takes a {@link Translation2d} and a rotation rate, and
    * calculates and commands module states accordingly.  Can use either open-loop or closed-loop velocity control for
    * the wheel velocities.  Also has field- and robot-relative modes, which affect how the translation vector is used.
@@ -773,4 +785,32 @@ public class SwerveSubsystem extends SubsystemBase
     }
     return rad / Constants.DEG_TO_RAD;
   }
-}
+
+  private static Pose2d[] calculateLeftAndRightReefPointsFromTag(double x, double y, double deg){
+        double xR = x + SwerveDriveConstants.M_FROM_TAG_TO_POLES * Math.cos(deg);
+        double yR = y + SwerveDriveConstants.M_FROM_TAG_TO_POLES * Math.sin(deg);
+        double xL = x - SwerveDriveConstants.M_FROM_TAG_TO_POLES * Math.cos(deg);
+        double yL = y - SwerveDriveConstants.M_FROM_TAG_TO_POLES * Math.sin(deg);
+
+        return new Pose2d[]{ //check if you can return pose2d array or need to return normal array containing pose2d
+            new Pose2d(xL, yL, new Rotation2d(convertDegToRag(deg))),
+            new Pose2d(xR, yR, new Rotation2d(convertDegToRag(deg)))
+        };
+    }
+
+  
+  public static Pose2d getcurrentRightReefPos(){
+    return currentRightReefPos;
+  } 
+
+  public static Pose2d getcurrentLeftReefPos(){
+    return currentLeftReefPos;
+  }
+
+  public static Pose2d getCurrentAprilTagPos(){
+    return tag_pos;
+  }
+    
+
+  } 
+

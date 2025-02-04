@@ -42,4 +42,5 @@ public class SwerveDriveConstants {
                                                     RED_REEF_POS_FACE_FOUR_ID,
                                                     RED_REEF_POS_FACE_FIVE_ID,
                                                     RED_REEF_POS_FACE_SIX_ID}; 
+    public static final double M_FROM_TAG_TO_POLES = 0.2;
 }
