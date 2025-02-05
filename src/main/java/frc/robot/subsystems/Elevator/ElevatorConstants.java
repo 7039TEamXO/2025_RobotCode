@@ -1,6 +1,9 @@
 package frc.robot.subsystems.Elevator;
 
 public class ElevatorConstants {
+    public static final int ElevatorRightMotorID = 8;
+    public static final int ElevatorLeftMotorID = 10;
+
     public static final double EncoderMultiplier = 1;
 
     public static final double kS = 0.25; // Add 0.25 V output to overcome static friction

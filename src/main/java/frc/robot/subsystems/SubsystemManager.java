@@ -20,6 +20,7 @@ import frc.robot.RobotState;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.Handler.HandlerState;
 import frc.robot.subsystems.Handler.Handler;
+import frc.robot.subsystems.Wrist.Wrist;
 import frc.robot.subsystems.Wrist.WristState;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
@@ -36,12 +37,9 @@ public class SubsystemManager {
 
     private static RobotState state;
 
-    
-
     private static ElevatorState elevatorState = ElevatorState.BASE;
     
     private static HandlerState handlerState = HandlerState.STOP;
-    private static Gamepiece gamepiece = Gamepiece.NONE; // gamepiece in robot
 
    
     public static Command travelCommand = Commands.run(() -> operateAuto(RobotState.TRAVEL, null));
@@ -56,14 +54,17 @@ public class SubsystemManager {
 
     public static void init() {
         state = RobotState.TRAVEL;
-        
+        DeliveryManager.init();
+        Handler.init();
     }
 
     public static void operate(boolean onAuto) {
         if (!onAuto) {
-            state = psController_HID.getL2Button() ? RobotState.DEPLETE 
-            : psController_HID.getR2Button() ? RobotState.INTAKE :
-            psController_HID.getRawButton(12) ? RobotState.TRAVEL: // right stick
+            state = psController_HID.getL2Button() ? RobotState.DEPLETE :
+            psController_HID.getR2Button() ? RobotState.INTAKE :
+            psController_HID.getRawButton(12) ? RobotState.TRAVEL :
+            psController_HID.getPOV(0) == 90 ? RobotState.INTAKE :
+            psController_HID.getPOV(0) == 270 ? RobotState.INTAKE : // right stick
             state;
 
             elevatorState = psController_HID.getCrossButton() ? ElevatorState.BASE:
@@ -79,7 +80,11 @@ public class SubsystemManager {
         
         switch (state) {
             case TRAVEL:
-                handlerState = HandlerState.STOP;
+                if(Handler.isAlgaeIn()){
+                    handlerState = HandlerState.HOLD_ALGAE;
+                }else{
+                    handlerState = HandlerState.STOP;
+                }
                 isLocked = false;
                 break;
 
@@ -88,53 +93,32 @@ public class SubsystemManager {
                 break;
 
             case DEPLETE:
-                if (elevatorState == ElevatorState.BASE || elevatorState == ElevatorState.LEVEL3) {
-                    handlerState = HandlerState.DEPLETE;
+                if (elevatorState == ElevatorState.LEVEL3 || Handler.isAlgaeIn()) {
+                    handlerState = HandlerState.DEPLETE_ALGAE;
                 }
                 else {
-                    handlerState = HandlerState.INTAKE;
+                    handlerState = HandlerState.DEPLETE_CORAL;
                 }
                 break;
 
             case INTAKE:
-                handlerState = HandlerState.INTAKE;
-                break;
 
-            case INTAKE_CORAL:
-                handlerState = HandlerState.INTAKE;
-                elevatorState = ElevatorState.BASE;
+            if (elevatorState == ElevatorState.BASE) {
+                handlerState = HandlerState.INTAKE_CORAL;
+            }
+            else {
+                handlerState = HandlerState.INTAKE_ALGAE;
+            }
+            state = Handler.isAlgaeIn() ? RobotState.TRAVEL : RobotState.INTAKE;
                 break;
         }
 
         DeliveryManager.operate(elevatorState);
         Handler.operate(handlerState);
 
-        
+        if (isLocked) drivebase.lock();        
 
-        if (isLocked) drivebase.lock();
-
-        //check if we have a algae
-        if ((elevatorState == ElevatorState.ALGAE_LOW || elevatorState == ElevatorState.ALGAE_HIGH)
-         &&  Handler.isGamePieceIn()
-         && gamepiece == Gamepiece.NONE) {
-            gamepiece = Gamepiece.ALGAE;
-        }
-        //check if we have a coral
-        if (elevatorState == ElevatorState.BASE 
-        &&  Handler.isGamePieceIn() 
-        && gamepiece == Gamepiece.NONE) {
-            gamepiece = Gamepiece.CORAL;
-        }
-
-        // check if we dont have a gamepiece
-        if (elevatorState == ElevatorState.BASE && !Handler.isGamePieceIn()) {
-            gamepiece = Gamepiece.NONE;
-        }
-        if ((elevatorState == ElevatorState.ALGAE_LOW || elevatorState == ElevatorState.ALGAE_HIGH) 
-        && !Handler.isGamePieceIn()) {
-            gamepiece = Gamepiece.NONE;
-        }
-
+        System.out.println(state);
     }
 
     private static void operateAuto(RobotState chosenState, ElevatorState choosenElevatorState) {
@@ -159,7 +143,4 @@ public class SubsystemManager {
         drivebase.resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(180))); 
     }
 
-    public static Gamepiece getGamepiece() {
-        return gamepiece;
-    }
 }

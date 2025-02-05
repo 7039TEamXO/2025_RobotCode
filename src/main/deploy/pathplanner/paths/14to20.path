@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 5.175,
-        "y": 5.25
+        "x": 5.016,
+        "y": 5.279
       },
       "prevControl": {
-        "x": 5.675,
-        "y": 6.116025403784438
+        "x": 5.516,
+        "y": 6.145025403784438
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,7 @@
     "rotation": -119.99999999999999
   },
   "reversed": false,
-  "folder": "QuadCoral",
+  "folder": "QuadCoralB",
   "idealStartingState": {
     "velocity": 0.0,
     "rotation": 180.0

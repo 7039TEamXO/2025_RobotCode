@@ -72,6 +72,8 @@ public class Limelight {
 
         LimelightHelpers.SetRobotOrientation("limelight", SubsystemManager.getDriveBase().getPose().getRotation().getDegrees(), yawRate, pitch, 0, 0, 0);
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+
+        if (mt2 != null) {
         if(Math.abs(SubsystemManager.getDriveBase().getRobotVelocity().omegaRadiansPerSecond) > 4 * Math.PI) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
         {
           doRejectUpdate = true;
@@ -91,6 +93,7 @@ public class Limelight {
 
         printRobotPose();
 
+    }
         
         // get current id for apriltag(get minimal tag)
         // System.out.println("current id : " + NetworkTableInstance.getDefault().getTable("limelight").getEntry("t2d").getDoubleArray(new Double[]{})[9]);

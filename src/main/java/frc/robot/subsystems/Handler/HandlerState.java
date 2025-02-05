@@ -1,5 +1,5 @@
 package frc.robot.subsystems.Handler;
 
 public enum HandlerState {
-    INTAKE, DEPLETE, STOP
+    INTAKE_CORAL, INTAKE_ALGAE, HOLD_ALGAE, DEPLETE_ALGAE, DEPLETE_CORAL, STOP
 }

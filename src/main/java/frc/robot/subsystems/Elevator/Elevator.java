@@ -10,7 +10,7 @@ public class Elevator {
     private static double elevatorPosition; 
     private static final MotionMagicVoltage motorRequest = new MotionMagicVoltage(0);
 
-    private static TalonFX elevatorMotor = new TalonFX(0);
+    private static TalonFX elevatorMotor = new TalonFX(ElevatorConstants.ElevatorRightMotorID);
     
     public static void init() {
         elevatorMotor.setPosition(0); // we start our position from 0

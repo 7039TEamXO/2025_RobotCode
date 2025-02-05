@@ -3,9 +3,9 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
-    "TBDDeleteEmptyFolder",
     "Example",
-    "QuadCoral",
+    "QuadCoralR",
+    "QuadCoralB",
     "TripleAlgae"
   ],
   "autoFolders": [],
@@ -14,8 +14,8 @@
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,
-  "robotMass": 57.924,
-  "robotMOI": 7.883,
+  "robotMass": 50.0,
+  "robotMOI": 7.8,
   "robotTrackwidth": 0.546,
   "driveWheelRadius": 0.1,
   "driveGearing": 5.4,

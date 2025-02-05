@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 //import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.Elevator.Elevator;
+import frc.robot.subsystems.Wrist.Wrist;
 
 
 public class Dashboard {
@@ -48,9 +49,9 @@ public class Dashboard {
         telemetry.addNumber("Back Left vRot", () -> SubsystemManager.getDriveBase().getSwerveDriveConfiguration().modules[2].getPosition().angle.getDegrees()).withPosition(9, 3).withSize(8, 3);
         telemetry.addNumber("Back Right vRot", () -> SubsystemManager.getDriveBase().getSwerveDriveConfiguration().modules[3].getPosition().angle.getDegrees()).withPosition(17, 3).withSize(8, 3);
 
+        subsystemsInformation.addNumber("Elevator raw encoder", () -> Elevator.getCurrentPosition()).withPosition(0, 0).withSize(5, 3);
+        subsystemsInformation.addNumber("Wrist raw encoder", () -> Wrist.getCurrentPosition()).withPosition(0, 0).withSize(5, 2);
 
-        subsystemsInformation.addNumber("Elevatot raw encoder", () -> Elevator.getCurrentPosition()).withPosition(0, 0).withSize(5, 3);
-        
     }
 
     public static Autos getSelected() {
