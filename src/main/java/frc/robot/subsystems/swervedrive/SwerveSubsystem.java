@@ -157,10 +157,10 @@ public class SwerveSubsystem extends SubsystemBase
       currentTagY = tag_pos.getTranslation().getY();
       currentTagAngle = tag_pos.getRotation().getDegrees();
       
-      double reefPoints[] = calculateLeftAndRightReefPointsFromTag(x=currentTagX, y=currentTagY, deg=currentTagAngle)
-      
-      currentLeftReefPos = reefPoints[0]
-      currentRightReefPos = reefPoints[1]
+      //TODO: Enable this code to calculate reef points - not tested !!! 
+      // double reefPoints[] = calculateLeftAndRightReefPointsFromTag(x=currentTagX, y=currentTagY, deg=currentTagAngle)
+      // currentLeftReefPos = reefPoints[0]
+      // currentRightReefPos = reefPoints[1]
       
       swerveDrive.updateOdometry();
     //   vision.updatePoseEstimation(swerveDrive);

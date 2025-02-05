@@ -18,4 +18,10 @@ public class WristConstants {
     public static final double SupplyCurrentLimit = 20;
 
     public static final double MaxEncoderPos = 13.77;
+
+    public static final double WRIST_POS_BASE = 0;
+    public static final double WRIST_POS_HIGH = 10;
+    public static final double WRIST_POS_INTAKE_ALGAE = 8;
+    public static final double WRIST_POS_DEPLETE_CORAL = 2;
+
 }

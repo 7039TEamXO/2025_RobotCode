@@ -23,19 +23,19 @@ public class Wrist {
     public static void operate(WristState state) {
         switch (state) {
             case BASE:
-                wristPosition = 0;
+                wristPosition = WristConstants.WRIST_POS_BASE;
                 break;
 
             case HIGH:
-                wristPosition = 10;
+                wristPosition = WristConstants.WRIST_POS_HIGH;
                 break;
 
             case INTAKE_ALGAE:
-                wristPosition = 8;
+                wristPosition = WristConstants.WRIST_POS_INTAKE_ALGAE;
                 break;
                 
             case DEPLETE_CORAL:
-                wristPosition = 2;
+                wristPosition = WristConstants.WRIST_POS_DEPLETE_CORAL;
                 break;
         }
 
