@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import java.io.File;
 
+import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 
@@ -36,8 +37,10 @@ public class SubsystemManager {
     private static boolean isLocked = false;
 
     private static RobotState state;
+    private static RobotState lastState;
 
     private static ElevatorState elevatorState = ElevatorState.BASE;
+    private static ElevatorState lastElevatorState = ElevatorState.BASE;
     
     private static HandlerState handlerState = HandlerState.STOP;
 
@@ -54,6 +57,7 @@ public class SubsystemManager {
 
     public static void init() {
         state = RobotState.TRAVEL;
+        lastState = state;
         DeliveryManager.init();
         Handler.init();
     }
@@ -62,11 +66,13 @@ public class SubsystemManager {
         if (!onAuto) {
             state = psController_HID.getL2Button() ? RobotState.DEPLETE :
             psController_HID.getR2Button() ? RobotState.INTAKE :
-            psController_HID.getRawButton(12) ? RobotState.TRAVEL :
+            psController_HID.getRawButton(12) ? RobotState.TRAVEL :// right stick
             psController_HID.getPOV(0) == 90 ? RobotState.INTAKE :
-            psController_HID.getPOV(0) == 270 ? RobotState.INTAKE : // right stick
+            psController_HID.getPOV(0) == 270 ? RobotState.INTAKE :
+            psController_HID.getCrossButton() && !Handler.isAlgaeIn() && lastElevatorState != ElevatorState.BASE ? 
+            RobotState.INTAKE :
             state;
-
+        
             elevatorState = psController_HID.getCrossButton() ? ElevatorState.BASE:
             psController_HID.getSquareButton() ? ElevatorState.LEVEL1:
             psController_HID.getTriangleButton() ? ElevatorState.LEVEL3:
@@ -103,6 +109,10 @@ public class SubsystemManager {
 
             case INTAKE:
 
+            if (Handler.isCoralIn()) {
+                state = RobotState.TRAVEL;
+                break;
+            }
             if (elevatorState == ElevatorState.BASE) {
                 handlerState = HandlerState.INTAKE_CORAL;
             }
@@ -116,9 +126,10 @@ public class SubsystemManager {
         DeliveryManager.operate(elevatorState);
         Handler.operate(handlerState);
 
-        if (isLocked) drivebase.lock();        
-
-        System.out.println(state);
+        if (isLocked) drivebase.lock();   
+        
+        lastState = state;
+        lastElevatorState = elevatorState;
     }
 
     private static void operateAuto(RobotState chosenState, ElevatorState choosenElevatorState) {

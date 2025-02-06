@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import frc.robot.Gamepiece;
+import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.Handler.Handler;
 import frc.robot.subsystems.Wrist.Wrist;
@@ -13,7 +14,7 @@ public class DeliveryManager {
 
     public static void init() {
         Wrist.init();
-
+        Elevator.init();
     }
 
     public static void operate(ElevatorState state){
@@ -32,7 +33,7 @@ public class DeliveryManager {
                 break;
 
             case LEVEL0:
-                wristState = WristState.BASE;
+                wristState = WristState.DEPLETE_CORAL;
                 break;
 
             case LEVEL1:
@@ -51,5 +52,6 @@ public class DeliveryManager {
         wristState = Handler.isAlgaeIn() ? WristState.INTAKE_ALGAE : wristState;
 
         Wrist.operate(wristState);
+        Elevator.operate(elevatorState);
     }
 }
