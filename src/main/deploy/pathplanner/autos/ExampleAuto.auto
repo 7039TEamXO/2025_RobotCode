@@ -17,10 +17,35 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Travel"
+                  "name": "Level_2"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Deplete"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 3.0
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeCoral"
           }
         }
       ]

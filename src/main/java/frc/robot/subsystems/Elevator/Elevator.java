@@ -18,6 +18,7 @@ public class Elevator {
     
     public static void init() {
         elevatorMasterMotor.setPosition(0); // we start our position from 0
+        elevatorSlaveMotor.setPosition(0); // we start our position from 0
         
         setMotorConfigs();
     }
@@ -25,38 +26,39 @@ public class Elevator {
     public static void operate(ElevatorState state){
         switch (state) {
             case BASE: 
-                elevatorPosition = 0;
+                elevatorPosition = ElevatorConstants.ELEVATOR_POSE_BASE;
                 break;
 
             case ALGAE_HIGH:
         
-                elevatorPosition = 13;
+                elevatorPosition = ElevatorConstants.ELEVATOR_POSE_ALGAE_HIGH;
                 break;
 
             case ALGAE_LOW:
-                elevatorPosition = 7.3;
+                elevatorPosition = ElevatorConstants.ELEVATOR_POSE_ALGAE_LOW;
                 break;
 
             case LEVEL0:
-                elevatorPosition = 1;
+                elevatorPosition = ElevatorConstants.ELEVATOR_POSE_LEVEL0;
                 break;
 
             case LEVEL1:
-                elevatorPosition = 3.8;
+                elevatorPosition = ElevatorConstants.ELEVATOR_POSE_LEVEL1;
                 break;
 
             case LEVEL2:
-                elevatorPosition = 10.5;
+                elevatorPosition = ElevatorConstants.ELEVATOR_POSE_LEVEL2;
                 break;
 
             case LEVEL3:
-                elevatorPosition = 19.0;
+                elevatorPosition = ElevatorConstants.ELEVATOR_POSE_LEVEL3;
                 break;
 
         }
 
         elevatorMasterMotor.setControl(motorRequest.withPosition(elevatorPosition)); //set position for elevator
-        System.out.println(elevatorMasterMotor.getPosition().getValueAsDouble());
+        System.out.println("pos: " + elevatorMasterMotor.getPosition().getValueAsDouble());
+        // System.out.println("precent: " + elevatorMasterMotor.getDutyCycle().getValueAsDouble());
         // elevatorMasterMotor.setControl(new DutyCycleOut(0.1));
     }
 
@@ -95,8 +97,8 @@ public class Elevator {
         rightTalonFXConfigs.CurrentLimits.SupplyCurrentLimit = ElevatorConstants.SupplyCurrentLimit;
         rightTalonFXConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-        rightTalonFXConfigs.MotorOutput.PeakForwardDutyCycle = 0.3;
-        rightTalonFXConfigs.MotorOutput.PeakReverseDutyCycle = -0.3;
+        rightTalonFXConfigs.MotorOutput.PeakForwardDutyCycle = 0.2;
+        rightTalonFXConfigs.MotorOutput.PeakReverseDutyCycle = -0.2;
 
 
         elevatorMasterMotor.getConfigurator().apply(rightTalonFXConfigs);

@@ -24,4 +24,7 @@ public class WristConstants {
     public static final double WRIST_POS_INTAKE_ALGAE = 8;
     public static final double WRIST_POS_DEPLETE_CORAL = 2;
 
+//for test
+    public static final double WRIST_POS_DEPLETE_CORAL_LEVEL0 = 3.5;
+
 }

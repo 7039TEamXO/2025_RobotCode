@@ -12,11 +12,11 @@ import frc.robot.subsystems.SubsystemManager;
 public class Handler {
 
     private static TalonFX master = new TalonFX(HandlerConstants.HandlerMotorID);
-    private static AnalogInput algaeIrInput = new AnalogInput(1);
+    private static AnalogInput algaeIrInput = new AnalogInput(HandlerConstants.HandlerAnalogInputSensorID);
     private static int algaeIrValue = algaeIrInput.getValue();
-    private static double power = 0.0;
+    private static double power = HandlerConstants.HANDLER_POWER_STOP;
 
-    private static DigitalInput coralIrInput = new DigitalInput(0);
+    private static DigitalInput coralIrInput = new DigitalInput(HandlerConstants.HandlerDigitalInputSensorID);
     private static boolean coralIrVal = coralIrInput.get();
     private static boolean lastCoralIrVal = coralIrInput.get();
     private static boolean isCoralIn = false;
@@ -33,22 +33,22 @@ public class Handler {
 
         switch (state) {
             case INTAKE_ALGAE: // intake coral, deplete coral 1 - 3(level), intake algae
-                power = 0.4;
+                power = HandlerConstants.HANDLER_POWER_INTAKE_ALGAE;
                 break;
             case DEPLETE_CORAL: // deplete algae, deplete coral level 4
-                power = 0.1;
+                power = HandlerConstants.HANDLER_POWER_DEPLETE_CORAL;
                 break;
             case STOP:
-                power = 0;
+                power = HandlerConstants.HANDLER_POWER_STOP;
                 break;
             case DEPLETE_ALGAE:
-                power = -0.1;
+                power = HandlerConstants.HANDLER_POWER_DEPLETE_ALGAE;
                 break;
             case HOLD_ALGAE:
-                power = 0.1;
+                power = HandlerConstants.HANDLER_POWER_HOLD_ALGAE;
                 break;
             case INTAKE_CORAL:
-                power = 0.1;
+                power = HandlerConstants.HANDLER_POWER_INTAKE_CORAL;
                 break;
         }
         
@@ -65,15 +65,17 @@ public class Handler {
 
         if (coralIrVal && !lastCoralIrVal) {
             isCoralIn = true;
-        }
-
-        if (state == HandlerState.DEPLETE_CORAL) {
+        }else{
             isCoralIn = false;
         }
 
+        // if (state == HandlerState.DEPLETE_CORAL) {
+        //     isCoralIn = false;
+        // }
+
 
         
-
+        lastCoralIrVal = coralIrVal;
     }
 
     public static boolean isAlgaeIn() {

@@ -33,7 +33,7 @@ public class DeliveryManager {
                 break;
 
             case LEVEL0:
-                wristState = WristState.DEPLETE_CORAL;
+                wristState = WristState.DEPLETE_CORAL_LEVEL0;
                 break;
 
             case LEVEL1:

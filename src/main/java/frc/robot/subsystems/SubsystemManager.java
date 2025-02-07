@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import java.io.File;
+import java.lang.annotation.ElementType;
 
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -53,7 +54,7 @@ public class SubsystemManager {
     public static Command level1Command = Commands.run(() -> operateAuto(RobotState.TRAVEL, ElevatorState.LEVEL1));
     public static Command level2Command = Commands.run(() -> operateAuto(RobotState.TRAVEL, ElevatorState.LEVEL2));
     public static Command level3Command = Commands.run(() -> operateAuto(RobotState.TRAVEL, ElevatorState.LEVEL3));
-    public static Command depleteCommand = Commands.run(() -> operateAuto(RobotState.TRAVEL, null));
+    public static Command depleteCommand = Commands.run(() -> operateAuto(RobotState.DEPLETE, null));
 
     public static void init() {
         state = RobotState.TRAVEL;
@@ -109,17 +110,14 @@ public class SubsystemManager {
 
             case INTAKE:
 
-            if (Handler.isCoralIn()) {
-                state = RobotState.TRAVEL;
-                break;
-            }
             if (elevatorState == ElevatorState.BASE) {
                 handlerState = HandlerState.INTAKE_CORAL;
             }
-            else {
+            else if (elevatorState == ElevatorState.ALGAE_HIGH || elevatorState == ElevatorState.ALGAE_LOW) {
                 handlerState = HandlerState.INTAKE_ALGAE;
             }
-            state = Handler.isAlgaeIn() ? RobotState.TRAVEL : RobotState.INTAKE;
+            
+            state = Handler.isAlgaeIn() || Handler.isCoralIn() ? RobotState.TRAVEL : RobotState.INTAKE;
                 break;
         }
 

@@ -37,9 +37,15 @@ public class Wrist {
             case DEPLETE_CORAL:
                 wristPosition = WristConstants.WRIST_POS_DEPLETE_CORAL;
                 break;
+            case DEPLETE_CORAL_LEVEL0:
+                wristPosition = WristConstants.WRIST_POS_DEPLETE_CORAL_LEVEL0;
+                break;
+
         }
 
         master.setControl(motorRequest.withPosition(wristPosition));
+
+        // System.out.println("pose :" + master.getPosition().getValueAsDouble());
     }
 
     public static double getCurrentPosition(){
