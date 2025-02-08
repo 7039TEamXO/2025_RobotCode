@@ -57,8 +57,8 @@ public class Limelight {
         0.4,    // Forward offset (meters)
         0.0,    // Side offset (meters)
         0.2,    // Height offset (meters)
-        180.0,    // Roll (degrees)
-        35,   // Pitch (degrees)
+        0.0,    // Roll (degrees)
+        20,   // Pitch (degrees)
         0.0     // Yaw (degrees)
         );
     }
@@ -68,7 +68,7 @@ public class Limelight {
 
         boolean doRejectUpdate = false;
         double yawRate = SubsystemManager.getDriveBase().getRobotVelocity().omegaRadiansPerSecond;
-        double pitch = 35;
+        double pitch = 20;
 
         LimelightHelpers.SetRobotOrientation("limelight", SubsystemManager.getDriveBase().getPose().getRotation().getDegrees(), yawRate, pitch, 0, 0, 0);
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
