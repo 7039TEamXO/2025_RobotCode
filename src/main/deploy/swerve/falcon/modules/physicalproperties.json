@@ -8,7 +8,7 @@
     "angle": 30
   },
   "rampRate": {
-    "drive": 0.2,
+    "drive": 0.4,
     "angle": 0.3
   },
   "wheelGripCoefficientOfFriction": 1.542,

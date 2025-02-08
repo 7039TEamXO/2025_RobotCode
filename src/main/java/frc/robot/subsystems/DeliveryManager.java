@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import frc.robot.Gamepiece;
 import frc.robot.subsystems.Elevator.Elevator;
+import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.Handler.Handler;
 import frc.robot.subsystems.Wrist.Wrist;
@@ -33,7 +34,10 @@ public class DeliveryManager {
                 break;
 
             case LEVEL0:
-                wristState = WristState.DEPLETE_CORAL_LEVEL0;
+                if (Elevator.getCurrentPosition() >= ElevatorConstants.ELEVATOR_POSE_SAFE_TO_ROTATE) {
+                    wristState = WristState.DEPLETE_CORAL_LEVEL0;
+                    
+                }
                 break;
 
             case LEVEL1:

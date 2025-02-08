@@ -48,9 +48,9 @@ public class Dashboard {
         telemetry.addNumber("Front Right vRot", () -> SubsystemManager.getDriveBase().getSwerveDriveConfiguration().modules[1].getPosition().angle.getDegrees()).withPosition(17, 0).withSize(8, 3);
         telemetry.addNumber("Back Left vRot", () -> SubsystemManager.getDriveBase().getSwerveDriveConfiguration().modules[2].getPosition().angle.getDegrees()).withPosition(9, 3).withSize(8, 3);
         telemetry.addNumber("Back Right vRot", () -> SubsystemManager.getDriveBase().getSwerveDriveConfiguration().modules[3].getPosition().angle.getDegrees()).withPosition(17, 3).withSize(8, 3);
-
-        subsystemsInformation.addNumber("Elevator raw encoder", () -> Elevator.getCurrentPosition()).withPosition(0, 0).withSize(5, 3);
-        subsystemsInformation.addNumber("Wrist raw encoder", () -> Wrist.getCurrentPosition()).withPosition(0, 0).withSize(5, 2);
+        
+        subsystemsInformation.addNumber("Elevator raw encoder", () -> Elevator.getCurrentPosition());
+        subsystemsInformation.addNumber("Wrist raw encoder", () -> Wrist.getCurrentPosition());
 
     }
 

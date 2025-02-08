@@ -7,6 +7,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import frc.robot.subsystems.SubsystemManager;
 
 public class Handler {
@@ -17,11 +18,13 @@ public class Handler {
     private static double power = HandlerConstants.HANDLER_POWER_STOP;
 
     private static DigitalInput coralIrInput = new DigitalInput(HandlerConstants.HandlerDigitalInputSensorID);
+    private static DigitalOutput coralIrOutput = new DigitalOutput(0);
     private static boolean coralIrVal = coralIrInput.get();
     private static boolean lastCoralIrVal = coralIrInput.get();
     private static boolean isCoralIn = false;
 
     public static void init() {
+        //coralIrOutput.set(true);
         var talonFXConfigs = new TalonFXConfiguration();
         talonFXConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
@@ -29,7 +32,7 @@ public class Handler {
     }
 
     public static void operate(HandlerState state) {
-        updateIr(state);
+        //updateIr(state);
 
         switch (state) {
             case INTAKE_ALGAE: // intake coral, deplete coral 1 - 3(level), intake algae
@@ -53,14 +56,15 @@ public class Handler {
         }
         
         master.setControl(new DutyCycleOut(power)); //set percent output
+        // System.out.println(coralIrInput.get());
     }   
 
     private static void updateIr(HandlerState state){
         algaeIrValue = algaeIrInput.getValue();
         coralIrVal = coralIrInput.get();
 
-        coralIrVal = !SubsystemManager.getpsJoystick().R1().getAsBoolean();
-        algaeIrValue = SubsystemManager.getpsJoystick().L1().getAsBoolean() ? 0 : 2000;
+        // coralIrVal = !SubsystemManager.getpsJoystick().R1().getAsBoolean();
+        // algaeIrValue = SubsystemManager.getpsJoystick().L1().getAsBoolean() ? 0 : 2000;
 
 
         if (coralIrVal && !lastCoralIrVal) {
@@ -79,13 +83,13 @@ public class Handler {
     }
 
     public static boolean isAlgaeIn() {
-        return algaeIrValue < 1500;
-        // return false;
+        //return algaeIrValue < 1500;
+        return false;
     }
 
     public static boolean isCoralIn(){
-        return isCoralIn;
-        // return false;
+        //return isCoralIn;
+        return false;
     }
 }
 

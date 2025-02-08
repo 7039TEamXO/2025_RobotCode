@@ -8,6 +8,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import frc.robot.subsystems.Wrist.Wrist;
+import frc.robot.subsystems.Wrist.WristConstants;
+
 public class Elevator {
 
     private static double elevatorPosition; 
@@ -19,7 +22,6 @@ public class Elevator {
     public static void init() {
         elevatorMasterMotor.setPosition(0); // we start our position from 0
         elevatorSlaveMotor.setPosition(0); // we start our position from 0
-        
         setMotorConfigs();
     }
 
@@ -39,7 +41,12 @@ public class Elevator {
                 break;
 
             case LEVEL0:
-                elevatorPosition = ElevatorConstants.ELEVATOR_POSE_LEVEL0;
+            if (Wrist.getCurrentPosition() <= WristConstants.WRIST_POS_DEPLETE_CORAL_LEVEL0_ELEVATOR_SAFE) {
+
+                elevatorPosition = ElevatorConstants.ELEVATOR_POSE_LEVEL1;
+            } else {
+                elevatorPosition = ElevatorConstants.ELEVATOR_POSE_BASE;
+            }
                 break;
 
             case LEVEL1:
@@ -58,6 +65,7 @@ public class Elevator {
 
         elevatorMasterMotor.setControl(motorRequest.withPosition(elevatorPosition)); //set position for elevator
         System.out.println("pos: " + elevatorMasterMotor.getPosition().getValueAsDouble());
+        System.out.println("current: " + elevatorMasterMotor.getSupplyCurrent());
         // System.out.println("precent: " + elevatorMasterMotor.getDutyCycle().getValueAsDouble());
         // elevatorMasterMotor.setControl(new DutyCycleOut(0.1));
     }
@@ -68,6 +76,10 @@ public class Elevator {
 
     public static double getCmFromEncoder(double encoder) {
         return encoder * ElevatorConstants.EncoderMultiplier;
+    }
+
+    public static double getMotorOutput(){
+        return elevatorMasterMotor.getVelocity().getValueAsDouble();
     }
 
     private static void setMotorConfigs() {
@@ -97,8 +109,8 @@ public class Elevator {
         rightTalonFXConfigs.CurrentLimits.SupplyCurrentLimit = ElevatorConstants.SupplyCurrentLimit;
         rightTalonFXConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-        rightTalonFXConfigs.MotorOutput.PeakForwardDutyCycle = 0.2;
-        rightTalonFXConfigs.MotorOutput.PeakReverseDutyCycle = -0.2;
+        rightTalonFXConfigs.MotorOutput.PeakForwardDutyCycle = 1;
+        rightTalonFXConfigs.MotorOutput.PeakReverseDutyCycle = -0.6;
 
 
         elevatorMasterMotor.getConfigurator().apply(rightTalonFXConfigs);
