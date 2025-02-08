@@ -64,8 +64,8 @@ public class Elevator {
         }
 
         elevatorMasterMotor.setControl(motorRequest.withPosition(elevatorPosition)); //set position for elevator
-        System.out.println("pos: " + elevatorMasterMotor.getPosition().getValueAsDouble());
-        System.out.println("current: " + elevatorMasterMotor.getSupplyCurrent());
+        // System.out.println("pos: " + elevatorMasterMotor.getPosition().getValueAsDouble());
+        // System.out.println("current: " + elevatorMasterMotor.getSupplyCurrent());
         // System.out.println("precent: " + elevatorMasterMotor.getDutyCycle().getValueAsDouble());
         // elevatorMasterMotor.setControl(new DutyCycleOut(0.1));
     }

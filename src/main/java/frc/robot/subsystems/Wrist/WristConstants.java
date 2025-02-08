@@ -23,7 +23,7 @@ public class WristConstants {
     public static final double WRIST_POS_DEPLETE_CORAL_LEVEL0 = 3.5;
     public static final double WRIST_POS_HIGH = 10;
     public static final double WRIST_POS_INTAKE_ALGAE = 8;
-    public static final double WRIST_POS_DEPLETE_CORAL = 2;
+    public static final double WRIST_POS_DEPLETE_CORAL = 0.5;
     public static final double WRIST_POS_DEPLETE_CORAL_LEVEL0_ELEVATOR_SAFE = WRIST_POS_DEPLETE_CORAL_LEVEL0 - 1.7;
 
 

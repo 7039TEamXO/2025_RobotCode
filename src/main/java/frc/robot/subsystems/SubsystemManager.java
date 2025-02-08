@@ -100,8 +100,12 @@ public class SubsystemManager {
                 break;
 
             case DEPLETE:
+
                 if (elevatorState == ElevatorState.LEVEL3 || Handler.isAlgaeIn()) {
                     handlerState = HandlerState.DEPLETE_ALGAE;
+                }
+                else if (elevatorState == ElevatorState.LEVEL0 ) {
+                    handlerState =  HandlerState.DEPLETE_CORAL_LEVEL0;
                 }
                 else {
                     handlerState = HandlerState.DEPLETE_CORAL;
@@ -139,6 +143,7 @@ public class SubsystemManager {
     public static SwerveSubsystem getDriveBase() {
         return drivebase;
     }
+
 
     public static void setDefaultCommand(Command defultCommand){
         drivebase.setDefaultCommand(defultCommand);

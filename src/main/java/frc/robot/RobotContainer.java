@@ -72,6 +72,7 @@ public class RobotContainer
   // controls are front-left positive
   // left stick controls translation
   // right stick controls the angular velocity of the robot
+
   Command driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
       () -> MathUtil.applyDeadband(-SubsystemManager.getpsJoystick().getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
       () -> MathUtil.applyDeadband(-SubsystemManager.getpsJoystick().getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
@@ -121,7 +122,7 @@ public class RobotContainer
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     SubsystemManager.getpsJoystick().PS().onTrue((Commands.runOnce(SubsystemManager.getDriveBase()::zeroGyroWithAlliance)));// if we will use it, in case if driver push this buttom, our rotation will be messed up
 
-    // SubsystemManager.getpsJoystick().square().whileTrue(SubsystemManager.getDriveBase().driveToPose(new Pose2d(5,2,
+    SubsystemManager.getpsJoystick().R1().whileTrue(SubsystemManager.getDriveBase().driveToRightReefPoint());
     //                                                 new Rotation2d(SubsystemManager.getDriveBase().convertDegToRag(90)))));
                                                     
     SubsystemManager.getpsJoystick().triangle().onTrue(Commands.runOnce(() -> SubsystemManager.getDriveBase().resetOdometry(new Pose2d(1,1,new Rotation2d(0)))));
@@ -154,7 +155,7 @@ public class RobotContainer
   {
     // An example command will be run in autonomous
     // return SubsystemManager.getDriveBase().getAutonomousCommand(Dashboard.getSelected().getAutoName());
-        return SubsystemManager.getDriveBase().getAutonomousCommand("ExampleAuto");
+        return SubsystemManager.getDriveBase().getAutonomousCommand("HomeRedStart");
   }
 
   public void setDriveMode()

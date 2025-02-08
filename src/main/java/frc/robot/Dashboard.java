@@ -1,5 +1,7 @@
 package frc.robot;
 
+// import java.util.logging.Handler;
+
 import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -8,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Wrist.Wrist;
+import frc.robot.subsystems.Handler.Handler;
 
 
 public class Dashboard {
@@ -51,7 +54,7 @@ public class Dashboard {
         
         subsystemsInformation.addNumber("Elevator raw encoder", () -> Elevator.getCurrentPosition());
         subsystemsInformation.addNumber("Wrist raw encoder", () -> Wrist.getCurrentPosition());
-
+        subsystemsInformation.addBoolean("Coral IR ", ()-> Handler.getCoralIr());
     }
 
     public static Autos getSelected() {

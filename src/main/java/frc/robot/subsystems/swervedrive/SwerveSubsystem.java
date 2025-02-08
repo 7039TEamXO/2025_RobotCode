@@ -38,6 +38,7 @@ import frc.robot.Constants;
 //import frc.robot.subsystems.swervedrive.Vision.Cameras;
 import java.io.File;
 import java.lang.System.Logger;
+import java.rmi.server.ServerCloneException;
 import java.util.function.DoubleSupplier;
 import org.photonvision.PhotonCamera;
 //import org.photonvision.targeting.PhotonPipelineResult;
@@ -67,9 +68,8 @@ public class SwerveSubsystem extends SubsystemBase
   double currentTagX = 0;
   double currentTagY = 0;
   double currentTagAngle = 0;
-  static Pose2d currentLeftReefPos = null;
-  static Pose2d currentRightReefPos = null;
-  
+  static Pose2d currentLeftReefPos = new Pose2d(0, 0, new Rotation2d(0));
+  static Pose2d currentRightReefPos = new Pose2d(0, 0, new Rotation2d(0));
   
     /**
      * AprilTag field layout.
@@ -114,8 +114,12 @@ public class SwerveSubsystem extends SubsystemBase
       swerveDrive.setCosineCompensator(false); //!SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for simulations since it causes discrepancies not seen in real life.
       swerveDrive.setAngularVelocityCompensation(true, true, 0.1);
       swerveDrive.setModuleEncoderAutoSynchronize(false, 1);
+      
+      double r = swerveDrive.getMaximumChassisAngularVelocity();
+      swerveDrive.setMaximumAllowableSpeeds(2, 4);
       SwerveController controller = swerveDrive.getSwerveController();
-      controller.setMaximumChassisAngularVelocity(6);
+      
+      controller.setMaximumChassisAngularVelocity(3);
       // if (visionDriveTest)
       // {
       //   setupPhotonVision();
@@ -158,9 +162,14 @@ public class SwerveSubsystem extends SubsystemBase
         currentTagAngle = tag_pos.getRotation().getDegrees();
         
         //TODO: Enable this code to calculate reef points - not tested !!! 
-        // double reefPoints[] = calculateLeftAndRightReefPointsFromTag(x=currentTagX, y=currentTagY, deg=currentTagAngle)
-        // currentLeftReefPos = reefPoints[0]
-        // currentRightReefPos = reefPoints[1]
+        Pose2d reefPoints[] = calculateLeftAndRightReefPointsFromTag(currentTagX, currentTagY, currentTagAngle);
+        currentLeftReefPos = reefPoints[0];
+        currentRightReefPos = reefPoints[1];
+
+        // System.out.println("left point: " + currentLeftReefPos );\
+        System.out.println("POS" + swerveDrive.getPose());
+        System.out.println("right point: " + currentRightReefPos);
+        System.out.println("Closest tag" + tag_pos);
         
         swerveDrive.updateOdometry();
       //   vision.updatePoseEstimation(swerveDrive);
@@ -350,6 +359,22 @@ public class SwerveSubsystem extends SubsystemBase
           edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
       );
     }
+    public Command driveToRightReefPoint(){
+      // Create the constraints to use while pathfinding
+      PathConstraints constraints = new PathConstraints(
+        swerveDrive.getMaximumChassisVelocity(), 4.0,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+
+    // Since AutoBuilder is configured, we can use it to build pathfinding commands
+        return AutoBuilder.pathfindToPose(
+        currentRightReefPos,
+        constraints,
+        edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
+          );
+    
+
+    }
+
   
     /**
      * Command to drive the robot using translative values and heading as a setpoint.
@@ -716,51 +741,56 @@ public class SwerveSubsystem extends SubsystemBase
       Pose2d closestReefFace = null;
       double minDist = Double.MAX_VALUE;
       var selected_face = -1;
-  
-      var currentAllianceOptional = DriverStation.getAlliance();
-      double currentX = currentRobotPose2d.getX();
-      double currentY = currentRobotPose2d.getY();
-      
-      if (currentAllianceOptional.isPresent()) {
-        var currentAlliance = currentAllianceOptional.get();
-  
-        if (currentAlliance == DriverStation.Alliance.Blue) {
-          for (int i = 0; i < SwerveDriveConstants.BLUE_RIFF_TAGS_ARRAY.length; i++) {
-            var reefFace = SwerveDriveConstants.BLUE_RIFF_TAGS_ARRAY[i];
-            
-            var reefFacePose = fieldLayout.getTagPose(reefFace).get().toPose2d();
-            double reefFaceX = reefFacePose.getTranslation().getX();
-            double reefFaceY = reefFacePose.getTranslation().getY();
-            
-            
-            double dist = Math.pow(reefFaceX - currentX, 2) + Math.pow(reefFaceY - currentY, 2);
-                  
-            if (dist < minDist){
-              minDist = dist;
-              selected_face = reefFace;
-              closestReefFace = reefFacePose; 
-            }
-          }
-        }
-        else if (currentAlliance == DriverStation.Alliance.Red) {
-          for (int i = 0; i < SwerveDriveConstants.RED_RIFF_TAGS_ARRAY.length; i++) {
-            var reefFace = SwerveDriveConstants.RED_RIFF_TAGS_ARRAY[i];
-            var reefFacePoseOptional = fieldLayout.getTagPose(reefFace);
-            
-            if (reefFacePoseOptional.isPresent()) {
-              var reefFacePose = reefFacePoseOptional.get().toPose2d();
+      try {
+        var currentAllianceOptional = DriverStation.getAlliance();
+
+        double currentX = currentRobotPose2d.getX();
+        double currentY = currentRobotPose2d.getY();
+
+        if (currentAllianceOptional.isPresent()) {
+
+          var currentAlliance = currentAllianceOptional.get();
+    
+          if (currentAlliance == DriverStation.Alliance.Blue) {
+            for (int i = 0; i < SwerveDriveConstants.BLUE_RIFF_TAGS_ARRAY.length; i++) {
+              var reefFace = SwerveDriveConstants.BLUE_RIFF_TAGS_ARRAY[i];
+              
+              var reefFacePose = fieldLayout.getTagPose(reefFace).get().toPose2d();
               double reefFaceX = reefFacePose.getTranslation().getX();
               double reefFaceY = reefFacePose.getTranslation().getY();
-              double dist = Math.pow(reefFaceX - currentX, 2) + Math.pow(reefFaceY - currentY, 2);
               
-              if (dist < minDist) {
-                  minDist = dist;
-                  selected_face = reefFace;
-                  closestReefFace = reefFacePose;
+              
+              double dist = Math.pow(reefFaceX - currentX, 2) + Math.pow(reefFaceY - currentY, 2);
+                    
+              if (dist < minDist){
+                minDist = dist;
+                selected_face = reefFace;
+                closestReefFace = reefFacePose; 
               }
             }
           }
-        }
+          else if (currentAlliance == DriverStation.Alliance.Red) {
+            for (int i = 0; i < SwerveDriveConstants.RED_RIFF_TAGS_ARRAY.length; i++) {
+              var reefFace = SwerveDriveConstants.RED_RIFF_TAGS_ARRAY[i];
+              var reefFacePoseOptional = fieldLayout.getTagPose(reefFace);
+              
+              if (reefFacePoseOptional.isPresent()) {
+                var reefFacePose = reefFacePoseOptional.get().toPose2d();
+                double reefFaceX = reefFacePose.getTranslation().getX();
+                double reefFaceY = reefFacePose.getTranslation().getY();
+                double dist = Math.pow(reefFaceX - currentX, 2) + Math.pow(reefFaceY - currentY, 2);
+                
+                if (dist < minDist) {
+                    minDist = dist;
+                    selected_face = reefFace;
+                    closestReefFace = reefFacePose;
+                }
+              }
+            }
+          }
+          }
+      } catch (Exception e){
+        return new Pose2d(0, 0, new Rotation2d(0));
       }
       // System.out.println(selected_face);
       return closestReefFace;
@@ -792,18 +822,20 @@ public class SwerveSubsystem extends SubsystemBase
           double xL = x - SwerveDriveConstants.M_FROM_TAG_TO_POLES * Math.cos(deg);
           double yL = y - SwerveDriveConstants.M_FROM_TAG_TO_POLES * Math.sin(deg);
   
+          double pointRad = convertDegToRag(deg);
+
           return new Pose2d[]{ //check if you can return pose2d array or need to return normal array containing pose2d
-              new Pose2d(xL, yL, new Rotation2d(convertDegToRag(deg))),
-              new Pose2d(xR, yR, new Rotation2d(convertDegToRag(deg)))
+              new Pose2d(xL, yL, new Rotation2d(pointRad)),
+              new Pose2d(xR, yR, new Rotation2d(pointRad))
           };
       }
   
     
-    public static Pose2d getcurrentRightReefPos(){
+    public Pose2d getcurrentRightReefPos(){
       return currentRightReefPos;
   } 
 
-  public static Pose2d getcurrentLeftReefPos(){
+  public Pose2d getcurrentLeftReefPos(){
     return currentLeftReefPos;
   }
 

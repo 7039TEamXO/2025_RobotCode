@@ -3,9 +3,10 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
-    "Example",
-    "QuadCoralR",
+    "Testing",
+    "New Folder",
     "QuadCoralB",
+    "QuadCoralR",
     "TripleAlgae"
   ],
   "autoFolders": [],

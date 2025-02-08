@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import frc.robot.subsystems.SubsystemManager;
+import frc.robot.subsystems.Elevator.ElevatorState;
 
 public class Handler {
 
@@ -20,11 +21,11 @@ public class Handler {
     private static DigitalInput coralIrInput = new DigitalInput(HandlerConstants.HandlerDigitalInputSensorID);
     private static DigitalOutput coralIrOutput = new DigitalOutput(0);
     private static boolean coralIrVal = coralIrInput.get();
-    private static boolean lastCoralIrVal = coralIrInput.get();
     private static boolean isCoralIn = false;
+    private static boolean lastCoralIrVal = coralIrInput.get();
 
     public static void init() {
-        //coralIrOutput.set(true);
+        coralIrOutput.set(true);
         var talonFXConfigs = new TalonFXConfiguration();
         talonFXConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
@@ -32,13 +33,14 @@ public class Handler {
     }
 
     public static void operate(HandlerState state) {
-        //updateIr(state);
+        updateIr(state); //!!! TODO: UNCOMENT !!!
 
         switch (state) {
             case INTAKE_ALGAE: // intake coral, deplete coral 1 - 3(level), intake algae
                 power = HandlerConstants.HANDLER_POWER_INTAKE_ALGAE;
                 break;
             case DEPLETE_CORAL: // deplete algae, deplete coral level 4
+            
                 power = HandlerConstants.HANDLER_POWER_DEPLETE_CORAL;
                 break;
             case STOP:
@@ -53,6 +55,10 @@ public class Handler {
             case INTAKE_CORAL:
                 power = HandlerConstants.HANDLER_POWER_INTAKE_CORAL;
                 break;
+            case DEPLETE_CORAL_LEVEL0:
+                power = HandlerConstants.HANDLER_POWER_DEPLETE_CORAL_LEVEL0;
+                break;
+
         }
         
         master.setControl(new DutyCycleOut(power)); //set percent output
@@ -67,19 +73,24 @@ public class Handler {
         // algaeIrValue = SubsystemManager.getpsJoystick().L1().getAsBoolean() ? 0 : 2000;
 
 
-        if (coralIrVal && !lastCoralIrVal) {
+        if (!coralIrVal && lastCoralIrVal) {
             isCoralIn = true;
         }else{
             isCoralIn = false;
         }
-
-        // if (state == HandlerState.DEPLETE_CORAL) {
-        //     isCoralIn = false;
-        // }
-
-
         
+
+        if (state == HandlerState.DEPLETE_CORAL) {
+            isCoralIn = false;
+        }
+
+
+        if (coralIrVal){
         lastCoralIrVal = coralIrVal;
+        }
+        else{
+            lastCoralIrVal = false;
+        }
     }
 
     public static boolean isAlgaeIn() {
@@ -88,8 +99,12 @@ public class Handler {
     }
 
     public static boolean isCoralIn(){
-        //return isCoralIn;
-        return false;
+        return isCoralIn;
+        //return false;
+    }
+    
+    public static boolean getCoralIr(){
+        return coralIrInput.get();
     }
 }
 
