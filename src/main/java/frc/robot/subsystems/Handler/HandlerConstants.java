@@ -3,8 +3,9 @@ package frc.robot.subsystems.Handler;
 public class HandlerConstants {
     public static final int HandlerMotorID = 1;
 
-    public static final int HandlerAnalogInputSensorID = 1; //1
+    public static final int HandlerAnalogInputSensorID = 3;
     public static final int HandlerDigitalInputSensorID = 1;
+    public static final int HandlerDigitalOutPutSensorID = 0;
 
     public static final double HANDLER_POWER_INTAKE_ALGAE = 0.4;
     public static final double HANDLER_POWER_DEPLETE_CORAL = 0.5;

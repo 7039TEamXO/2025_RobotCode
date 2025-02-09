@@ -99,7 +99,6 @@ public class SwerveSubsystem extends SubsystemBase
   
       // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
       SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
-      
       try
       {
         swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.MAX_SPEED);
@@ -140,6 +139,8 @@ public class SwerveSubsystem extends SubsystemBase
       swerveDrive = new SwerveDrive(driveCfg, controllerCfg, Constants.MAX_SPEED, 
       new Pose2d(new Translation2d(Meter.of(0), Meter.of(0)), Rotation2d.fromDegrees(0)));
     }
+
+    
   
     /**
      * Setup the photon vision class.
@@ -167,9 +168,9 @@ public class SwerveSubsystem extends SubsystemBase
         currentRightReefPos = reefPoints[1];
 
         // System.out.println("left point: " + currentLeftReefPos );\
-        System.out.println("POS" + swerveDrive.getPose());
-        System.out.println("right point: " + currentRightReefPos);
-        System.out.println("Closest tag" + tag_pos);
+        // System.out.println("POS" + swerveDrive.getPose());
+        // System.out.println("right point: " + currentRightReefPos);
+        // System.out.println("Closest tag" + tag_pos);
         
         swerveDrive.updateOdometry();
       //   vision.updatePoseEstimation(swerveDrive);

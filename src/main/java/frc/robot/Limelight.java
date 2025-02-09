@@ -32,6 +32,8 @@ public class Limelight {
     private static NetworkTableEntry ty = limelightTable.getEntry("ty");
     private static NetworkTableEntry tv = limelightTable.getEntry("botpose_orb_wpiblue");
     private static int validIDs[] = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22};
+
+    private static boolean hasTarget = LimelightHelpers.getTV("limelight");
     
 
     private static final SwerveDrivePoseEstimator m_poseEstimator =
@@ -64,34 +66,37 @@ public class Limelight {
     }
 
     public static void update() {
-        setConfigurationToLimelight();
+        // setConfigurationToLimelight();
 
         boolean doRejectUpdate = false;
-        double yawRate = SubsystemManager.getDriveBase().getRobotVelocity().omegaRadiansPerSecond;
-        double pitch = 20;
+        // double yawRate = SubsystemManager.getDriveBase().getRobotVelocity().omegaRadiansPerSecond;
+        // double pitch = 20;
 
-        LimelightHelpers.SetRobotOrientation("limelight", SubsystemManager.getDriveBase().getPose().getRotation().getDegrees(), yawRate, pitch, 0, 0, 0);
-        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+        // LimelightHelpers.SetRobotOrientation("limelight", SubsystemManager.getDriveBase().getPose().getRotation().getDegrees(), yawRate, pitch, 0, 0, 0);
+        // LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
 
-        if (mt2 != null) {
+        // if (mt2 != null) {
         if(Math.abs(SubsystemManager.getDriveBase().getRobotVelocity().omegaRadiansPerSecond) > 4 * Math.PI) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
         {
           doRejectUpdate = true;
         }
-        if(mt2.tagCount == 0)
-        {
-          doRejectUpdate = true;
+        // if(mt2.tagCount == 0)
+        // {
+        //   doRejectUpdate = true;
+        // }
+        if (hasTarget == false) {
+            doRejectUpdate = true;
         }
         if(!doRejectUpdate)
         {
-          m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
-          m_poseEstimator.addVisionMeasurement(
-              mt2.pose,
-              mt2.timestampSeconds);
+        //   m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
+        //   m_poseEstimator.addVisionMeasurement(
+        //       mt2.pose,
+        //       mt2.timestampSeconds);
               updatePosition();
         }
 
-        printRobotPose();
+        //printRobotPose();
 
     }
         
@@ -101,11 +106,11 @@ public class Limelight {
 
         // System.out.println(NetworkTableInstance.getDefault().getTable("limelight").getEntry("targetpose_cameraspace").getDoubleArray(new double[6]));
         // return true if we see apriltag
-        // boolean hasTarget = LimelightHelpers.getTV("limelight"); 
+         
         // System.out.println(hasTarget);
 
         // System.out.println(SubsystemManager.getDriveBase().getPose().getRotation().getDegrees());
-    }
+    // }
 
     public static void updatePosition() {
 

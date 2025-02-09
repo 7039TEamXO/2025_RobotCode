@@ -19,7 +19,7 @@ public class Handler {
     private static double power = HandlerConstants.HANDLER_POWER_STOP;
 
     private static DigitalInput coralIrInput = new DigitalInput(HandlerConstants.HandlerDigitalInputSensorID);
-    private static DigitalOutput coralIrOutput = new DigitalOutput(0);
+    private static DigitalOutput coralIrOutput = new DigitalOutput(HandlerConstants.HandlerDigitalOutPutSensorID);
     private static boolean coralIrVal = coralIrInput.get();
     private static boolean isCoralIn = false;
     private static boolean lastCoralIrVal = coralIrInput.get();
@@ -58,9 +58,9 @@ public class Handler {
             case DEPLETE_CORAL_LEVEL0:
                 power = HandlerConstants.HANDLER_POWER_DEPLETE_CORAL_LEVEL0;
                 break;
-
+            
         }
-        
+        //System.out.println(algaeIrInput.getValue());
         master.setControl(new DutyCycleOut(power)); //set percent output
         // System.out.println(coralIrInput.get());
     }   
@@ -94,8 +94,9 @@ public class Handler {
     }
 
     public static boolean isAlgaeIn() {
-        //return algaeIrValue < 1500;
-        return false;
+        System.out.println(algaeIrValue < 225 && algaeIrValue > 210);
+        return algaeIrValue < 225 && algaeIrValue > 210;
+        //return false;
     }
 
     public static boolean isCoralIn(){

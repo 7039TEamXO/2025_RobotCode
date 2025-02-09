@@ -87,7 +87,7 @@ public class SubsystemManager {
         
         switch (state) {
             case TRAVEL:
-                if(Handler.isAlgaeIn()){
+                if(Handler.isAlgaeIn() && (elevatorState == ElevatorState.ALGAE_LOW || elevatorState == ElevatorState.ALGAE_HIGH)){
                     handlerState = HandlerState.HOLD_ALGAE;
                 }else{
                     handlerState = HandlerState.STOP;
@@ -120,6 +120,9 @@ public class SubsystemManager {
             else if (elevatorState == ElevatorState.ALGAE_HIGH || elevatorState == ElevatorState.ALGAE_LOW) {
                 handlerState = HandlerState.INTAKE_ALGAE;
             }
+            if (lastElevatorState == ElevatorState.LEVEL3) {
+                handlerState = HandlerState.INTAKE_CORAL;
+            }
             
             state = Handler.isAlgaeIn() || Handler.isCoralIn() ? RobotState.TRAVEL : RobotState.INTAKE;
                 break;
@@ -132,6 +135,7 @@ public class SubsystemManager {
         
         lastState = state;
         lastElevatorState = elevatorState;
+        
     }
 
     private static void operateAuto(RobotState chosenState, ElevatorState choosenElevatorState) {
