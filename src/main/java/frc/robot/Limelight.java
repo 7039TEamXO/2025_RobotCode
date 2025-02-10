@@ -30,9 +30,9 @@ public class Limelight {
     private static NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
     private static NetworkTableEntry tx = limelightTable.getEntry("tx");
     private static NetworkTableEntry ty = limelightTable.getEntry("ty");
-    private static NetworkTableEntry tv = limelightTable.getEntry("botpose_orb_wpiblue");
-    private static int validIDs[] = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22};
-
+    private static NetworkTableEntry tv = limelightTable.getEntry("botpose_wpiblue");
+    private static int validIDs[] = new int[]{3, 6, 7, 8, 9, 10, 11, 16, 17, 18, 19, 20, 21, 22};
+    //removed 1, 2, 12, 13, 4, 5, 14, 15 
     private static boolean hasTarget = LimelightHelpers.getTV("limelight");
     
 
@@ -66,16 +66,15 @@ public class Limelight {
     }
 
     public static void update() {
-        // setConfigurationToLimelight();
+        //setConfigurationToLimelight();
 
         boolean doRejectUpdate = false;
         // double yawRate = SubsystemManager.getDriveBase().getRobotVelocity().omegaRadiansPerSecond;
         // double pitch = 20;
 
-        // LimelightHelpers.SetRobotOrientation("limelight", SubsystemManager.getDriveBase().getPose().getRotation().getDegrees(), yawRate, pitch, 0, 0, 0);
+        // LimelightHelpers.SetRobotOrientation("limelight", SubsystemManager.getDriveBase().getHeading().getDegrees(), 0, 0, 0, 0, 0);
         // LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-
-        // if (mt2 != null) {
+        // // if (mt2 != null) {
         if(Math.abs(SubsystemManager.getDriveBase().getRobotVelocity().omegaRadiansPerSecond) > 4 * Math.PI) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
         {
           doRejectUpdate = true;
@@ -93,10 +92,10 @@ public class Limelight {
         //   m_poseEstimator.addVisionMeasurement(
         //       mt2.pose,
         //       mt2.timestampSeconds);
-              updatePosition();
+        //       updatePosition();
         }
 
-        //printRobotPose();
+        printRobotPose();
 
     }
         
@@ -124,13 +123,15 @@ public class Limelight {
                 tv.getDoubleArray(new Double[]{})[1], 
                     SubsystemManager.getDriveBase().getHeading()));  
         }
+        //printRobotPose();
         //System.out.println("X___" + SubsystemManager.getDriveBase().getPose().getX() + " Y___" + SubsystemManager.getDriveBase().getPose().getY() + "  Rot___" + SubsystemManager.getDriveBase().getPose().getRotation());
         
     }
     private static void printRobotPose() {
         System.out.println("x: " +  SubsystemManager.getDriveBase().getPose().getX());
-        System.out.println("y: " +  SubsystemManager.getDriveBase().getPose().getY());
-        System.out.println("angle: " +  SubsystemManager.getDriveBase().getHeading().getDegrees());
+        System.out.println("tv : " + tv.getDoubleArray(new Double[]{})[0]);
+        // System.out.println("y: " +  SubsystemManager.getDriveBase().getPose().getY());
+        // System.out.println("angle: " +  SubsystemManager.getDriveBase().getHeading().getDegrees());
 
         // if (RobotContainer.teamColorIsBlue()) {
         //     System.out.println("team color blue");

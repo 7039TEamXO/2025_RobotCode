@@ -122,10 +122,9 @@ public class RobotContainer
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     SubsystemManager.getpsJoystick().PS().onTrue((Commands.runOnce(SubsystemManager.getDriveBase()::zeroGyroWithAlliance)));// if we will use it, in case if driver push this buttom, our rotation will be messed up
 
-    SubsystemManager.getpsJoystick().R1().whileTrue(SubsystemManager.getDriveBase().driveToRightReefPoint());
-    //                                                 new Rotation2d(SubsystemManager.getDriveBase().convertDegToRag(90)))));
+    SubsystemManager.getpsJoystick().R1().whileTrue(SubsystemManager.getDriveBase().driveToPose(new Pose2d(15, 5, new Rotation2d(SubsystemManager.getDriveBase().convertDegToRag(90)))));
                                                     
-    SubsystemManager.getpsJoystick().triangle().onTrue(Commands.runOnce(() -> SubsystemManager.getDriveBase().resetOdometry(new Pose2d(1,1,new Rotation2d(0)))));
+    //SubsystemManager.getpsJoystick().triangle().onTrue(Commands.runOnce(() -> SubsystemManager.getDriveBase().resetOdometry(new Pose2d(1,1,new Rotation2d(0)))));
   }
 
   private void configureDriveCommand(){

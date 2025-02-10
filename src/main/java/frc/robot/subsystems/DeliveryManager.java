@@ -9,7 +9,6 @@ import frc.robot.subsystems.Wrist.Wrist;
 import frc.robot.subsystems.Wrist.WristState;
 
 public class DeliveryManager {
-
     private static ElevatorState elevatorState = ElevatorState.BASE;
     private static WristState wristState = WristState.BASE;
 
@@ -18,7 +17,15 @@ public class DeliveryManager {
         Elevator.init();
     }
 
-    public static void operate(ElevatorState state){
+    public static ElevatorState getElevatorState() {
+        return elevatorState;
+    }
+
+    public static WristState getWristState() {
+        return wristState;
+    }
+
+    public static void operate(ElevatorState state) {
         elevatorState = state;
         switch (state) {
             case BASE:
@@ -36,7 +43,6 @@ public class DeliveryManager {
             case LEVEL0:
                 if (Elevator.getCurrentPosition() >= ElevatorConstants.ELEVATOR_POSE_SAFE_TO_ROTATE) {
                     wristState = WristState.DEPLETE_CORAL_LEVEL0;
-                    
                 }
                 break;
 

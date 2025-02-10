@@ -79,8 +79,9 @@ public class Robot extends TimedRobot
   @Override
   public void robotPeriodic()
   {
-    Limelight.update();
+    Limelight.updatePosition();
     LED.setLedData();
+
     // m_robotContainer.print();
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
@@ -161,6 +162,7 @@ public class Robot extends TimedRobot
   @Override
   public void teleopPeriodic()
   {
+    SubsystemManager.getDriveBase().updateCloserPoints();
     // SubsystemManager.getDriveBase().resetOdometry( new Pose2d(
     //   Math.abs(SubsystemManager.getDriveBase().getPose().getX()),
     //   Math.abs(SubsystemManager.getDriveBase().getPose().getX()),

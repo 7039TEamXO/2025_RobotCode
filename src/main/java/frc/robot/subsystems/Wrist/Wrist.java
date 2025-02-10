@@ -14,7 +14,6 @@ public class Wrist {
     private static final MotionMagicVoltage motorRequest = new MotionMagicVoltage(0);
     
     public static void init() {
-
         master.setPosition(0);
 
         setMotorConfigs();
@@ -37,6 +36,7 @@ public class Wrist {
             case DEPLETE_CORAL:
                 wristPosition = WristConstants.WRIST_POS_DEPLETE_CORAL;
                 break;
+
             case DEPLETE_CORAL_LEVEL0:
                 wristPosition = WristConstants.WRIST_POS_DEPLETE_CORAL_LEVEL0;
                 break;
@@ -77,6 +77,4 @@ public class Wrist {
 
         master.getConfigurator().apply(talonFXConfigs);
     }
-
-    
 }

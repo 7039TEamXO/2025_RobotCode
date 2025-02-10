@@ -55,6 +55,7 @@ public class Dashboard {
         subsystemsInformation.addNumber("Elevator raw encoder", () -> Elevator.getCurrentPosition());
         subsystemsInformation.addNumber("Wrist raw encoder", () -> Wrist.getCurrentPosition());
         subsystemsInformation.addBoolean("Coral IR ", ()-> Handler.getCoralIr());
+        subsystemsInformation.addNumber("Alagae IR ", ()-> Handler.getAlgaeIrValue());
     }
 
     public static Autos getSelected() {

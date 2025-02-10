@@ -156,7 +156,21 @@ public class SwerveSubsystem extends SubsystemBase
       // When vision is enabled we must manually update odometry in SwerveDrive
       // if (visionDriveTest)
       // {
-        tag_pos = getClosestReefFace(swerveDrive.getPose());
+        
+
+        // System.out.println("left point: " + currentLeftReefPos );\
+        // System.out.println("POS" + swerveDrive.getPose());
+        // System.out.println("right point: " + currentRightReefPos);
+        // System.out.println("Closest tag" + tag_pos);
+        
+        swerveDrive.updateOdometry();
+        // vision.updatePoseEstimation(swerveDrive);
+      // }
+    }
+
+    
+    public void updateCloserPoints(){
+      tag_pos = getClosestReefFace(swerveDrive.getPose());
         
         currentTagX = tag_pos.getTranslation().getX();
         currentTagY = tag_pos.getTranslation().getY();
@@ -166,15 +180,7 @@ public class SwerveSubsystem extends SubsystemBase
         Pose2d reefPoints[] = calculateLeftAndRightReefPointsFromTag(currentTagX, currentTagY, currentTagAngle);
         currentLeftReefPos = reefPoints[0];
         currentRightReefPos = reefPoints[1];
-
-        // System.out.println("left point: " + currentLeftReefPos );\
-        // System.out.println("POS" + swerveDrive.getPose());
-        // System.out.println("right point: " + currentRightReefPos);
-        // System.out.println("Closest tag" + tag_pos);
-        
-        swerveDrive.updateOdometry();
-      //   vision.updatePoseEstimation(swerveDrive);
-      // }
+        System.out.println(tag_pos);
     }
   
     @Override
@@ -794,6 +800,7 @@ public class SwerveSubsystem extends SubsystemBase
         return new Pose2d(0, 0, new Rotation2d(0));
       }
       // System.out.println(selected_face);
+      System.out.println("TAG: " + selected_face);
       return closestReefFace;
     }
   

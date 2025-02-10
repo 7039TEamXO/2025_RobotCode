@@ -12,7 +12,9 @@ public class HandlerConstants {
     public static final double HANDLER_POWER_STOP = 0;
     public static final double HANDLER_POWER_DEPLETE_ALGAE = -0.1;
     public static final double HANDLER_POWER_HOLD_ALGAE = 0.1;
-    public static final double HANDLER_POWER_INTAKE_CORAL = 0.1;
+    public static final double HANDLER_POWER_INTAKE_CORAL = 0.2;
     public static final double HANDLER_POWER_DEPLETE_CORAL_LEVEL0 = 0.25;
+
+    public static final double ALGAE_IR_IN_VALUE = 220;
 
 }

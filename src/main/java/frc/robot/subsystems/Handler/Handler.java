@@ -8,8 +8,11 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
+import frc.robot.subsystems.DeliveryManager;
 import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.Elevator.ElevatorState;
+import frc.robot.subsystems.Wrist.Wrist;
+import frc.robot.subsystems.Wrist.WristState;
 
 public class Handler {
 
@@ -33,33 +36,38 @@ public class Handler {
     }
 
     public static void operate(HandlerState state) {
-        updateIr(state); //!!! TODO: UNCOMENT !!!
+        updateIr(state);
 
         switch (state) {
-            case INTAKE_ALGAE: // intake coral, deplete coral 1 - 3(level), intake algae
+            case INTAKE_ALGAE: // intake coral, deplete coral 1 - 3 (level), intake algae
                 power = HandlerConstants.HANDLER_POWER_INTAKE_ALGAE;
                 break;
+
             case DEPLETE_CORAL: // deplete algae, deplete coral level 4
-            
                 power = HandlerConstants.HANDLER_POWER_DEPLETE_CORAL;
                 break;
+            
             case STOP:
                 power = HandlerConstants.HANDLER_POWER_STOP;
                 break;
+
             case DEPLETE_ALGAE:
                 power = HandlerConstants.HANDLER_POWER_DEPLETE_ALGAE;
                 break;
+
             case HOLD_ALGAE:
                 power = HandlerConstants.HANDLER_POWER_HOLD_ALGAE;
                 break;
+
             case INTAKE_CORAL:
                 power = HandlerConstants.HANDLER_POWER_INTAKE_CORAL;
                 break;
+
             case DEPLETE_CORAL_LEVEL0:
                 power = HandlerConstants.HANDLER_POWER_DEPLETE_CORAL_LEVEL0;
                 break;
-            
         }
+
         //System.out.println(algaeIrInput.getValue());
         master.setControl(new DutyCycleOut(power)); //set percent output
         // System.out.println(coralIrInput.get());
@@ -72,42 +80,35 @@ public class Handler {
         // coralIrVal = !SubsystemManager.getpsJoystick().R1().getAsBoolean();
         // algaeIrValue = SubsystemManager.getpsJoystick().L1().getAsBoolean() ? 0 : 2000;
 
-
         if (!coralIrVal && lastCoralIrVal) {
             isCoralIn = true;
-        }else{
+        } else {
             isCoralIn = false;
         }
-        
 
         if (state == HandlerState.DEPLETE_CORAL) {
             isCoralIn = false;
         }
 
-
-        if (coralIrVal){
         lastCoralIrVal = coralIrVal;
-        }
-        else{
-            lastCoralIrVal = false;
-        }
     }
 
     public static boolean isAlgaeIn() {
-        System.out.println(algaeIrValue < 225 && algaeIrValue > 210);
-        return algaeIrValue < 225 && algaeIrValue > 210;
-        //return false;
+        return algaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE;
     }
 
-    public static boolean isCoralIn(){
+    public static boolean isCoralIn() {
         return isCoralIn;
-        //return false;
     }
     
-    public static boolean getCoralIr(){
+    public static boolean getCoralIr() {
         return coralIrInput.get();
+    }
+
+    public static int getAlgaeIrValue(){
+        return algaeIrValue;
     }
 }
 
-// INTAKE - intake coral, deplete coral 1 - 3(level), intake algae
+// INTAKE - intake coral, deplete coral 1 - 3 (level), intake algae
 // DEPLETE - deplete algae, deplete coral level 4

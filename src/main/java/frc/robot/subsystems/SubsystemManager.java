@@ -87,9 +87,11 @@ public class SubsystemManager {
         
         switch (state) {
             case TRAVEL:
-                if(Handler.isAlgaeIn() && (elevatorState == ElevatorState.ALGAE_LOW || elevatorState == ElevatorState.ALGAE_HIGH)){
+                if(Handler.isAlgaeIn() && (elevatorState == ElevatorState.ALGAE_LOW || 
+                                            elevatorState == ElevatorState.ALGAE_HIGH ||
+                                              elevatorState == ElevatorState.BASE)){
                     handlerState = HandlerState.HOLD_ALGAE;
-                }else{
+                } else {
                     handlerState = HandlerState.STOP;
                 }
                 isLocked = false;
