@@ -135,6 +135,7 @@ public class RobotContainer
       () -> MathUtil.applyDeadband(-SubsystemManager.getpsJoystick().getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
       () -> -SubsystemManager.getpsJoystick().getRightX());
     }else{
+      SubsystemManager.getDriveBase().zeroGyroWithAlliance();
       driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
       () -> MathUtil.applyDeadband(SubsystemManager.getpsJoystick().getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
       () -> MathUtil.applyDeadband(SubsystemManager.getpsJoystick().getLeftX(), OperatorConstants.LEFT_X_DEADBAND),

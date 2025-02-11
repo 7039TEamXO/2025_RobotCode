@@ -58,7 +58,7 @@ public class Robot extends TimedRobot
     // SubsystemManager.initDriveBase();
     SubsystemManager.init();
     Dashboard.init();
-    LED.init();
+    //LED.init();
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
@@ -79,8 +79,8 @@ public class Robot extends TimedRobot
   @Override
   public void robotPeriodic()
   {
-    Limelight.updatePosition();
-    LED.setLedData();
+    
+    //LED.setLedData();
 
     // m_robotContainer.print();
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
@@ -120,7 +120,7 @@ public class Robot extends TimedRobot
   @Override
   public void autonomousInit()
   {
-
+    
     SubsystemManager.init();
 
     m_robotContainer.setMotorBrake(true);
@@ -139,6 +139,7 @@ public class Robot extends TimedRobot
   @Override
   public void autonomousPeriodic()
   {
+    Limelight.updatePosition();
   }
 
   @Override
@@ -162,6 +163,7 @@ public class Robot extends TimedRobot
   @Override
   public void teleopPeriodic()
   {
+    Limelight.updatePosition();
     SubsystemManager.getDriveBase().updateCloserPoints();
     // SubsystemManager.getDriveBase().resetOdometry( new Pose2d(
     //   Math.abs(SubsystemManager.getDriveBase().getPose().getX()),

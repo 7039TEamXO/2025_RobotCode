@@ -180,7 +180,7 @@ public class SwerveSubsystem extends SubsystemBase
         Pose2d reefPoints[] = calculateLeftAndRightReefPointsFromTag(currentTagX, currentTagY, currentTagAngle);
         currentLeftReefPos = reefPoints[0];
         currentRightReefPos = reefPoints[1];
-        System.out.println(tag_pos);
+        // System.out.println(tag_pos);
     }
   
     @Override

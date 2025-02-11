@@ -95,7 +95,7 @@ public class Limelight {
         //       updatePosition();
         }
 
-        printRobotPose();
+       // printRobotPose();
 
     }
         
@@ -112,16 +112,18 @@ public class Limelight {
     // }
 
     public static void updatePosition() {
-
         if(tx.getDouble(0) != 0 && ty.getDouble(0) != 0){
             
             // SubsystemManager.getDriveBase().resetOdometry(new Pose2d(new Translation2d(LimelightHelpers.getBotPose2d_wpiRed("limelight").getX(),
             //  LimelightHelpers.getBotPose2d_wpiRed("limelight").getY()),
             //   Rotation2d.fromDegrees(LimelightHelpers.getBotPose2d_wpiRed("limelight").getRotation().getDegrees())));
+
+            // LEADS TO A ROBOT CODE FAIL:
+
             SubsystemManager.getDriveBase().resetOdometry(new Pose2d(
-                tv.getDoubleArray(new Double[]{})[0],
-                tv.getDoubleArray(new Double[]{})[1], 
-                    SubsystemManager.getDriveBase().getHeading()));  
+               tv.getDoubleArray(new Double[]{})[0],
+               tv.getDoubleArray(new Double[]{})[1], 
+                   SubsystemManager.getDriveBase().getHeading()));  
         }
         //printRobotPose();
         //System.out.println("X___" + SubsystemManager.getDriveBase().getPose().getX() + " Y___" + SubsystemManager.getDriveBase().getPose().getY() + "  Rot___" + SubsystemManager.getDriveBase().getPose().getRotation());
