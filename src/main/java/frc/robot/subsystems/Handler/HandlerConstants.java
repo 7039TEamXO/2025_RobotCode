@@ -15,6 +15,8 @@ public class HandlerConstants {
     public static final double HANDLER_POWER_INTAKE_CORAL = 0.2;
     public static final double HANDLER_POWER_DEPLETE_CORAL_LEVEL0 = 0.25;
 
+    public static final double HANDLER_POWER_PUSH_BACK_CORAL = -0.05;
+
     public static final double ALGAE_IR_IN_VALUE = 220;
 
 }
