@@ -800,7 +800,7 @@ public class SwerveSubsystem extends SubsystemBase
         return new Pose2d(0, 0, new Rotation2d(0));
       }
       // System.out.println(selected_face);
-      System.out.println("TAG: " + selected_face);
+      // System.out.println("TAG: " + selected_face);
       return closestReefFace;
     }
   

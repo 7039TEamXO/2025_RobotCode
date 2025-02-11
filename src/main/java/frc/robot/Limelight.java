@@ -24,6 +24,7 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import swervelib.SwerveDrive;
 import swervelib.imu.SwerveIMU;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 
 public class Limelight {
@@ -122,13 +123,20 @@ public class Limelight {
             // LEADS TO A ROBOT CODE FAIL:
         if(hasTarget) {
             if(tx.getDouble(0) != 0 && ty.getDouble(0) != 0){
+                if (Array.getLength(tv.getDoubleArray(new Double[]{})) > 2) {
+                System.out.println("True blya");
+
+                // SubsystemManager.getDriveBase().addFakeVisionReading(tv.getDoubleArray(new Double[]{})[0], tv.getDoubleArray(new Double[]{})[1], SubsystemManager.getDriveBase().getHeading());
             SubsystemManager.getDriveBase().resetOdometry(new Pose2d(
                tv.getDoubleArray(new Double[]{})[0],
                tv.getDoubleArray(new Double[]{})[1], 
                    SubsystemManager.getDriveBase().getHeading()));  
-                // System.out.println(tv.getDoubleArray(new Double[]{})[0]+ " " + 
+                // System.out.println(tv.getDoubleArray(new Double[]{})[0]+ " " +  
                 // tv.getDoubleArray(new Double[]{})[1] + " " + 
                 //     SubsystemManager.getDriveBase().getHeading());
+                } else {
+                    System.out.println(" ne True blya");
+                }
             }
         }
         

@@ -66,12 +66,20 @@ public class Handler {
             case DEPLETE_CORAL_LEVEL0:
                 power = HandlerConstants.HANDLER_POWER_DEPLETE_CORAL_LEVEL0;
                 break;
+
+
         }
 
         //System.out.println(algaeIrInput.getValue());
         master.setControl(new DutyCycleOut(power)); //set percent output
         // System.out.println(coralIrInput.get());
     }   
+
+    public static void pushBackCoral() {
+        if (isCoralIn){
+            
+        }
+    }
 
     private static void updateIr(HandlerState state){
         algaeIrValue = algaeIrInput.getValue();
