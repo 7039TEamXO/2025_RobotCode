@@ -119,8 +119,7 @@ public class SwerveSubsystem extends SubsystemBase
       swerveDrive.setAngularVelocityCompensation(true, true, 0.1);
       swerveDrive.setModuleEncoderAutoSynchronize(false, 1);
       
-      double r = swerveDrive.getMaximumChassisAngularVelocity();
-      swerveDrive.setMaximumAllowableSpeeds(Constants.MAX_SPEED, 4);
+      // swerveDrive.setMaximumAllowableSpeeds(Constants.MAX_SPEED, 4);
       SwerveController controller = swerveDrive.getSwerveController();
       
       controller.setMaximumChassisAngularVelocity(3);
@@ -187,10 +186,13 @@ public class SwerveSubsystem extends SubsystemBase
         currentTagY = tag_pos.getTranslation().getY();
         currentTagAngle = tag_pos.getRotation().getDegrees();
         
+        System.out.println("X: " + (currentTagX - swerveDrive.getPose().getX()) + "Y: " + (currentTagY - swerveDrive.getPose().getY()) + 
+        "YAW: " + (currentTagAngle - swerveDrive.getPose().getRotation().getRadians()));
         //TODO: Enable this code to calculate reef points - not tested !!! 
         Pose2d reefPoints[] = calculateLeftAndRightReefPointsFromTag(currentTagX, currentTagY, currentTagAngle);
         currentLeftReefPos = reefPoints[0];
         currentRightReefPos = reefPoints[1];
+
         // System.out.println(tag_pos);
     }
   
@@ -841,7 +843,12 @@ public class SwerveSubsystem extends SubsystemBase
           double xL = x - SwerveDriveConstants.M_FROM_TAG_TO_POLES * Math.cos(deg);
           double yL = y - SwerveDriveConstants.M_FROM_TAG_TO_POLES * Math.sin(deg);
   
-          double pointRad = convertDegToRag(deg);
+
+          double flippedDeg = (deg + 180) % 360;
+          if (flippedDeg > 180){
+            flippedDeg -= 360;
+          }
+          double pointRad = convertDegToRag(flippedDeg);
 
           return new Pose2d[]{ //check if you can return pose2d array or need to return normal array containing pose2d
               new Pose2d(xL, yL, new Rotation2d(pointRad)),
