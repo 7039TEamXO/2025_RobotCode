@@ -136,7 +136,6 @@ public class Limelight {
         if(hasTarget) {
             if(tx.getDouble(0) != 0 && ty.getDouble(0) != 0){
                 if (Array.getLength(botPosWpiBlue.getDoubleArray(new Double[]{})) > 2) {
-                System.out.println("True blya");
 
                 // SubsystemManager.getDriveBase().addFakeVisionReading(botPosWpiBlue.getDoubleArray(new Double[]{})[0], botPosWpiBlue.getDoubleArray(new Double[]{})[1], SubsystemManager.getDriveBase().getHeading());
             SubsystemManager.getDriveBase().resetOdometry(new Pose2d(
@@ -169,5 +168,8 @@ public class Limelight {
         //     System.out.println("team color red");
         // }
         
+    }
+    public static double getTx(){
+        return LimelightHelpers.getTX("limelight");
     }
 }

@@ -78,6 +78,7 @@ public class RobotContainer
       () -> MathUtil.applyDeadband(-SubsystemManager.getpsJoystick().getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
       () -> -SubsystemManager.getpsJoystick().getRightX());
       
+  // Command alignRightCommand =  SubsystemManager.getDriveBase().alignByLimelight(modifyAxis(-SubsystemManager.getpsJoystick().getLeftY()));
 
 
   SlewRateLimiter joystickSlewRateLimiter = new SlewRateLimiter(4);
@@ -123,9 +124,10 @@ public class RobotContainer
   {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     SubsystemManager.getpsJoystick().PS().onTrue((Commands.runOnce(SubsystemManager.getDriveBase()::zeroGyroWithAlliance)));// if we will use it, in case if driver push this buttom, our rotation will be messed up
-    
-    SubsystemManager.getpsJoystick().R1().whileTrue(SubsystemManager.getDriveBase().driveToPose(new Pose2d(15, 5, new Rotation2d(SubsystemManager.getDriveBase().convertDegToRag(90)))));
-                                                    
+
+    SubsystemManager.getpsJoystick().R1().whileTrue(SubsystemManager.getDriveBase().alignByLimelightRight( () -> modifyAxis(-SubsystemManager.getpsJoystick().getLeftY())));
+    SubsystemManager.getpsJoystick().L1().whileTrue(SubsystemManager.getDriveBase().alignByLimlightLeft( () -> modifyAxis(-SubsystemManager.getpsJoystick().getLeftY())));
+
     //SubsystemManager.getpsJoystick().triangle().onTrue(Commands.runOnce(() -> SubsystemManager.getDriveBase().resetOdometry(new Pose2d(1,1,new Rotation2d(0)))));
   }
 
@@ -137,13 +139,16 @@ public class RobotContainer
       () -> (modifyAxis(-SubsystemManager.getpsJoystick().getLeftX())),
       () -> (modifyAxis(-SubsystemManager.getpsJoystick().getRightX())));
     } else{
-     SubsystemManager.getDriveBase().zeroGyroWithAlliance();
+    
+    SubsystemManager.getDriveBase().zeroGyroWithAlliance();
      driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
      () -> (modifyAxis(SubsystemManager.getpsJoystick().getLeftY())),
      () -> (modifyAxis(SubsystemManager.getpsJoystick().getLeftX())),
      () -> (modifyAxis(-SubsystemManager.getpsJoystick().getRightX())));
     }
 
+    
+    
     SubsystemManager.setDefaultCommand(driveFieldOrientedAngularVelocity);
   }
 

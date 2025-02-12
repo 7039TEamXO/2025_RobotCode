@@ -29,6 +29,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 //import edu.wpi.first.wpilibj.DriverStation.Alliance;
 //import edu.wpi.first.wpilibj.Timer;
@@ -43,6 +44,7 @@ import frc.robot.LimelightHelpers;
 import java.io.File;
 import java.lang.System.Logger;
 import java.rmi.server.ServerCloneException;
+import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import org.photonvision.PhotonCamera;
 //import org.photonvision.targeting.PhotonPipelineResult;
@@ -122,7 +124,7 @@ public class SwerveSubsystem extends SubsystemBase
       // swerveDrive.setMaximumAllowableSpeeds(Constants.MAX_SPEED, 4);
       SwerveController controller = swerveDrive.getSwerveController();
       
-      controller.setMaximumChassisAngularVelocity(3);
+      // controller.setMaximumChassisAngularVelocity(3);
       // if (visionDriveTest)
       // {
       //   setupPhotonVision();
@@ -144,8 +146,7 @@ public class SwerveSubsystem extends SubsystemBase
       new Pose2d(new Translation2d(Meter.of(0), Meter.of(0)), Rotation2d.fromDegrees(0)));
     }
 
-    
-  
+
     /**
      * Setup the photon vision class.
      */
@@ -157,6 +158,8 @@ public class SwerveSubsystem extends SubsystemBase
     @Override
     public void periodic()
     {
+      // updateCloserPoints();
+      // Limelight.updatePosition();
       // if (Limelight.hasTarget()){
 
       //   swerveDrive.addVisionMeasurement(Limelight.getVisionPose(), Timer.getFPGATimestamp());
@@ -184,14 +187,14 @@ public class SwerveSubsystem extends SubsystemBase
         
         currentTagX = tag_pos.getTranslation().getX();
         currentTagY = tag_pos.getTranslation().getY();
-        currentTagAngle = tag_pos.getRotation().getDegrees();
+        currentTagAngle = tag_pos.getRotation().getRadians();
         
-        System.out.println("X: " + (currentTagX - swerveDrive.getPose().getX()) + "Y: " + (currentTagY - swerveDrive.getPose().getY()) + 
-        "YAW: " + (currentTagAngle - swerveDrive.getPose().getRotation().getRadians()));
+        // System.out.println("X: " + (currentTagX - swerveDrive.getPose().getX()) + "Y: " + (currentTagY - swerveDrive.getPose().getY()) + 
+        // "YAW: " + (currentTagAngle - swerveDrive.getPose().getRotation().getRadians()));
         //TODO: Enable this code to calculate reef points - not tested !!! 
-        Pose2d reefPoints[] = calculateLeftAndRightReefPointsFromTag(currentTagX, currentTagY, currentTagAngle);
-        currentLeftReefPos = reefPoints[0];
-        currentRightReefPos = reefPoints[1];
+        // Pose2d reefPoints[] = calculateLeftAndRightReefPointsFromTag(currentTagX, currentTagY, currentTagAngle);
+        // currentLeftReefPos = reefPoints[0];
+        // currentRightReefPos = reefPoints[1];
 
         // System.out.println(tag_pos);
     }
@@ -381,19 +384,68 @@ public class SwerveSubsystem extends SubsystemBase
     }
     public Command driveToRightReefPoint(){
       // Create the constraints to use while pathfinding
-      PathConstraints constraints = new PathConstraints(
-        swerveDrive.getMaximumChassisVelocity(), 4.0,
-        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+      tag_pos = getClosestReefFace(swerveDrive.getPose());
+        
+      currentTagX = tag_pos.getTranslation().getX();
+      currentTagY = tag_pos.getTranslation().getY();
+      currentTagAngle = tag_pos.getRotation().getRadians();
 
-    // Since AutoBuilder is configured, we can use it to build pathfinding commands
-        return AutoBuilder.pathfindToPose(
-        currentRightReefPos,
-        constraints,
-        edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
-          );
+      Pose2d reefPoints[] = calculateLeftAndRightReefPointsFromTag(currentTagX, currentTagY, currentTagAngle);
+      currentLeftReefPos = reefPoints[0];
+      currentRightReefPos = reefPoints[1];
+      double kp = -0.6;
+
+      return run(() -> {
+      // System.out.println("1" + swerveDrive.getPose().getX());
+      // System.out.println(currentRightReefPos.getX());
+      // System.out.println("X: " + (currentRightReefPos.getX() - swerveDrive.getPose().getX()));
+      // System.out.println("YYY: " + (currentRightReefPos.getY() - swerveDrive.getPose().getY()));
+      // System.out.println(currentRightReefPos.getY() - swerveDrive.getPose().getY());
+      // System.out.println( currentRightReefPos.getRotation().getDegrees() - swerveDrive.getPose().getRotation().getDegrees());
+      //   // Make the robot move
+
+              swerveDrive.drive((new Translation2d(((swerveDrive.getPose().getX() - currentRightReefPos.getX()) * kp),
+                                ((swerveDrive.getPose().getY() - currentRightReefPos.getY()) * kp))), 
+        ((swerveDrive.getPose().getRotation().getDegrees() - currentRightReefPos.getRotation().getDegrees()) * 0.00),
+                          false,
+                          false);
+      });
     
 
     }
+
+    public Command alignByLimelightRight(DoubleSupplier joystickY){
+      double kp = -0.05;
+
+      System.out.println(joystickY);
+
+     return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(new Translation2d((joystickY.getAsDouble() * swerveDrive.getMaximumChassisVelocity())
+                                      ,Limelight.getTx() * kp), 0.8),
+                              
+                              (Limelight.getTx() * kp),
+                              false,
+                              false));
+
+
+      }
+
+    
+    public Command alignByLimlightLeft(DoubleSupplier joystickY){
+      double kp = -0.05;
+
+      System.out.println(joystickY);
+
+      return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(new Translation2d((joystickY.getAsDouble() * swerveDrive.getMaximumChassisVelocity())
+                                      ,Limelight.getTx() * kp), 0.8),
+                              
+                              (Limelight.getTx() * kp),
+                              false,
+                              false));
+
+
+      }
+
+
 
   
     /**
@@ -848,11 +900,10 @@ public class SwerveSubsystem extends SubsystemBase
           if (flippedDeg > 180){
             flippedDeg -= 360;
           }
-          double pointRad = convertDegToRag(flippedDeg);
 
           return new Pose2d[]{ //check if you can return pose2d array or need to return normal array containing pose2d
-              new Pose2d(xL, yL, new Rotation2d(pointRad)),
-              new Pose2d(xR, yR, new Rotation2d(pointRad))
+              new Pose2d(xL, yL, new Rotation2d(flippedDeg)),
+              new Pose2d(xR, yR, new Rotation2d(flippedDeg))
           };
       }
   
@@ -867,6 +918,10 @@ public class SwerveSubsystem extends SubsystemBase
 
   public static Pose2d getCurrentAprilTagPos(){
     return tag_pos;
+  }
+  public static boolean teamColorIsBlue() {
+  Optional<Alliance> color = DriverStation.getAlliance();
+	return color.get() == DriverStation.Alliance.Blue;
   }
     
 
