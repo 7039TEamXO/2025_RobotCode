@@ -31,10 +31,10 @@ public class Limelight {
     private static NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
     private static NetworkTableEntry tx = limelightTable.getEntry("tx");
     private static NetworkTableEntry ty = limelightTable.getEntry("ty");
-    private static NetworkTableEntry tv = limelightTable.getEntry("botpose_wpiblue");
+    private static NetworkTableEntry botPosWpiBlue = limelightTable.getEntry("botpose_wpiblue");
     private static int validIDs[] = new int[]{3, 6, 7, 8, 9, 10, 11, 16, 17, 18, 19, 20, 21, 22};
     //removed 1, 2, 12, 13, 4, 5, 14, 15 
-    private static boolean hasTarget = LimelightHelpers.getTV("limelight");
+    // private static boolean hasTarget = LimelightHelpers.getTV("limelight");
     
 
     private static final SwerveDrivePoseEstimator m_poseEstimator =
@@ -66,39 +66,39 @@ public class Limelight {
         );
     }
 
-    public static void update() {
+    // public static void update() {
         //setConfigurationToLimelight();
 
-        boolean doRejectUpdate = false;
+        // boolean doRejectUpdate = false;
         // double yawRate = SubsystemManager.getDriveBase().getRobotVelocity().omegaRadiansPerSecond;
         // double pitch = 20;
 
         // LimelightHelpers.SetRobotOrientation("limelight", SubsystemManager.getDriveBase().getHeading().getDegrees(), 0, 0, 0, 0, 0);
         // LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
         // // if (mt2 != null) {
-        if(Math.abs(SubsystemManager.getDriveBase().getRobotVelocity().omegaRadiansPerSecond) > 4 * Math.PI) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
-        {
-          doRejectUpdate = true;
-        }
+        // if(Math.abs(SubsystemManager.getDriveBase().getRobotVelocity().omegaRadiansPerSecond) > 4 * Math.PI) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
+        // {
+        //   doRejectUpdate = true;
+        // }
         // if(mt2.tagCount == 0)
         // {
         //   doRejectUpdate = true;
         // }
-        if (hasTarget == false) {
-            doRejectUpdate = true;
-        }
-        if(!doRejectUpdate)
-        {
+        // if (hasTarget == false) {
+        //     doRejectUpdate = true;
+        // }
+        // if(!doRejectUpdate)
+        // {
         //   m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
         //   m_poseEstimator.addVisionMeasurement(
         //       mt2.pose,
         //       mt2.timestampSeconds);
         //       updatePosition();
-        }
+        // }
 
        // printRobotPose();
 
-    }
+    // }
         
         // get current id for apriltag(get minimal tag)
         // System.out.println("current id : " + NetworkTableInstance.getDefault().getTable("limelight").getEntry("t2d").getDoubleArray(new Double[]{})[9]);
@@ -112,6 +112,18 @@ public class Limelight {
         // System.out.println(SubsystemManager.getDriveBase().getPose().getRotation().getDegrees());
     // }
 
+    public static boolean hasTarget(){
+        return LimelightHelpers.getTV("limelight");
+    }
+
+    public static Pose2d getVisionPose(){
+        double x = botPosWpiBlue.getDoubleArray(new Double[]{})[0];
+        double y = botPosWpiBlue.getDoubleArray(new Double[]{})[1];
+        double yaw = botPosWpiBlue.getDoubleArray(new Double[]{})[5];
+        Pose2d pose = new Pose2d(new Translation2d(x, y), new Rotation2d(yaw));
+        System.out.println("X: " + x + " | Y: " + y + " | yaw: " +yaw); //TODO: Remove 
+        return pose;
+    }
     public static void updatePosition() {
         boolean hasTarget = LimelightHelpers.getTV("limelight");
         // System.out.println(hasTarget);
@@ -123,13 +135,13 @@ public class Limelight {
             // LEADS TO A ROBOT CODE FAIL:
         if(hasTarget) {
             if(tx.getDouble(0) != 0 && ty.getDouble(0) != 0){
-                if (Array.getLength(tv.getDoubleArray(new Double[]{})) > 2) {
+                if (Array.getLength(botPosWpiBlue.getDoubleArray(new Double[]{})) > 2) {
                 System.out.println("True blya");
 
-                // SubsystemManager.getDriveBase().addFakeVisionReading(tv.getDoubleArray(new Double[]{})[0], tv.getDoubleArray(new Double[]{})[1], SubsystemManager.getDriveBase().getHeading());
+                // SubsystemManager.getDriveBase().addFakeVisionReading(botPosWpiBlue.getDoubleArray(new Double[]{})[0], botPosWpiBlue.getDoubleArray(new Double[]{})[1], SubsystemManager.getDriveBase().getHeading());
             SubsystemManager.getDriveBase().resetOdometry(new Pose2d(
-               tv.getDoubleArray(new Double[]{})[0],
-               tv.getDoubleArray(new Double[]{})[1], 
+               botPosWpiBlue.getDoubleArray(new Double[]{})[0],
+               botPosWpiBlue.getDoubleArray(new Double[]{})[1], 
                    SubsystemManager.getDriveBase().getHeading()));  
                 // System.out.println(tv.getDoubleArray(new Double[]{})[0]+ " " +  
                 // tv.getDoubleArray(new Double[]{})[1] + " " + 
@@ -146,7 +158,7 @@ public class Limelight {
     }
     private static void printRobotPose() {
         System.out.println("x: " +  SubsystemManager.getDriveBase().getPose().getX());
-        System.out.println("tv : " + tv.getDoubleArray(new Double[]{})[0]);
+        System.out.println("tv : " + botPosWpiBlue.getDoubleArray(new Double[]{})[0]);
         // System.out.println("y: " +  SubsystemManager.getDriveBase().getPose().getY());
         // System.out.println("angle: " +  SubsystemManager.getDriveBase().getHeading().getDegrees());
 

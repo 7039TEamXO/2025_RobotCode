@@ -29,7 +29,8 @@ public class Climb {
                 wantedPower = ClimbConstants.CLIMB_WANTED_POWER_STOP;
                 break;
 
-            case UP:
+            case ASCEND:
+                servoPos = 1;
                 wantedPower = ClimbConstants.CLIMB_WANTED_POWER_UP;
                 break;
             

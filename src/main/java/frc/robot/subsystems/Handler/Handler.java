@@ -66,6 +66,10 @@ public class Handler {
             case DEPLETE_CORAL_LEVEL0:
                 power = HandlerConstants.HANDLER_POWER_DEPLETE_CORAL_LEVEL0;
                 break;
+            case PUSH_BACK_CORAL:
+                power = HandlerConstants.HANDLER_POWER_PUSH_BACK_CORAL;
+                break;
+
 
 
         }
@@ -76,9 +80,8 @@ public class Handler {
     }   
 
     public static void pushBackCoral() {
-        if (isCoralIn){
-            
-        }
+        
+        
     }
 
     private static void updateIr(HandlerState state){

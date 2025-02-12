@@ -20,7 +20,7 @@ import frc.robot.subsystems.SubsystemManager;
 
 import java.util.Map;
 import java.util.Optional;
-
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import com.pathplanner.lib.auto.NamedCommands;
 
 /**
@@ -79,6 +79,8 @@ public class RobotContainer
       () -> -SubsystemManager.getpsJoystick().getRightX());
       
 
+
+  SlewRateLimiter joystickSlewRateLimiter = new SlewRateLimiter(4);
   // Command driveFieldOrientedDirectAngleSim = SubsystemManager.getDriveBase().simDriveCommand(
   //     () -> MathUtil.applyDeadband(SubsystemManager.ps4Joystick.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
   //     () -> MathUtil.applyDeadband(SubsystemManager.ps4Joystick.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
@@ -129,21 +131,39 @@ public class RobotContainer
 
   private void configureDriveCommand(){
 
-    //if (teamColorIsBlue()) {
+    if (teamColorIsBlue()) {
       driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
-      () -> MathUtil.applyDeadband(-SubsystemManager.getpsJoystick().getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-      () -> MathUtil.applyDeadband(-SubsystemManager.getpsJoystick().getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-      () -> -SubsystemManager.getpsJoystick().getRightX());
-    //} else{
-    //  SubsystemManager.getDriveBase().zeroGyroWithAlliance();
-    //  driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
-    //  () -> MathUtil.applyDeadband(SubsystemManager.getpsJoystick().getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-    //  () -> MathUtil.applyDeadband(SubsystemManager.getpsJoystick().getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-    //  () -> -SubsystemManager.getpsJoystick().getRightX());
-    //}
+      () -> (modifyAxis(-SubsystemManager.getpsJoystick().getLeftY())),
+      () -> (modifyAxis(-SubsystemManager.getpsJoystick().getLeftX())),
+      () -> (modifyAxis(-SubsystemManager.getpsJoystick().getRightX())));
+    } else{
+     SubsystemManager.getDriveBase().zeroGyroWithAlliance();
+     driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
+     () -> (modifyAxis(SubsystemManager.getpsJoystick().getLeftY())),
+     () -> (modifyAxis(SubsystemManager.getpsJoystick().getLeftX())),
+     () -> (modifyAxis(-SubsystemManager.getpsJoystick().getRightX())));
+    }
 
     SubsystemManager.setDefaultCommand(driveFieldOrientedAngularVelocity);
   }
+
+  // private void configureDriveCommand(){
+
+  //   if (teamColorIsBlue()) {
+  //     driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
+  //     () -> MathUtil.applyDeadband(-SubsystemManager.getpsJoystick().getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+  //     () -> MathUtil.applyDeadband(-SubsystemManager.getpsJoystick().getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+  //     () -> -SubsystemManager.getpsJoystick().getRightX());
+  //   } else{
+  //    SubsystemManager.getDriveBase().zeroGyroWithAlliance();
+  //    driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
+  //    () -> MathUtil.applyDeadband(SubsystemManager.getpsJoystick().getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+  //    () -> MathUtil.applyDeadband(SubsystemManager.getpsJoystick().getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+  //    () -> -SubsystemManager.getpsJoystick().getRightX());
+  //   }
+
+  //   SubsystemManager.setDefaultCommand(driveFieldOrientedAngularVelocity);
+  // }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -172,10 +192,11 @@ public class RobotContainer
 	return color.get() == DriverStation.Alliance.Blue;
   }
 
-  /*
+  //
   private static double modifyAxis(double joystickInput) {
-    double scaled_input = 1 - (1 - Math.abs(joystickInput)) * (1 - 0.5);
-    return joystickInput * scaled_input;
+    double deadBandValue = MathUtil.applyDeadband(joystickInput, OperatorConstants.LEFT_Y_DEADBAND);
+    double scaled_input = 1 - (1 - Math.abs(deadBandValue)) * (1 - 0.3);
+    return deadBandValue * scaled_input;
   }
-  */
+
 }
