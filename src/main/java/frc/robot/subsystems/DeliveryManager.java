@@ -21,49 +21,51 @@ public class DeliveryManager {
         return elevatorState;
     }
 
-    public static WristState getWristState() {
-        return wristState;
-    }
-
+    
     public static void operate(ElevatorState state) {
         elevatorState = state;
         switch (state) {
             case BASE:
-                wristState = WristState.BASE;
-                break;
+            wristState = WristState.BASE;
+            break;
 
             case ALGAE_HIGH:
                 wristState = WristState.INTAKE_ALGAE;
                 break;
-
+                
             case ALGAE_LOW:
-                wristState = WristState.INTAKE_ALGAE;
-                break;
-
+            wristState = WristState.INTAKE_ALGAE;
+            break;
+            
             case LEVEL0:
-                if (Elevator.getCurrentPosition() >= ElevatorConstants.ELEVATOR_POSE_SAFE_TO_ROTATE) {
+            if (Elevator.getCurrentPosition() >= ElevatorConstants.ELEVATOR_POSE_SAFE_TO_ROTATE) {
                     wristState = WristState.DEPLETE_CORAL_LEVEL0;
                 }
                 break;
 
             case LEVEL1:
-                wristState = WristState.DEPLETE_CORAL;
-                break;
-
+            wristState = WristState.DEPLETE_CORAL;
+            break;
+            
             case LEVEL2:
-                wristState = WristState.DEPLETE_CORAL;
-                break;
-
+            wristState = WristState.DEPLETE_CORAL;
+            break;
+            
             case LEVEL3:
             if (Elevator.getCurrentPosition() >= ElevatorConstants.ELEVATOR_POSE_SAFE_TO_ROTATE) {
                 wristState = WristState.HIGH;
             }
                 break;
+            }
+            
+            wristState = Handler.isAlgaeIn() ? WristState.INTAKE_ALGAE : wristState;
+            
+            Wrist.operate(wristState);
+            Elevator.operate(elevatorState);
         }
-
-        wristState = Handler.isAlgaeIn() ? WristState.INTAKE_ALGAE : wristState;
-
-        Wrist.operate(wristState);
-        Elevator.operate(elevatorState);
-    }
+        
+        
+        public static WristState getWristState() {
+            return wristState;
+        }
 }

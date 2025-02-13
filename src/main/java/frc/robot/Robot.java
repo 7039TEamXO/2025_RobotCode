@@ -165,7 +165,7 @@ public class Robot extends TimedRobot
   @Override
   public void teleopPeriodic()
   {
-   
+    System.out.println(Dashboard.getSelected());
     SubsystemManager.getDriveBase().updateCloserPoints();
     // SubsystemManager.getDriveBase().resetOdometry( new Pose2d(
     //   Math.abs(SubsystemManager.getDriveBase().getPose().getX()),

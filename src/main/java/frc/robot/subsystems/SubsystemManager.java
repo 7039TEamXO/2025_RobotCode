@@ -42,7 +42,7 @@ public class SubsystemManager {
 
     private static boolean isLocked = false;
 
-    private static RobotState state;
+    private static RobotState state = RobotState.TRAVEL;
     private static RobotState lastState;
 
     private static ElevatorState elevatorState = ElevatorState.BASE;
@@ -68,13 +68,13 @@ public class SubsystemManager {
         lastState = state;
         DeliveryManager.init();
         Handler.init();
+        Climb.init();
     }
 
     public static void operate(boolean onAuto) {
         if (!onAuto) {
             state = psController_HID.getL2Button() ? RobotState.DEPLETE :
             psController_HID.getR2Button() ? RobotState.INTAKE :
-            psController_HID.getOptionsButton() ? RobotState.CLIMB :
             psController_HID.getShareButton() ? RobotState.CLIMB :
             psController_HID.getRawButton(12) ? RobotState.TRAVEL : // right stick
             psController_HID.getPOV(0) == 90 ? RobotState.INTAKE :
@@ -91,8 +91,7 @@ public class SubsystemManager {
             psController_HID.getPOV(0) == 270 ? ElevatorState.ALGAE_LOW : // left
             elevatorState;
          
-            climbState = psController_HID.getOptionsButton() ? ClimbState.OPEN :
-            psController_HID.getShareButton() ? ClimbState.ASCEND : ClimbState.STOP;
+            
          
            }
         
@@ -114,6 +113,15 @@ public class SubsystemManager {
 
             case CLIMB:
                 handlerState = HandlerState.STOP;
+                elevatorState = ElevatorState.BASE;
+                if (psController_HID.getOptionsButton()) {
+                    climbState = ClimbState.UP;
+                } else if (psController_HID.getShareButton()) {
+                    climbState = ClimbState.DOWN;
+                }
+                 else {
+                    climbState = ClimbState.STOP;
+                }
                 break;
 
             case DEPLETE:
@@ -145,6 +153,7 @@ public class SubsystemManager {
         DeliveryManager.operate(elevatorState);
         Handler.operate(handlerState);
         Climb.operate(climbState);
+        // System.out.println(state + "" + climbState);
         
 
         if (isLocked) drivebase.lock();   
@@ -175,6 +184,22 @@ public class SubsystemManager {
 
     public static void initDriveBase() {
         drivebase.resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(180))); 
+    }
+
+    public static RobotState getRobotState() {
+        return state;
+    }
+
+    public static ElevatorState getElevatorState() {
+        return elevatorState;
+    }
+
+    public static HandlerState getHandlerState() {
+        return handlerState;
+    }
+
+    public static ClimbState getClimbState() {
+        return climbState;
     }
 
 }

@@ -6,6 +6,7 @@ import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import frc.robot.subsystems.DeliveryManager;
 //import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.Elevator.Elevator;
@@ -31,6 +32,7 @@ public class Dashboard {
             }
             m_chooser.addOption(name_state, name_state);
         }
+        
 
         // SendableChooser<Double> m_robotPose = new SendableChooser<Double>();
         // m_robotPose.addOption("Robot Pose [X]", SubsystemManager.getDriveBase().getPose().getX());
@@ -52,16 +54,30 @@ public class Dashboard {
         telemetry.addNumber("Back Left vRot", () -> SubsystemManager.getDriveBase().getSwerveDriveConfiguration().modules[2].getPosition().angle.getDegrees()).withPosition(9, 3).withSize(8, 3);
         telemetry.addNumber("Back Right vRot", () -> SubsystemManager.getDriveBase().getSwerveDriveConfiguration().modules[3].getPosition().angle.getDegrees()).withPosition(17, 3).withSize(8, 3);
         
-        subsystemsInformation.addNumber("Elevator raw encoder", () -> Elevator.getCurrentPosition());
-        subsystemsInformation.addNumber("Wrist raw encoder", () -> Wrist.getCurrentPosition());
-        subsystemsInformation.addBoolean("Coral IR ", ()-> Handler.getCoralIr());
-        subsystemsInformation.addNumber("Alagae IR ", ()-> Handler.getAlgaeIrValue());
+        subsystemsInformation.addNumber("Elevator_raw", () -> Elevator.getCurrentPosition()).withPosition(0, 0).withSize(3, 3);
+        subsystemsInformation.addNumber("Wrist_raw", () -> Wrist.getCurrentPosition()).withPosition(3, 0).withSize(3, 3);
+        subsystemsInformation.addBoolean("CoralIR ", ()-> Handler.getCoralIr()).withPosition(6, 0).withSize(3, 3);
+        subsystemsInformation.addNumber("AlgaeIR ", ()-> Handler.getAlgaeIrValue()).withPosition(9, 0).withSize(3, 3);
+
+        subsystemsInformation.addString("ElevatorState",() -> SubsystemManager.getElevatorState().name()).withPosition(17, 0).withSize(5, 3);
+        subsystemsInformation.addString("RobotState",() -> SubsystemManager.getRobotState().name()).withPosition(22, 0).withSize(3, 3);
+        subsystemsInformation.addString("HandlerState",() -> SubsystemManager.getHandlerState().name()).withPosition(17, 3).withSize(3, 3);
+        subsystemsInformation.addString("WristState", () -> DeliveryManager.getWristState().name()).withPosition(20, 3).withSize(3, 3);
+        subsystemsInformation.addString("ClimbState", () -> SubsystemManager.getClimbState().name()).withPosition(23, 3).withSize(3, 3);
+
+        subsystemsInformation.addBoolean("isCoralIn", () -> Handler.isCoralIn()).withPosition(6, 3).withSize(3, 3);
+        subsystemsInformation.addBoolean("isAlgaelIn", () -> Handler.isAlgaeIn()).withPosition(9, 3).withSize(3, 3);;
+        
+        
     }
 
-    public static Autos getSelected() {
-        if (m_chooser.getSelected() != null) {
-            m_autoSelected = m_chooser.getSelected();
-        }
-        return Autos.valueOf(m_autoSelected);
+    public static String getSelected() {
+        return m_autoSelected = m_chooser.getSelected();
     }
+    // public static Autos getSelected() {
+    //     if (m_chooser.getSelected() != null) {
+    //         m_autoSelected = m_chooser.getSelected();
+    //     }
+    //     return Autos.valueOf(m_autoSelected);
+    // }
 }

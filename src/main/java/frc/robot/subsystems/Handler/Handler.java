@@ -97,7 +97,7 @@ public class Handler {
     private static void updateIr(HandlerState state){
         algaeIrValue = algaeIrInput.getValue();
         coralIrVal = getCoralIr();
-        System.out.println(counter);
+        // System.out.println(counter);
         // coralIrVal = !SubsystemManager.getpsJoystick().R1().getAsBoolean();
         // algaeIrValue = SubsystemManager.getpsJoystick().L1().getAsBoolean() ? 0 : 2000;
         if (coralIrVal && counter >= 10 && feedCoral) {

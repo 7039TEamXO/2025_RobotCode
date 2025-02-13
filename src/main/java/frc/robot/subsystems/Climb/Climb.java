@@ -1,6 +1,7 @@
 package frc.robot.subsystems.Climb;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -28,15 +29,16 @@ public class Climb {
             case STOP:
                 wantedPower = ClimbConstants.CLIMB_WANTED_POWER_STOP;
                 break;
-
-            case ASCEND:
-                servoPos = 1;
+            case UP:
                 wantedPower = ClimbConstants.CLIMB_WANTED_POWER_UP;
                 break;
-            
+            case DOWN:
+                wantedPower = ClimbConstants.CLIMB_WANTED_POWER_DOWN;
+                break;
+
         }
 
-        climbMotor.setControl(motorRequest.withPosition(wantedPower));
+        climbMotor.setControl(new DutyCycleOut(wantedPower));
     } 
 
     private static void setMotorConfigs() {

@@ -179,7 +179,7 @@ public class RobotContainer
   {
     // An example command will be run in autonomous
     // return SubsystemManager.getDriveBase().getAutonomousCommand(Dashboard.getSelected().getAutoName());
-        return SubsystemManager.getDriveBase().getAutonomousCommand("HomeRedStart");
+        return SubsystemManager.getDriveBase().getAutonomousCommand(Dashboard.getSelected());
   }
 
   public void setDriveMode()

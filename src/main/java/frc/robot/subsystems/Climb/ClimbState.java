@@ -1,5 +1,5 @@
 package frc.robot.subsystems.Climb;
 
 public enum ClimbState {
-    STOP, OPEN, ASCEND
+    STOP, DOWN, UP
 }
