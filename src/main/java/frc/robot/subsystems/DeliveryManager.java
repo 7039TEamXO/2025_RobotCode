@@ -55,7 +55,9 @@ public class DeliveryManager {
                 break;
 
             case LEVEL3:
+            if (Elevator.getCurrentPosition() >= ElevatorConstants.ELEVATOR_POSE_SAFE_TO_ROTATE) {
                 wristState = WristState.HIGH;
+            }
                 break;
         }
 

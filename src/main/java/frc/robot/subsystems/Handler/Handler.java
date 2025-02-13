@@ -62,7 +62,7 @@ public class Handler {
                 break;
 
             case INTAKE_CORAL:
-                if getFeedCoral()
+                if (getFeedCoral())
                 {
                     power = HandlerConstants.HANDLER_POWER_FEED_CORAL;
                 }
@@ -96,35 +96,34 @@ public class Handler {
 
     private static void updateIr(HandlerState state){
         algaeIrValue = algaeIrInput.getValue();
-        coralIrVal = coralIrInput.get();
-
+        coralIrVal = getCoralIr();
+        System.out.println(counter);
         // coralIrVal = !SubsystemManager.getpsJoystick().R1().getAsBoolean();
         // algaeIrValue = SubsystemManager.getpsJoystick().L1().getAsBoolean() ? 0 : 2000;
-
-        if (coralIrVal) {
-            counter += 1;
-            if (counter > 20) {
-                feedCoral = true;
-            }
-        } 
-        else {
+        if (coralIrVal && counter >= 10 && feedCoral) {
+            isCoralIn = true;
             feedCoral = false;
         }
 
-        if (!coralIrVal && lastCoralIrVal) {
-            if (counter > 30) {
-                isCoralIn = true;
-        } else {
-            isCoralIn = false;
+        if (!coralIrVal && counter >= 10) {
+                // isCoralIn = true;
+                feedCoral = true;
+        } 
+        if (coralIrVal && counter <= 10) {
+            counter += 1;    
         }
+
+        // здесь был я
 
         if (state == HandlerState.DEPLETE_CORAL) {
             isCoralIn = false;
             counter = 0;
+            feedCoral = false;
         }
 
         lastCoralIrVal = coralIrVal;
     }
+
 
     public static boolean isAlgaeIn() {
         return algaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE;
@@ -145,7 +144,8 @@ public class Handler {
         return algaeIrValue;
     }
 }
-}
+
+
 
 // INTAKE - intake coral, deplete coral 1 - 3 (level), intake algae
 // DEPLETE - deplete algae, deplete coral level 4
