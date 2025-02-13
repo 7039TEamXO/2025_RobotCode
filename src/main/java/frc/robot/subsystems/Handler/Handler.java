@@ -26,6 +26,7 @@ public class Handler {
     private static boolean coralIrVal = coralIrInput.get();
     private static boolean isCoralIn = false;
     private static boolean feedCoral = false;
+    private static int counter = 0;
     private static boolean lastCoralIrVal = coralIrInput.get();
 
     public static void init() {
@@ -101,20 +102,25 @@ public class Handler {
         // algaeIrValue = SubsystemManager.getpsJoystick().L1().getAsBoolean() ? 0 : 2000;
 
         if (coralIrVal) {
-            feedCoral = true;
+            counter += 1;
+            if (counter > 20) {
+                feedCoral = true;
+            }
         } 
         else {
             feedCoral = false;
         }
 
         if (!coralIrVal && lastCoralIrVal) {
-            isCoralIn = true;
+            if (counter > 30) {
+                isCoralIn = true;
         } else {
             isCoralIn = false;
         }
 
         if (state == HandlerState.DEPLETE_CORAL) {
             isCoralIn = false;
+            counter = 0;
         }
 
         lastCoralIrVal = coralIrVal;
@@ -138,6 +144,7 @@ public class Handler {
     public static int getAlgaeIrValue(){
         return algaeIrValue;
     }
+}
 }
 
 // INTAKE - intake coral, deplete coral 1 - 3 (level), intake algae
