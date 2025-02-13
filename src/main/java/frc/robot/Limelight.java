@@ -172,4 +172,8 @@ public class Limelight {
     public static double getTx(){
         return LimelightHelpers.getTX("limelight");
     }
+
+    public static void setLimelightPipleline(int pipeline){
+        limelightTable.getEntry("pipeline").setNumber(pipeline);
+    }
 }

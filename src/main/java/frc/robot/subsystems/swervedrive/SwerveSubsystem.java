@@ -382,6 +382,7 @@ public class SwerveSubsystem extends SubsystemBase
           edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
       );
     }
+
     public Command driveToRightReefPoint(){
       // Create the constraints to use while pathfinding
       tag_pos = getClosestReefFace(swerveDrive.getPose());
@@ -411,41 +412,49 @@ public class SwerveSubsystem extends SubsystemBase
                           false);
       });
     
-
     }
+
+    /**************************************** Align by limelight ******************************************************* */
 
     public Command alignByLimelightRight(DoubleSupplier joystickY){
       double kp = -0.05;
-
-      System.out.println(joystickY);
-
-     return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(new Translation2d((joystickY.getAsDouble() * swerveDrive.getMaximumChassisVelocity())
-                                      ,Limelight.getTx() * kp), 0.8),
-                              
-                              (Limelight.getTx() * kp),
-                              false,
-                              false));
-
-
-      }
-
-    
-    public Command alignByLimlightLeft(DoubleSupplier joystickY){
-      double kp = -0.05;
-
-      System.out.println(joystickY);
-
+      Limelight.setLimelightPipleline(0);
       return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(new Translation2d((joystickY.getAsDouble() * swerveDrive.getMaximumChassisVelocity())
                                       ,Limelight.getTx() * kp), 0.8),
                               
                               (Limelight.getTx() * kp),
                               false,
                               false));
+                              }
 
+    /****************************************************/
 
-      }
+    public Command alignByLimlightLeft(DoubleSupplier joystickY){
+      double kp = -0.05;
 
+      Limelight.setLimelightPipleline(1);
+      return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(new Translation2d((joystickY.getAsDouble() * swerveDrive.getMaximumChassisVelocity())
+                                      ,Limelight.getTx() * kp), 0.8),
+                              
+                              (Limelight.getTx() * kp),
+                              false,
+                              false));
+                              }
 
+      /****************************************************/
+
+      public Command alignByLimelightMiddle(DoubleSupplier joystickY){
+      double kp = -0.05;
+      Limelight.setLimelightPipleline(2);
+      return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(new Translation2d((joystickY.getAsDouble() * swerveDrive.getMaximumChassisVelocity())
+                                      ,Limelight.getTx() * kp), 0.8),
+                              
+                              (Limelight.getTx() * kp),
+                              false,
+                              false));
+                              }
+
+    /****************************************************************************************************************** */
 
   
     /**
