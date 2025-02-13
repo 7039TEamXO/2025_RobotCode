@@ -25,6 +25,7 @@ public class Handler {
     private static DigitalOutput coralIrOutput = new DigitalOutput(HandlerConstants.HandlerDigitalOutPutSensorID);
     private static boolean coralIrVal = coralIrInput.get();
     private static boolean isCoralIn = false;
+    private static boolean feedCoral = false;
     private static boolean lastCoralIrVal = coralIrInput.get();
 
     public static void init() {
@@ -60,7 +61,15 @@ public class Handler {
                 break;
 
             case INTAKE_CORAL:
+                if getFeedCoral()
+                {
+                    power = HandlerConstants.HANDLER_POWER_FEED_CORAL;
+                }
+                
+                else
+                {
                 power = HandlerConstants.HANDLER_POWER_INTAKE_CORAL;
+                }
                 break;
 
             case DEPLETE_CORAL_LEVEL0:
@@ -91,18 +100,19 @@ public class Handler {
         // coralIrVal = !SubsystemManager.getpsJoystick().R1().getAsBoolean();
         // algaeIrValue = SubsystemManager.getpsJoystick().L1().getAsBoolean() ? 0 : 2000;
 
+        if (coralIrVal) {
+            feedCoral = true;
+        } 
+        else {
+            feedCoral = false;
+        }
+
         if (!coralIrVal && lastCoralIrVal) {
             isCoralIn = true;
         } else {
             isCoralIn = false;
         }
 
-        if (!coralIrVal && isCoralIn){
-            state = HandlerState.PUSH_BACK_CORAL;
-        }
-        else if (coralIrVal && isCoralIn){
-            state = HandlerState.STOP;
-        }
         if (state == HandlerState.DEPLETE_CORAL) {
             isCoralIn = false;
         }
@@ -118,6 +128,9 @@ public class Handler {
         return isCoralIn;
     }
     
+    public static boolean getFeedCoral() {
+        return feedCoral;
+    }
     public static boolean getCoralIr() {
         return coralIrInput.get();
     }
