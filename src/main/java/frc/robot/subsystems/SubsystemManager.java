@@ -94,7 +94,8 @@ public class SubsystemManager {
             
          
            }
-        
+           
+           
         switch (state) {
             case TRAVEL:
                 // if(Handler.isCoralIn() && !Handler.getCoralIr()){
@@ -137,15 +138,16 @@ public class SubsystemManager {
                 break;
 
             case INTAKE:
-                if (elevatorState == ElevatorState.BASE) {
+                Handler.updateHandlerIr(lastState != RobotState.INTAKE);
+                if (elevatorState == ElevatorState.BASE && !Handler.isCoralIn()) {
                     handlerState = HandlerState.INTAKE_CORAL;
                 }
                 else if (elevatorState == ElevatorState.ALGAE_HIGH || elevatorState == ElevatorState.ALGAE_LOW) {
                     handlerState = HandlerState.INTAKE_ALGAE;
                 }
-                if (lastElevatorState == ElevatorState.LEVEL3) {
-                    handlerState = HandlerState.INTAKE_CORAL;
-                }
+                // if (lastElevatorState == ElevatorState.LEVEL3) {
+                //     handlerState = HandlerState.INTAKE_CORAL;
+                // }
                 state = Handler.isAlgaeIn() || Handler.isCoralIn() ? RobotState.TRAVEL : RobotState.INTAKE;
                 break;
         }
@@ -157,7 +159,6 @@ public class SubsystemManager {
         
 
         if (isLocked) drivebase.lock();   
-        
         lastState = state;
         lastElevatorState = elevatorState;
         
