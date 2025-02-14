@@ -146,7 +146,6 @@ public class Limelight {
                 // tv.getDoubleArray(new Double[]{})[1] + " " + 
                 //     SubsystemManager.getDriveBase().getHeading());
                 } else {
-                    System.out.println(" ne True blya");
                 }
             }
         }
@@ -170,6 +169,12 @@ public class Limelight {
         
     }
     public static double getTx(){
-        return LimelightHelpers.getTX("limelight");
+        System.out.println(limelightTable.getEntry("tx").getNumber(0).doubleValue());
+        System.out.println(limelightTable.getEntry("getpipe").getNumber(999));
+        return limelightTable.getEntry("tx").getNumber(0).doubleValue();
+    }
+
+    public static void setPipeline(int pipeline){
+        limelightTable.getEntry("pipeline").setNumber(pipeline);
     }
 }

@@ -76,7 +76,7 @@ public class SubsystemManager {
             state = psController_HID.getL2Button() ? RobotState.DEPLETE :
             psController_HID.getR2Button() ? RobotState.INTAKE :
             psController_HID.getShareButton() ? RobotState.CLIMB :
-            psController_HID.getRawButton(12) ? RobotState.TRAVEL : // right stick
+            psController_HID.getTouchpadButton() ? RobotState.TRAVEL : // right stick
             psController_HID.getPOV(0) == 90 ? RobotState.INTAKE :
             psController_HID.getPOV(0) == 270 ? RobotState.INTAKE :
             psController_HID.getCrossButton() && !Handler.isAlgaeIn() && lastElevatorState != ElevatorState.BASE ? 

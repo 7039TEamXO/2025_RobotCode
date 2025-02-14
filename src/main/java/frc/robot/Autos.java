@@ -1,8 +1,7 @@
 package frc.robot;
 
 public enum Autos {
-    MID_AUTO("ExampleAuto"),
-    LEFT_AUTO("LeftAuto"),
+    QuadCoralBAuto("QuadCoralBAuto"),
     HOME_RED_START("HomeRedStart");
     
     private final String autoName;

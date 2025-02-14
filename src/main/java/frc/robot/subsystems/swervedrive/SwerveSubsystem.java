@@ -120,10 +120,10 @@ public class SwerveSubsystem extends SubsystemBase
       swerveDrive.setCosineCompensator(false); //!SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for simulations since it causes discrepancies not seen in real life.
       swerveDrive.setAngularVelocityCompensation(true, true, 0.1);
       swerveDrive.setModuleEncoderAutoSynchronize(false, 1);
-      
+  
       // swerveDrive.setMaximumAllowableSpeeds(Constants.MAX_SPEED, 4);
       SwerveController controller = swerveDrive.getSwerveController();
-      
+      controller.setMaximumChassisAngularVelocity(5);
       // controller.setMaximumChassisAngularVelocity(3);
       // if (visionDriveTest)
       // {
@@ -414,36 +414,17 @@ public class SwerveSubsystem extends SubsystemBase
 
     }
 
-    public Command alignByLimelightRight(DoubleSupplier joystickY){
-      double kp = -0.05;
+    public Command alignByLimelight(DoubleSupplier joystickY){
 
-      System.out.println(joystickY);
-
-     return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(new Translation2d((joystickY.getAsDouble() * swerveDrive.getMaximumChassisVelocity())
-                                      ,Limelight.getTx() * kp), 0.8),
-                              
-                              (Limelight.getTx() * kp),
-                              false,
-                              false));
-
+     return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(
+                                      new Translation2d((joystickY.getAsDouble() * (swerveDrive.getMaximumChassisVelocity() / 1.5))
+                                      ,Limelight.getTx() * SwerveDriveConstants.ALIGN_LIMMELIGHT_X_KP), 0.8),
+                                      (Limelight.getTx() * SwerveDriveConstants.ALIGN_LIMMELIGHT_ROTATION_KP), 
+                                      false,
+                                      false));
 
       }
-
     
-    public Command alignByLimlightLeft(DoubleSupplier joystickY){
-      double kp = -0.05;
-
-      System.out.println(joystickY);
-
-      return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(new Translation2d((joystickY.getAsDouble() * swerveDrive.getMaximumChassisVelocity())
-                                      ,Limelight.getTx() * kp), 0.8),
-                              
-                              (Limelight.getTx() * kp),
-                              false,
-                              false));
-
-
-      }
 
 
 
