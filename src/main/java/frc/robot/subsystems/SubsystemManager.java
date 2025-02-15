@@ -47,6 +47,9 @@ public class SubsystemManager {
 
     private static ElevatorState elevatorState = ElevatorState.BASE;
     private static ElevatorState lastElevatorState = ElevatorState.BASE;
+
+    private static int autoElevatorCounter = 0;
+    private static boolean isAutoElevatorCounting = false;
     
     private static HandlerState handlerState = HandlerState.STOP;
 
@@ -56,10 +59,10 @@ public class SubsystemManager {
     public static Command intakeCoralCommand = Commands.run(() -> operateAuto(RobotState.INTAKE, ElevatorState.BASE));
     public static Command intakeAlgaeLowCommand = Commands.run(() -> operateAuto(RobotState.INTAKE, ElevatorState.ALGAE_LOW));
     public static Command intakeAlgaeHighCommand = Commands.run(() -> operateAuto(RobotState.INTAKE, ElevatorState.ALGAE_HIGH));
-    public static Command level0Command = Commands.run(() -> operateAuto(RobotState.TRAVEL, ElevatorState.LEVEL0));
-    public static Command level1Command = Commands.run(() -> operateAuto(RobotState.TRAVEL, ElevatorState.LEVEL1));
-    public static Command level2Command = Commands.run(() -> operateAuto(RobotState.TRAVEL, ElevatorState.LEVEL2));
-    public static Command level3Command = Commands.run(() -> operateAuto(RobotState.TRAVEL, ElevatorState.LEVEL3));
+    public static Command level0Command = Commands.run(() -> operateAuto(null, ElevatorState.LEVEL0));
+    public static Command level1Command = Commands.run(() -> operateAuto(null, ElevatorState.LEVEL1));
+    public static Command level2Command = Commands.run(() -> operateAuto(null, ElevatorState.LEVEL2));
+    public static Command level3Command = Commands.run(() -> operateAuto(null, ElevatorState.LEVEL3));
     public static Command depleteCommand = Commands.run(() -> operateAuto(RobotState.DEPLETE, null));
     // public static Command alighRightCommand = SubsystemManager.getDriveBase().alignByLimelight((-psController_HID.getLeftY()));
 
@@ -76,7 +79,7 @@ public class SubsystemManager {
             state = psController_HID.getL2Button() ? RobotState.DEPLETE :
             psController_HID.getR2Button() ? RobotState.INTAKE :
             psController_HID.getShareButton() ? RobotState.CLIMB :
-            psController_HID.getTouchpadButton() ? RobotState.TRAVEL : // right stick
+            psController_HID.getPOV(0) == 0 ? RobotState.TRAVEL : 
             psController_HID.getPOV(0) == 90 ? RobotState.INTAKE :
             psController_HID.getPOV(0) == 270 ? RobotState.INTAKE :
             psController_HID.getCrossButton() && !Handler.isAlgaeIn() && lastElevatorState != ElevatorState.BASE ? 
@@ -89,23 +92,18 @@ public class SubsystemManager {
             psController_HID.getPOV(0) == 90 ? ElevatorState.ALGAE_HIGH : //right
             psController_HID.getPOV(0) == 180 ? ElevatorState.LEVEL0 : // down
             psController_HID.getPOV(0) == 270 ? ElevatorState.ALGAE_LOW : // left
-            elevatorState;
-         
+            lastElevatorState;
             
-         
            }
-           
            
         switch (state) {
             case TRAVEL:
-                // if(Handler.isCoralIn() && !Handler.getCoralIr()){
-                //     handlerState = HandlerState.PUSH_BACK_CORAL;
-                // } else if (!Handler.getCoralIr() && )
 
                 if(Handler.isAlgaeIn() && (elevatorState == ElevatorState.ALGAE_LOW || 
                                             elevatorState == ElevatorState.ALGAE_HIGH ||
                                               elevatorState == ElevatorState.BASE)){
                     handlerState = HandlerState.HOLD_ALGAE;
+                    System.out.println("i exist 106");
                 } else {
                     handlerState = HandlerState.STOP;
                 }
@@ -128,34 +126,60 @@ public class SubsystemManager {
             case DEPLETE:
                 if (elevatorState == ElevatorState.LEVEL3 || Handler.isAlgaeIn()) {
                     handlerState = HandlerState.DEPLETE_ALGAE;
+                    
                 }
                 else if (elevatorState == ElevatorState.LEVEL0 ) {
                     handlerState =  HandlerState.DEPLETE_CORAL_LEVEL0;
                 }
                 else {
                     handlerState = HandlerState.DEPLETE_CORAL;
-                }
+                }   
                 break;
 
-            case INTAKE:
-                Handler.updateHandlerIr(lastState != RobotState.INTAKE);
-                if (elevatorState == ElevatorState.BASE && !Handler.isCoralIn()) {
+            case INTAKE: 
+                // System.out.println(elevatorState);
+                if ((elevatorState != ElevatorState.ALGAE_HIGH && elevatorState != ElevatorState.ALGAE_LOW) && !Handler.isCoralIn()) {
                     handlerState = HandlerState.INTAKE_CORAL;
+                    elevatorState = ElevatorState.BASE;
                 }
                 else if (elevatorState == ElevatorState.ALGAE_HIGH || elevatorState == ElevatorState.ALGAE_LOW) {
                     handlerState = HandlerState.INTAKE_ALGAE;
+                    System.out.println(elevatorState);
                 }
+                
                 // if (lastElevatorState == ElevatorState.LEVEL3) {
                 //     handlerState = HandlerState.INTAKE_CORAL;
                 // }
+                
                 state = Handler.isAlgaeIn() || Handler.isCoralIn() ? RobotState.TRAVEL : RobotState.INTAKE;
                 break;
+        }
+
+            System.out.println("s-" + state + " e-" + elevatorState + " ls-" + lastElevatorState + " h-" + handlerState + Handler.getCounter() + " CIV-" + Handler.getCoralIr());
+
+            Handler.updateHandlerIr(lastElevatorState!=ElevatorState.BASE || 
+                                        handlerState==HandlerState.DEPLETE_CORAL || 
+                                            handlerState==HandlerState.INTAKE_ALGAE ||
+                                                psController_HID.getR2Button());
+
+            isAutoElevatorCounting = onAuto && elevatorState != ElevatorState.LEVEL3 && lastElevatorState == ElevatorState.LEVEL3 ? true : isAutoElevatorCounting;
+
+        
+
+        if (isAutoElevatorCounting && onAuto) {
+            autoElevatorCounter++;
+        }
+
+        if (autoElevatorCounter < 40 && onAuto && lastElevatorState == ElevatorState.LEVEL3) {
+            elevatorState = ElevatorState.LEVEL3;
+        } else {
+            isAutoElevatorCounting = false;
+            autoElevatorCounter = 0;
         }
 
         DeliveryManager.operate(elevatorState);
         Handler.operate(handlerState);
         Climb.operate(climbState);
-        // System.out.println(state + "" + climbState);
         
 
         if (isLocked) drivebase.lock();   

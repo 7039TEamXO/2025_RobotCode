@@ -71,7 +71,7 @@ public class Dashboard {
         
     }
 
-    public static String getSelected() {
+    public static String getSelectedAutonomy() {
         return m_autoSelected = m_chooser.getSelected();
     }
     // public static Autos getSelected() {

@@ -33,6 +33,8 @@ public class Limelight {
     private static NetworkTableEntry ty = limelightTable.getEntry("ty");
     private static NetworkTableEntry botPosWpiBlue = limelightTable.getEntry("botpose_wpiblue");
     private static int validIDs[] = new int[]{3, 6, 7, 8, 9, 10, 11, 16, 17, 18, 19, 20, 21, 22};
+    
+    //private static int validIDs1[] = new int[]{1,6,10 ,11};
     //removed 1, 2, 12, 13, 4, 5, 14, 15 
     // private static boolean hasTarget = LimelightHelpers.getTV("limelight");
     
@@ -51,13 +53,17 @@ public class Limelight {
         VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
         VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30))
     );
+    public static void init(){
+        setConfigurationToLimelight();
+    }
+
 
     private static void setConfigurationToLimelight() {
         // /Configure AprilTag detection
         LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIDs); // Only track these tag IDs
         LimelightHelpers.SetFiducialDownscalingOverride("limelight", 2.0f); // Process at half resolution for improved framerate and reduced range
         LimelightHelpers.setCameraPose_RobotSpace("limelight", 
-        0.4,    // Forward offset (meters)
+        0.3,    // Forward offset (meters)
         0.0,    // Side offset (meters)
         0.2,    // Height offset (meters)
         0.0,    // Roll (degrees)
@@ -169,8 +175,8 @@ public class Limelight {
         
     }
     public static double getTx(){
-        System.out.println(limelightTable.getEntry("tx").getNumber(0).doubleValue());
-        System.out.println(limelightTable.getEntry("getpipe").getNumber(999));
+    //     System.out.println(limelightTable.getEntry("tx").getNumber(0).doubleValue());
+    //     System.out.println(limelightTable.getEntry("getpipe").getNumber(999));
         return limelightTable.getEntry("tx").getNumber(0).doubleValue();
     }
 

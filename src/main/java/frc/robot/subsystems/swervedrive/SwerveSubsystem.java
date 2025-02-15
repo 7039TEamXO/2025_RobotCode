@@ -39,6 +39,9 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import frc.robot.Limelight;
 import frc.robot.LimelightHelpers;
+import frc.robot.subsystems.SubsystemManager;
+import frc.robot.subsystems.Elevator.Elevator;
+import frc.robot.subsystems.Elevator.ElevatorConstants;
 
 //import frc.robot.subsystems.swervedrive.Vision.Cameras;
 import java.io.File;
@@ -69,7 +72,7 @@ public class SwerveSubsystem extends SubsystemBase
   /**
    * Swerve drive object.
    */
-  private final SwerveDrive swerveDrive;
+  private static SwerveDrive swerveDrive;
   private static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
   private static Pose2d tag_pos = null;
   double currentTagX = 0;
@@ -123,7 +126,7 @@ public class SwerveSubsystem extends SubsystemBase
   
       // swerveDrive.setMaximumAllowableSpeeds(Constants.MAX_SPEED, 4);
       SwerveController controller = swerveDrive.getSwerveController();
-      controller.setMaximumChassisAngularVelocity(5);
+      // controller.setMaximumChassisAngularVelocity(5);
       // controller.setMaximumChassisAngularVelocity(3);
       // if (visionDriveTest)
       // {
@@ -158,6 +161,8 @@ public class SwerveSubsystem extends SubsystemBase
     @Override
     public void periodic()
     {
+      swerveDrive.setMaximumAllowableSpeeds(calculateSpeedAccordingToElevator(Constants.MAX_SPEED, Constants.MIN_SPEED)
+      , calculateSpeedAccordingToElevator(Constants.MAX_ROTATION_V, Constants.MIN_ROTATION_V));
       // updateCloserPoints();
       // Limelight.updatePosition();
       // if (Limelight.hasTarget()){
@@ -406,7 +411,7 @@ public class SwerveSubsystem extends SubsystemBase
 
               swerveDrive.drive((new Translation2d(((swerveDrive.getPose().getX() - currentRightReefPos.getX()) * kp),
                                 ((swerveDrive.getPose().getY() - currentRightReefPos.getY()) * kp))), 
-        ((swerveDrive.getPose().getRotation().getDegrees() - currentRightReefPos.getRotation().getDegrees()) * 0.00),
+        ((swerveDrive.getPose().getRotation().getDegrees() - currentRightReefPos.getRotation().getDegrees()) * 0.00), // TODO set angular kP
                           false,
                           false);
       });
@@ -417,7 +422,7 @@ public class SwerveSubsystem extends SubsystemBase
     public Command alignByLimelight(DoubleSupplier joystickY){
 
      return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(
-                                      new Translation2d((joystickY.getAsDouble() * (swerveDrive.getMaximumChassisVelocity() / 1.5))
+                                      new Translation2d((joystickY.getAsDouble() * (swerveDrive.getMaximumChassisVelocity() ))
                                       ,Limelight.getTx() * SwerveDriveConstants.ALIGN_LIMMELIGHT_X_KP), 0.8),
                                       (Limelight.getTx() * SwerveDriveConstants.ALIGN_LIMMELIGHT_ROTATION_KP), 
                                       false,
@@ -905,6 +910,17 @@ public class SwerveSubsystem extends SubsystemBase
 	return color.get() == DriverStation.Alliance.Blue;
   }
     
+  public static double calculateSpeedAccordingToElevator(double maxV, double minV){
+    return (maxV - minV) -
+      ((Elevator.getCurrentPosition() / ElevatorConstants.maxPos) * (maxV - minV)) + minV;
+    
+  }
+  public static boolean isRobotVBelowOne(){
+    return (Math.abs(swerveDrive.getRobotVelocity().vxMetersPerSecond) < 0.3) &&
+            (Math.abs(swerveDrive.getRobotVelocity().vyMetersPerSecond) < 0.3) &&  
+              (Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) < 0.2);
+
+  }
 
   } 
 

@@ -58,6 +58,7 @@ public class Robot extends TimedRobot
     // SubsystemManager.initDriveBase();
     SubsystemManager.init();
     Dashboard.init();
+    Limelight.init();
 
     //LED.init();
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
@@ -80,7 +81,9 @@ public class Robot extends TimedRobot
   @Override
   public void robotPeriodic()
   {
-    // Limelight.updatePosition();
+    if (SwerveSubsystem.isRobotVBelowOne()){
+      //Limelight.updatePosition();
+    }
     //LED.setLedData();
 
     // m_robotContainer.print();
@@ -107,6 +110,7 @@ public class Robot extends TimedRobot
   @Override
   public void disabledPeriodic()
   {
+    // Limelight.updatePosition();
     
     // if (disabledTimer.hasElapsed(Constants.DrivebaseConstants.WHEEL_LOCK_TIME))
     // {
@@ -139,7 +143,7 @@ public class Robot extends TimedRobot
    */
   @Override
   public void autonomousPeriodic()
-  {
+  { 
     
   }
 
@@ -166,7 +170,6 @@ public class Robot extends TimedRobot
   public void teleopPeriodic()
   {
     // System.out.println(Dashboard.getSelected());
-    SubsystemManager.getDriveBase().updateCloserPoints();
     // SubsystemManager.getDriveBase().resetOdometry( new Pose2d(
     //   Math.abs(SubsystemManager.getDriveBase().getPose().getX()),
     //   Math.abs(SubsystemManager.getDriveBase().getPose().getX()),

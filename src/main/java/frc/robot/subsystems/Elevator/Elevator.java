@@ -32,7 +32,6 @@ public class Elevator {
                 break;
 
             case ALGAE_HIGH:
-        
                 elevatorPosition = ElevatorConstants.ELEVATOR_POSE_ALGAE_HIGH;
                 break;
 
@@ -77,6 +76,7 @@ public class Elevator {
     public static double getCmFromEncoder(double encoder) {
         return encoder * ElevatorConstants.EncoderMultiplier;
     }
+    
 
     public static double getMotorOutput(){
         return elevatorMasterMotor.getVelocity().getValueAsDouble();

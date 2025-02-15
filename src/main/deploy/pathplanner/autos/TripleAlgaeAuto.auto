@@ -69,6 +69,12 @@
           "data": {
             "pathName": "20ToProc"
           }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": []
+          }
         }
       ]
     }

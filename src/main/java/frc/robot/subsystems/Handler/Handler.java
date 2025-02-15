@@ -27,6 +27,7 @@ public class Handler {
     private static boolean isCoralIn = false;
     private static boolean feedCoral = false;
     private static int counter = 0;
+    private static boolean isReset = false;
     private static boolean lastCoralIrVal = coralIrInput.get();
 
     public static void init() {
@@ -40,10 +41,12 @@ public class Handler {
     public static void operate(HandlerState state) {
         switch (state) {
             case INTAKE_ALGAE: // intake coral, deplete coral 1 - 3 (level), intake algae
+                // isReset = true;
                 power = HandlerConstants.HANDLER_POWER_INTAKE_ALGAE;
                 break;
 
             case DEPLETE_CORAL: // deplete algae, deplete coral level 4
+                // isReset = true;
                 power = HandlerConstants.HANDLER_POWER_DEPLETE_CORAL;
                 break;
             
@@ -52,6 +55,7 @@ public class Handler {
                 break;
 
             case DEPLETE_ALGAE:
+                // isReset = true;
                 power = HandlerConstants.HANDLER_POWER_DEPLETE_ALGAE;
                 break;
 
@@ -60,10 +64,12 @@ public class Handler {
                 break;
 
             case INTAKE_CORAL:
+                // isReset = false;
                 power = HandlerConstants.HANDLER_POWER_INTAKE_CORAL;
                 break;
 
             case DEPLETE_CORAL_LEVEL0:
+                // isReset = true;
                 power = HandlerConstants.HANDLER_POWER_DEPLETE_CORAL_LEVEL0;
                 break;
             case PUSH_BACK_CORAL:
@@ -76,36 +82,33 @@ public class Handler {
 
         //System.out.println(algaeIrInput.getValue());
         master.setControl(new DutyCycleOut(power)); //set percent output
+        // System.out.println(power);
         // System.out.println(coralIrInput.get());
     }   
 
-    public static void pushBackCoral() {
-        
-        
-    }
 
     public static void updateHandlerIr(boolean isReset){
         algaeIrValue = algaeIrInput.getValue();
         coralIrVal = getCoralIr();
+        System.out.println("im alive");
         
-        if (!coralIrVal && counter >= 10) {
-                isCoralIn = true; 
-        } 
-        if (coralIrVal && counter <= 10) {
-            counter ++;
+        System.out.println("----------" + isReset);
+        if (!coralIrVal && lastCoralIrVal) {
+                isCoralIn = true;
         }
-
-        // здесь был я
 
         if (isReset) {
             isCoralIn = false;
             counter = 0;
-            feedCoral = false;
+            System.out.println("i exist 106");
         }
 
         lastCoralIrVal = coralIrVal;
     }
 
+    public static int getCounter() {
+        return counter;
+    }
 
     public static boolean isAlgaeIn() {
         return algaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE;
