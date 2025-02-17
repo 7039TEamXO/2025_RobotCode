@@ -164,7 +164,8 @@ public class SubsystemManager {
                 break;
         }
 
-        if ((psController_HID.getR1Button() || psController_HID.getL1Button() || psController_HID.getR3Button()) && Limelight.getTx() != 0) { // cheking for leds
+        if ((psController_HID.getR1Button() || psController_HID.getL1Button() || psController_HID.getR3Button()) &&
+             Math.abs(Limelight.getTx()) <= 2) { // cheking for leds
             isTxSeen = true;
         } else {
             isTxSeen = false;

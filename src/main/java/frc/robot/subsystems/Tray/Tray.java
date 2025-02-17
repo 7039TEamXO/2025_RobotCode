@@ -27,7 +27,6 @@ public class Tray {
                 trayPosition = TrayConstants.TRAY_POS_UP;
                 break;
         }
-        System.out.println(trayMotor.getPosition().getValueAsDouble());
         trayMotor.setControl(motorRequest.withPosition(trayPosition));
     }
 
