@@ -29,9 +29,7 @@ import swervelib.parser.SwerveParser;
  * described in the TimedRobot documentation. If you change the name of this class or the package after creating this
  * project, you must also update the build.gradle file in the project.
  */
-public class Robot extends TimedRobot
-{
-
+public class Robot extends TimedRobot {
   private static Robot   instance;
   private        Command m_autonomousCommand;
 
@@ -60,7 +58,7 @@ public class Robot extends TimedRobot
     Dashboard.init();
     Limelight.init();
 
-    //LED.init();
+    LED.init();
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
@@ -68,7 +66,6 @@ public class Robot extends TimedRobot
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
     // immediately when disabled, but then also let it be pushed more 
     disabledTimer = new Timer();
-
   }
 
   /**
@@ -84,7 +81,7 @@ public class Robot extends TimedRobot
     if (SwerveSubsystem.isRobotVBelowOne()){
       //Limelight.updatePosition();
     }
-    //LED.setLedData();
+    LED.setLedData();
 
     // m_robotContainer.print();
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
@@ -93,7 +90,6 @@ public class Robot extends TimedRobot
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
     // m_robotContainer.print();
-
   }
 
   /**
@@ -125,7 +121,6 @@ public class Robot extends TimedRobot
   @Override
   public void autonomousInit()
   {
-    
     SubsystemManager.init();
 
     m_robotContainer.setMotorBrake(true);

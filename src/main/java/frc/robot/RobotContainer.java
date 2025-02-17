@@ -80,7 +80,6 @@ public class RobotContainer
       
   // Command alignRightCommand =  SubsystemManager.getDriveBase().alignByLimelight(modifyAxis(-SubsystemManager.getpsJoystick().getLeftY()));
 
-
   SlewRateLimiter joystickSlewRateLimiter = new SlewRateLimiter(4);
   // Command driveFieldOrientedDirectAngleSim = SubsystemManager.getDriveBase().simDriveCommand(
   //     () -> MathUtil.applyDeadband(SubsystemManager.ps4Joystick.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
@@ -110,7 +109,6 @@ public class RobotContainer
     NamedCommands.registerCommand("Level_2", SubsystemManager.level2Command);
     NamedCommands.registerCommand("Level_3", SubsystemManager.level3Command);
     NamedCommands.registerCommand("Deplete", SubsystemManager.depleteCommand);
-
   }
 
   /**
@@ -125,7 +123,6 @@ public class RobotContainer
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     SubsystemManager.getpsJoystick().PS().onTrue((Commands.runOnce(SubsystemManager.getDriveBase()::zeroGyroWithAlliance)));// if we will use it, in case if driver push this buttom, our rotation will be messed up
 
-    
     SubsystemManager.getpsJoystick().R1().onTrue(Commands.runOnce( () -> Limelight.setPipeline(0)));
     SubsystemManager.getpsJoystick().L1().onTrue(Commands.runOnce( () -> Limelight.setPipeline(1)));
     SubsystemManager.getpsJoystick().button(12).onTrue(Commands.runOnce( () -> Limelight.setPipeline(2)));
@@ -134,12 +131,10 @@ public class RobotContainer
     SubsystemManager.getpsJoystick().L1().whileTrue(SubsystemManager.getDriveBase().alignByLimelight( () -> modifyAxis(-SubsystemManager.getpsJoystick().getLeftY())));
     SubsystemManager.getpsJoystick().button(12).whileTrue(SubsystemManager.getDriveBase().alignByLimelight( () -> modifyAxis(-SubsystemManager.getpsJoystick().getLeftY())));
 
-
     //SubsystemManager.getpsJoystick().triangle().onTrue(Commands.runOnce(() -> SubsystemManager.getDriveBase().resetOdometry(new Pose2d(1,1,new Rotation2d(0)))));
   }
 
-  private void configureDriveCommand(){
-
+  private void configureDriveCommand() {
     if (teamColorIsBlue()) {
       driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
       () -> (modifyAxis(-SubsystemManager.getpsJoystick().getLeftY())),
@@ -148,13 +143,11 @@ public class RobotContainer
     } else{
     
     SubsystemManager.getDriveBase().zeroGyroWithAlliance();
-     driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
-     () -> (modifyAxis(SubsystemManager.getpsJoystick().getLeftY())),
-     () -> (modifyAxis(SubsystemManager.getpsJoystick().getLeftX())),
-     () -> (modifyAxis(-SubsystemManager.getpsJoystick().getRightX())));
+      driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
+      () -> (modifyAxis(SubsystemManager.getpsJoystick().getLeftY())),
+      () -> (modifyAxis(SubsystemManager.getpsJoystick().getLeftX())),
+      () -> (modifyAxis(-SubsystemManager.getpsJoystick().getRightX())));
     }
-
-    
     
     SubsystemManager.setDefaultCommand(driveFieldOrientedAngularVelocity);
   }
@@ -186,7 +179,7 @@ public class RobotContainer
   {
     // An example command will be run in autonomous
     // return SubsystemManager.getDriveBase().getAutonomousCommand(Dashboard.getSelected().getAutoName());
-        return SubsystemManager.getDriveBase().getAutonomousCommand(Dashboard.getSelectedAutonomy());
+    return SubsystemManager.getDriveBase().getAutonomousCommand(Dashboard.getSelectedAutonomy());
   }
 
   public void setDriveMode()
@@ -196,19 +189,16 @@ public class RobotContainer
   public void setMotorBrake(boolean brake)
   {
     SubsystemManager.getDriveBase().setMotorBrake(brake);
-    
   }
 
   public static boolean teamColorIsBlue() {
-  Optional<Alliance> color = DriverStation.getAlliance();
-	return color.get() == DriverStation.Alliance.Blue;
+    Optional<Alliance> color = DriverStation.getAlliance();
+	  return color.get() == DriverStation.Alliance.Blue;
   }
 
-  //
   private static double modifyAxis(double joystickInput) {
     double deadBandValue = MathUtil.applyDeadband(joystickInput, OperatorConstants.LEFT_Y_DEADBAND);
     double scaled_input = 1 - (1 - Math.abs(deadBandValue)) * (1 - 0.1);
     return deadBandValue * scaled_input;
   }
-
 }

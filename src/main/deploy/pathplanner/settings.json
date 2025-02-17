@@ -3,13 +3,15 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
-    "Testing",
-    "New Folder",
-    "QuadCoralB",
-    "QuadCoralR",
-    "TripleAlgae"
+    "DoubleAlgaeUp",
+    "DoubleAlgaeDown",
+    "TripleCoralDown",
+    "TripleCoralUp"
   ],
-  "autoFolders": [],
+  "autoFolders": [
+    "DoubleAlgae",
+    "TripleCoral"
+  ],
   "defaultMaxVel": 3.2,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,

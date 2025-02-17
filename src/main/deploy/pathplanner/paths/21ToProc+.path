@@ -3,25 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 13.863,
-        "y": 2.931
+        "x": 5.8,
+        "y": 4.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 13.739486947764549,
-        "y": 3.1483580592650817
+        "x": 6.383091860889932,
+        "y": 4.936011376209094
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 16.3,
-        "y": 1.0
+        "x": 6.6,
+        "y": 5.7
       },
       "prevControl": {
-        "x": 14.691497220334284,
-        "y": 2.1843663975910066
+        "x": 6.6,
+        "y": 5.2
+      },
+      "nextControl": {
+        "x": 6.6,
+        "y": 6.2
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.35,
+        "y": 7.45
+      },
+      "prevControl": {
+        "x": 6.3718763415001,
+        "y": 7.134861628364317
       },
       "nextControl": null,
       "isLocked": false,
@@ -38,17 +54,17 @@
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
-    "unlimited": true
+    "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.0,
-    "rotation": 125.00000000000001
+    "velocity": 0,
+    "rotation": 90.0
   },
   "reversed": false,
-  "folder": "QuadCoralR",
+  "folder": "DoubleAlgaeUp",
   "idealStartingState": {
-    "velocity": 0.0,
-    "rotation": 119.99999999999999
+    "velocity": 0,
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

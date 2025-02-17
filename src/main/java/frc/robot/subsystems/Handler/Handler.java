@@ -15,7 +15,6 @@ import frc.robot.subsystems.Wrist.Wrist;
 import frc.robot.subsystems.Wrist.WristState;
 
 public class Handler {
-
     private static TalonFX master = new TalonFX(HandlerConstants.HandlerMotorID);
     private static AnalogInput algaeIrInput = new AnalogInput(HandlerConstants.HandlerAnalogInputSensorID);
     private static int algaeIrValue = algaeIrInput.getValue();
@@ -25,6 +24,7 @@ public class Handler {
     private static DigitalOutput coralIrOutput = new DigitalOutput(HandlerConstants.HandlerDigitalOutPutSensorID);
     private static boolean coralIrVal = coralIrInput.get();
     private static boolean isCoralIn = false;
+    private static boolean lastCoralIn = false;
     private static boolean feedCoral = false;
     private static int counter = 0;
     private static boolean isReset = false;
@@ -72,12 +72,10 @@ public class Handler {
                 // isReset = true;
                 power = HandlerConstants.HANDLER_POWER_DEPLETE_CORAL_LEVEL0;
                 break;
+                
             case PUSH_BACK_CORAL:
                 power = HandlerConstants.HANDLER_POWER_PUSH_BACK_CORAL;
                 break;
-
-
-
         }
 
         //System.out.println(algaeIrInput.getValue());
@@ -87,29 +85,47 @@ public class Handler {
     }   
 
 
-    public static void updateHandlerIr(boolean isReset){
+    public static void updateHandlerIr(){ //boolean isReset
         algaeIrValue = algaeIrInput.getValue();
         coralIrVal = getCoralIr();
-        System.out.println("im alive");
+        // System.out.println("UpdHIR [!]");
         
-        System.out.println("----------" + isReset);
+        // System.out.println("[IsReset] " + isReset);
         if (!coralIrVal && lastCoralIrVal) {
                 isCoralIn = true;
         }
 
-        if (isReset) {
-            isCoralIn = false;
-            counter = 0;
-            System.out.println("i exist 106");
+        // if (isReset) {
+        //     isCoralIn = false;
+        //     counter = 0;
+        // }
+
+        if (lastCoralIn && (power != HandlerConstants.HANDLER_POWER_DEPLETE_CORAL &&
+                power != HandlerConstants.HANDLER_POWER_DEPLETE_ALGAE && 
+                    power != HandlerConstants.HANDLER_POWER_DEPLETE_CORAL_LEVEL0)) {
+            isCoralIn = true;
         }
+        if (power == HandlerConstants.HANDLER_POWER_DEPLETE_CORAL ||
+                power == HandlerConstants.HANDLER_POWER_DEPLETE_ALGAE || 
+                    power == HandlerConstants.HANDLER_POWER_DEPLETE_CORAL_LEVEL0 ||
+                        power == HandlerConstants.HANDLER_POWER_INTAKE_ALGAE) {
+            isCoralIn = false;
+                    }
+        // if ((power == HandlerConstants.HANDLER_POWER_DEPLETE_ALGAE) && lastCoralIn) {
+        //     isCoralIn = false;
+        // }
 
         lastCoralIrVal = coralIrVal;
+        lastCoralIn = isCoralIn;
     }
 
     public static int getCounter() {
         return counter;
     }
 
+    public static boolean getReset() {
+        return isReset;
+    }
     public static boolean isAlgaeIn() {
         return algaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE;
     }
@@ -130,7 +146,6 @@ public class Handler {
     }
 }
 
-
-
 // INTAKE - intake coral, deplete coral 1 - 3 (level), intake algae
 // DEPLETE - deplete algae, deplete coral level 4
+// package frc.robot.subsystems.Handler;

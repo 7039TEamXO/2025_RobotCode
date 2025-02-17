@@ -11,13 +11,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "14to20"
+                  "pathName": "15to22V2"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Level_0"
+                  "name": "Level_3"
                 }
               }
             ]
@@ -30,7 +30,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 0.2
+                  "waitTime": 0.25
                 }
               },
               {
@@ -49,7 +49,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "20to13"
+                  "pathName": "22to12"
                 }
               },
               {
@@ -87,7 +87,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "13to19U"
+                  "pathName": "12to17D"
                 }
               },
               {
@@ -125,7 +125,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "19Uto13"
+                  "pathName": "17Dto12"
                 }
               },
               {
@@ -163,7 +163,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "13to19D"
+                  "pathName": "12to17U"
                 }
               },
               {
@@ -198,6 +198,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "TripleCoral",
   "choreoAuto": false
 }

@@ -12,7 +12,6 @@ import frc.robot.subsystems.Wrist.Wrist;
 import frc.robot.subsystems.Wrist.WristConstants;
 
 public class Elevator {
-
     private static double elevatorPosition; 
     private static final MotionMagicVoltage motorRequest = new MotionMagicVoltage(0);
 
@@ -40,12 +39,12 @@ public class Elevator {
                 break;
 
             case LEVEL0:
-            if (Wrist.getCurrentPosition() <= WristConstants.WRIST_POS_DEPLETE_CORAL_LEVEL0_ELEVATOR_SAFE) {
+                if (Wrist.getCurrentPosition() <= WristConstants.WRIST_POS_DEPLETE_CORAL_LEVEL0_ELEVATOR_SAFE) {
 
-                elevatorPosition = ElevatorConstants.ELEVATOR_POSE_LEVEL1;
-            } else {
-                elevatorPosition = ElevatorConstants.ELEVATOR_POSE_BASE;
-            }
+                    elevatorPosition = ElevatorConstants.ELEVATOR_POSE_LEVEL1;
+                } else {
+                    elevatorPosition = ElevatorConstants.ELEVATOR_POSE_BASE;
+                }
                 break;
 
             case LEVEL1:
@@ -58,6 +57,9 @@ public class Elevator {
 
             case LEVEL3:
                 elevatorPosition = ElevatorConstants.ELEVATOR_POSE_LEVEL3;
+                break;
+            case INTAKE_CORAL:
+                elevatorPosition = ElevatorConstants.ELEVATOR_POSE_LEVEL0;
                 break;
 
         }
@@ -76,7 +78,6 @@ public class Elevator {
     public static double getCmFromEncoder(double encoder) {
         return encoder * ElevatorConstants.EncoderMultiplier;
     }
-    
 
     public static double getMotorOutput(){
         return elevatorMasterMotor.getVelocity().getValueAsDouble();
@@ -94,15 +95,12 @@ public class Elevator {
         slot0Configs.kI = ElevatorConstants.kI; // no output for integrated error
         slot0Configs.kD = ElevatorConstants.kD; // A velocity error of 1 rps results in 0.1 V output
 
-        
-
         // set Motion Magic settings
         var motionMagicConfigs = rightTalonFXConfigs.MotionMagic;
         motionMagicConfigs.MotionMagicCruiseVelocity = ElevatorConstants.MotionMagicCruiseVelocity; // Target cruise velocity of 80 rps
         motionMagicConfigs.MotionMagicAcceleration = ElevatorConstants.MotionMagicAcceleration; // Target acceleration of 160 rps/s (0.5 seconds)
         motionMagicConfigs.MotionMagicJerk = ElevatorConstants.MotionMagicJerk; // Target jerk of 1600 rps/s/s (0.1 seconds)
         
-
         rightTalonFXConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         rightTalonFXConfigs.CurrentLimits.StatorCurrentLimit = ElevatorConstants.StatorCurrentLimit;
         rightTalonFXConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -112,12 +110,8 @@ public class Elevator {
         rightTalonFXConfigs.MotorOutput.PeakForwardDutyCycle = 1;
         rightTalonFXConfigs.MotorOutput.PeakReverseDutyCycle = -0.6;
 
-
         elevatorMasterMotor.getConfigurator().apply(rightTalonFXConfigs);
 
-        // 
-
-        
         var leftTalonFXConfigs = new TalonFXConfiguration();
 
         leftTalonFXConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -131,7 +125,5 @@ public class Elevator {
         leftTalonFXConfigs.MotorOutput.PeakReverseDutyCycle = -0.3;
 
         elevatorSlaveMotor.getConfigurator().apply(leftTalonFXConfigs);
-
-
     }
 }

@@ -13,13 +13,13 @@ import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Wrist.Wrist;
 import frc.robot.subsystems.Handler.Handler;
 
-
 public class Dashboard {
     private final static SendableChooser<String> m_chooser = new SendableChooser<>();
     private static String m_autoSelected;
     private static ShuffleboardTab driver = Shuffleboard.getTab("Driver");
-    private static ShuffleboardTab subsystemsInformation = Shuffleboard.getTab("SubsystemsInformation");
     private static ShuffleboardTab telemetry = Shuffleboard.getTab("Telemetry");
+    private static ShuffleboardTab subsystemsInformation = Shuffleboard.getTab("SubsystemsInformation");
+    private static ShuffleboardTab debugging = Shuffleboard.getTab("Debugging");
     private static HttpCamera limelightcamera = new HttpCamera("limelight", "http://10.70.39.11:5801");
 
     public static void init() {
@@ -31,8 +31,7 @@ public class Dashboard {
                 m_chooser.setDefaultOption(name_state, name_state);
             }
             m_chooser.addOption(name_state, name_state);
-        }
-        
+        }  
 
         // SendableChooser<Double> m_robotPose = new SendableChooser<Double>();
         // m_robotPose.addOption("Robot Pose [X]", SubsystemManager.getDriveBase().getPose().getX());
@@ -41,7 +40,6 @@ public class Dashboard {
 
         driver.add("Autos", m_chooser).withPosition(0, 0).withSize(5, 3);
         driver.add("Limelight Camera", limelightcamera).withPosition(17, 0).withSize(9, 6);
-
 
         // telemetry.add("Robot Pose", m_robotPose).withPosition(0, 0).withSize(5, 3);
 
@@ -66,14 +64,19 @@ public class Dashboard {
         subsystemsInformation.addString("ClimbState", () -> SubsystemManager.getClimbState().name()).withPosition(23, 3).withSize(3, 3);
 
         subsystemsInformation.addBoolean("isCoralIn", () -> Handler.isCoralIn()).withPosition(6, 3).withSize(3, 3);
-        subsystemsInformation.addBoolean("isAlgaelIn", () -> Handler.isAlgaeIn()).withPosition(9, 3).withSize(3, 3);;
-        
-        
+        subsystemsInformation.addBoolean("isAlgaelIn", () -> Handler.isAlgaeIn()).withPosition(9, 3).withSize(3, 3);
+
+        debugging.addNumber("HandlerCounter", () -> Handler.getCounter()).withPosition(0, 0).withSize(3,3);
+        debugging.addBoolean("HandlerReset", () -> Handler.getReset()).withPosition(3, 0).withSize(3,3);
+
+        debugging.addString("ElevatorState",() -> SubsystemManager.getElevatorState().name()).withPosition(17, 0).withSize(5, 3);
+        debugging.addString("LastElevatorState",() -> SubsystemManager.getLastElevatorState().name()).withPosition(22, 0).withSize(5, 3);
     }
 
     public static String getSelectedAutonomy() {
         return m_autoSelected = m_chooser.getSelected();
     }
+
     // public static Autos getSelected() {
     //     if (m_chooser.getSelected() != null) {
     //         m_autoSelected = m_chooser.getSelected();

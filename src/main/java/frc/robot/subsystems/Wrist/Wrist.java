@@ -7,7 +7,6 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public class Wrist {
-
     private static TalonFX master = new TalonFX(WristConstants.WristMotorID);
     private static double wristPosition;
 
@@ -40,7 +39,6 @@ public class Wrist {
             case DEPLETE_CORAL_LEVEL0:
                 wristPosition = WristConstants.WRIST_POS_DEPLETE_CORAL_LEVEL0;
                 break;
-
         }
 
         master.setControl(motorRequest.withPosition(wristPosition));
@@ -48,7 +46,7 @@ public class Wrist {
         // System.out.println("pose :" + master.getPosition().getValueAsDouble());
     }
 
-    public static double getCurrentPosition(){
+    public static double getCurrentPosition() {
         return master.getPosition().getValueAsDouble();
     }
 

@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 7.2,
-        "y": 4.768076923076923
+        "y": 6.2
       },
       "prevControl": null,
       "nextControl": {
         "x": 6.126666666666667,
-        "y": 4.7474358974358974
+        "y": 6.1793589743589745
       },
       "isLocked": false,
       "linkedName": null
@@ -59,7 +59,7 @@
     "rotation": -119.99999999999999
   },
   "reversed": false,
-  "folder": "QuadCoralB",
+  "folder": "TripleCoralUp",
   "idealStartingState": {
     "velocity": 0.0,
     "rotation": 180.0

@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.9,
+        "x": 5.8,
         "y": 4.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.4,
-        "y": 4.0
+        "x": 6.383091860889932,
+        "y": 3.063988623790906
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.628333333333333,
-        "y": 2.3117948717948718
+        "x": 6.6,
+        "y": 2.3
       },
       "prevControl": {
-        "x": 6.628333333333333,
-        "y": 2.8117948717948718
+        "x": 6.6,
+        "y": 2.8
       },
       "nextControl": {
-        "x": 6.628333333333333,
-        "y": 1.8117948717948718
+        "x": 6.6,
+        "y": 1.7999999999999998
       },
       "isLocked": false,
       "linkedName": null
@@ -33,23 +33,18 @@
     {
       "anchor": {
         "x": 6.35,
-        "y": 0.6
+        "y": 0.55
       },
       "prevControl": {
-        "x": 6.35,
-        "y": 0.85
+        "x": 6.371874364771961,
+        "y": 0.8651385088503811
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1.15,
-      "rotationDegrees": -90.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -66,7 +61,7 @@
     "rotation": -90.0
   },
   "reversed": false,
-  "folder": "TripleAlgae",
+  "folder": "DoubleAlgaeDown",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0
