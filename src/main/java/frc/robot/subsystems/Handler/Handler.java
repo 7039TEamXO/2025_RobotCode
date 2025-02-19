@@ -39,6 +39,7 @@ public class Handler {
     }
 
     public static void operate(HandlerState state) {
+        // updateHandlerIr();
         switch (state) {
             case INTAKE_ALGAE: // intake coral, deplete coral 1 - 3 (level), intake algae
                 // isReset = true;

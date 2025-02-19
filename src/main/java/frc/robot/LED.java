@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.LEDPattern;
@@ -10,12 +11,20 @@ import frc.robot.subsystems.Handler.Handler;
 public class LED {
     private static AddressableLEDBuffer buffer = new AddressableLEDBuffer(2000);
     private static Color color = Color.kOrangeRed;
-    private static AddressableLED channel = new AddressableLED(1); // return to 8
+    private static AddressableLED midChannel = new AddressableLED(1); // return to 8
+    // private static AddressableLED leftChannel = new AddressableLED(3);
+    // private static AddressableLED rightChannel = new AddressableLED(2);
 
     public static void init() {
-        channel.setLength(buffer.getLength());
-        channel.setData(buffer);
-        channel.start();
+        midChannel.setLength(buffer.getLength());
+        midChannel.setData(buffer);
+        midChannel.start();
+        // leftChannel.setLength(buffer.getLength());
+        // leftChannel.setData(buffer);
+        // leftChannel.start();
+        // rightChannel.setLength(buffer.getLength());
+        // rightChannel.setData(buffer);
+        // rightChannel.start();
     }
 
     public static void setLedData() {
@@ -33,8 +42,25 @@ public class LED {
             buffer.setLED(i, color);
         }
         // Maybe cache the patterns instead
+
+        
+        // Apply the LED pattern to the data buffer
+        
+        
+        // Write the data to the LED strip
+        
         // LEDPattern pattern = LEDPattern.solid(color);
         // pattern.applyTo(buffer);
-        channel.setData(buffer);
+        midChannel.setData(buffer);
+        // rightChannel.setData(buffer);
+        // leftChannel.setData(buffer);
+
+
+
+
+        // Distance ledSpacing = Meters.of(1 / 120.0);
+        // LEDPattern base = LEDPattern.discontinuousGradient(Color.kRed, Color.kBlue);
+        // LEDPattern pattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(25));
+        // LEDPattern absolute = base.scrollAtAbsoluteSpeed(Centimeters.per(Second).of(12.5), ledSpacing);
     }
 }

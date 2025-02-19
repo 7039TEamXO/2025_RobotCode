@@ -27,6 +27,7 @@ public class Tray {
                 trayPosition = TrayConstants.TRAY_POS_UP;
                 break;
         }
+        // System.out.println(trayMotor.getPosition().getValueAsDouble());
         trayMotor.setControl(motorRequest.withPosition(trayPosition));
     }
 
@@ -54,5 +55,9 @@ public class Tray {
         talonFXConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
 
         trayMotor.getConfigurator().apply(talonFXConfigs);
+    }
+
+    public static double getTrayPosition(){
+        return trayMotor.getPosition().getValueAsDouble();
     }
 }

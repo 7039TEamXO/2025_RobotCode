@@ -1,8 +1,12 @@
 package frc.robot;
 
 public enum Autos {
-    QuadCoralBAuto("QuadCoralBAuto"),
-    HOME_RED_START("HomeRedStart");
+    TripleCoralDownAuto("TripleCoralDownAuto"),
+    TripleCoralDownLevel3Auto("TripleCoralDownV2Auto"),
+    TripleCoralUpAuto("TripleCoralUpAuto"),
+    TripleCoralUpLevel3Auto("TripleCoralUpV2Auto"),
+    DoubleAlgaeDownAuto("DoubleAlgaeDownAuto"),
+    DoubleAlgaeUpAuto("DoubleAlgaeUpAuto");
     
     private final String autoName;
     

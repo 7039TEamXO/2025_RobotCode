@@ -12,6 +12,7 @@ import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Wrist.Wrist;
 import frc.robot.subsystems.Handler.Handler;
+import frc.robot.subsystems.Tray.Tray;
 
 public class Dashboard {
     private final static SendableChooser<String> m_chooser = new SendableChooser<>();
@@ -54,6 +55,7 @@ public class Dashboard {
         
         subsystemsInformation.addNumber("Elevator_raw", () -> Elevator.getCurrentPosition()).withPosition(0, 0).withSize(3, 3);
         subsystemsInformation.addNumber("Wrist_raw", () -> Wrist.getCurrentPosition()).withPosition(3, 0).withSize(3, 3);
+        subsystemsInformation.addNumber("Tray_raw", () -> Tray.getTrayPosition()).withPosition(0, 3).withSize(3, 3);
         subsystemsInformation.addBoolean("CoralIR ", ()-> Handler.getCoralIr()).withPosition(6, 0).withSize(3, 3);
         subsystemsInformation.addNumber("AlgaeIR ", ()-> Handler.getAlgaeIrValue()).withPosition(9, 0).withSize(3, 3);
 
@@ -71,6 +73,7 @@ public class Dashboard {
 
         debugging.addString("ElevatorState",() -> SubsystemManager.getElevatorState().name()).withPosition(17, 0).withSize(5, 3);
         debugging.addString("LastElevatorState",() -> SubsystemManager.getLastElevatorState().name()).withPosition(22, 0).withSize(5, 3);
+
     }
 
     public static String getSelectedAutonomy() {

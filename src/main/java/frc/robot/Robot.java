@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 //import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.subsystems.SubsystemManager;
+import frc.robot.subsystems.Handler.Handler;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 import java.io.File;
@@ -139,7 +140,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic()
   { 
-    
+    SubsystemManager.operate(true);
   }
 
   @Override

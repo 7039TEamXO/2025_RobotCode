@@ -104,6 +104,7 @@ public class RobotContainer
     NamedCommands.registerCommand("IntakeCoral", SubsystemManager.intakeCoralCommand);
     NamedCommands.registerCommand("IntakeAlgaeLow", SubsystemManager.intakeAlgaeLowCommand);
     NamedCommands.registerCommand("IntakeAlgaeHigh", SubsystemManager.intakeAlgaeHighCommand);
+    NamedCommands.registerCommand("Base", SubsystemManager.baseCommand);
     NamedCommands.registerCommand("Level_0", SubsystemManager.level0Command);
     NamedCommands.registerCommand("Level_1", SubsystemManager.level1Command);
     NamedCommands.registerCommand("Level_2", SubsystemManager.level2Command);

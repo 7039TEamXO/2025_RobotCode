@@ -71,7 +71,7 @@ public class DeliveryManager {
         }
             
         // wristState = Handler.isAlgaeIn() ? WristState.INTAKE_ALGAE : wristState;
-        
+
         Wrist.operate(wristState);
         Elevator.operate(elevatorState);
     }

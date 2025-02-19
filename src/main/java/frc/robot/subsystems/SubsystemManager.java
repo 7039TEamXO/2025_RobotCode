@@ -66,6 +66,7 @@ public class SubsystemManager {
     public static Command intakeCoralCommand = Commands.run(() -> operateAuto(RobotState.INTAKE, ElevatorState.BASE));
     public static Command intakeAlgaeLowCommand = Commands.run(() -> operateAuto(RobotState.INTAKE, ElevatorState.ALGAE_LOW));
     public static Command intakeAlgaeHighCommand = Commands.run(() -> operateAuto(RobotState.INTAKE, ElevatorState.ALGAE_HIGH));
+    public static Command baseCommand = Commands.run(() -> operateAuto(null, ElevatorState.BASE));
     public static Command level0Command = Commands.run(() -> operateAuto(null, ElevatorState.LEVEL0));
     public static Command level1Command = Commands.run(() -> operateAuto(null, ElevatorState.LEVEL1));
     public static Command level2Command = Commands.run(() -> operateAuto(null, ElevatorState.LEVEL2));
@@ -102,7 +103,7 @@ public class SubsystemManager {
             psController_HID.getPOV(0) == 270 ? ElevatorState.ALGAE_LOW : // left
             lastElevatorState;
         }
-           
+        Handler.updateHandlerIr();
         switch (state) {
             case TRAVEL:
                 if(Handler.isAlgaeIn() && (elevatorState == ElevatorState.ALGAE_LOW || 
@@ -171,7 +172,7 @@ public class SubsystemManager {
             isTxSeen = false;
         }
         // System.out.println("S - " + state + " E - " + elevatorState + " LE - " + lastElevatorState + " H - " + handlerState + " C - " + Handler.getCounter() + " CIV - " + Handler.getCoralIr());
-        Handler.updateHandlerIr();
+        
         // Handler.updateHandlerIr((lastElevatorState != ElevatorState.BASE && 
         //                         lastElevatorState != ElevatorState.INTAKE_CORAL) ||
         //                             handlerState == HandlerState.DEPLETE_CORAL || 
