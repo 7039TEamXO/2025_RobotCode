@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import java.io.File;
 import java.lang.annotation.ElementType;
+import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -72,6 +73,9 @@ public class SubsystemManager {
     public static Command level2Command = Commands.run(() -> operateAuto(null, ElevatorState.LEVEL2));
     public static Command level3Command = Commands.run(() -> operateAuto(null, ElevatorState.LEVEL3));
     public static Command depleteCommand = Commands.run(() -> operateAuto(RobotState.DEPLETE, null));
+    public static Command alignCommand = Commands.run(() -> getDriveBase().alignByLimelight(() -> 0));
+    public static Command SelectLeftLimelight = Commands.runOnce(() -> Limelight.setPipeline(1));
+
     // public static Command alighRightCommand = SubsystemManager.getDriveBase().alignByLimelight((-psController_HID.getLeftY()));
 
     public static void init() {

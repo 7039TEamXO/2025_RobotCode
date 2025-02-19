@@ -59,7 +59,7 @@
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": "DoubleAlgaeUp",
+  "folder": "DoubleAlgaeLeft",
   "idealStartingState": {
     "velocity": 0.0,
     "rotation": 180.0

@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.914,
-        "y": 5.119
+        "x": 3.9,
+        "y": 5.05
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.8738611890985584,
-        "y": 5.365756713909507
+        "x": 3.859861189098558,
+        "y": 5.296756713909507
       },
       "isLocked": false,
       "linkedName": null
@@ -45,7 +45,7 @@
     "rotation": -55.0
   },
   "reversed": false,
-  "folder": "TripleCoralUp",
+  "folder": "TripleCoralLeft",
   "idealStartingState": {
     "velocity": 0.0,
     "rotation": -59.99999999999999

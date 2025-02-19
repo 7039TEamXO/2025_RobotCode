@@ -429,9 +429,6 @@ public class SwerveSubsystem extends SubsystemBase
                                       false));
 
       }
-    
-
-
 
   
     /**
@@ -911,6 +908,10 @@ public class SwerveSubsystem extends SubsystemBase
   }
     
   public static double calculateSpeedAccordingToElevator(double maxV, double minV){
+    if (Elevator.getCurrentPosition() <= ElevatorConstants.ELEVATOR_POSE_SAFE_TO_ROTATE){
+      return maxV;
+    }
+
     return (maxV - minV) -
       ((Elevator.getCurrentPosition() / ElevatorConstants.maxPos) * (maxV - minV)) + minV;
     

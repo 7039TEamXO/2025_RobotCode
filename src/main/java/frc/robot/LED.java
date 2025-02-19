@@ -31,14 +31,13 @@ public class LED {
         
         color = Color.kOrangeRed;
         if (Handler.isCoralIn() || Handler.isAlgaeIn()) {
-            color = Color.kAquamarine;
+            color = Color.kDeepPink;
         }
         if (SubsystemManager.getTxSeen()) {
             color = Color.kGreen;
         }
 
         for (int i = 0; i < buffer.getLength(); i++) {
-
             buffer.setLED(i, color);
         }
         // Maybe cache the patterns instead

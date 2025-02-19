@@ -21,7 +21,7 @@
       },
       "prevControl": {
         "x": 4.903325483708279,
-        "y": 6.141085401734286
+        "y": 6.141085401734287
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,7 @@
     "rotation": 90.0
   },
   "reversed": false,
-  "folder": "DoubleAlgaeUp",
+  "folder": "DoubleAlgaeLeft",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -119.99999999999999

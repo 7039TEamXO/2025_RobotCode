@@ -40,7 +40,6 @@ public class Elevator {
 
             case LEVEL0:
                 if (Wrist.getCurrentPosition() <= WristConstants.WRIST_POS_DEPLETE_CORAL_LEVEL0_ELEVATOR_SAFE) {
-
                     elevatorPosition = ElevatorConstants.ELEVATOR_POSE_LEVEL1;
                 } else {
                     elevatorPosition = ElevatorConstants.ELEVATOR_POSE_BASE;

@@ -92,18 +92,23 @@ public class Handler {
         // System.out.println("UpdHIR [!]");
         
         // System.out.println("[IsReset] " + isReset);
-        if (!coralIrVal && lastCoralIrVal) {
-                isCoralIn = true;
+        // if (!coralIrVal && lastCoralIrVal) {
+        //         isCoralIn = true;
+        // }
+        if (coralIrVal) {
+            counter++;
+        } else if(!lastCoralIrVal) {
+            counter = 0;
         }
-
         // if (isReset) {
         //     isCoralIn = false;
         //     counter = 0;
+
         // }
 
-        if (lastCoralIn && (power != HandlerConstants.HANDLER_POWER_DEPLETE_CORAL &&
+        if (!coralIrVal && (power != HandlerConstants.HANDLER_POWER_DEPLETE_CORAL &&
                 power != HandlerConstants.HANDLER_POWER_DEPLETE_ALGAE && 
-                    power != HandlerConstants.HANDLER_POWER_DEPLETE_CORAL_LEVEL0)) {
+                    power != HandlerConstants.HANDLER_POWER_DEPLETE_CORAL_LEVEL0) && counter > 16) {
             isCoralIn = true;
         }
         if (power == HandlerConstants.HANDLER_POWER_DEPLETE_CORAL ||
@@ -111,7 +116,9 @@ public class Handler {
                     power == HandlerConstants.HANDLER_POWER_DEPLETE_CORAL_LEVEL0 ||
                         power == HandlerConstants.HANDLER_POWER_INTAKE_ALGAE) {
             isCoralIn = false;
-                    }
+            counter = 0;
+        }
+        // System.out.println(counter);
         // if ((power == HandlerConstants.HANDLER_POWER_DEPLETE_ALGAE) && lastCoralIn) {
         //     isCoralIn = false;
         // }
@@ -149,4 +156,3 @@ public class Handler {
 
 // INTAKE - intake coral, deplete coral 1 - 3 (level), intake algae
 // DEPLETE - deplete algae, deplete coral level 4
-// package frc.robot.subsystems.Handler;
