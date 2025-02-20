@@ -98,7 +98,7 @@ public class SubsystemManager {
             psController_HID.getCrossButton() && !Handler.isAlgaeIn() && lastElevatorState != ElevatorState.BASE ? 
                 RobotState.INTAKE : lastState;
 
-            elevatorState = psController_HID.getCrossButton() ? ElevatorState.BASE :
+            elevatorState = psController_HID.getCrossButton() ? ElevatorState.BASE : // BASE
             psController_HID.getSquareButton() ? ElevatorState.LEVEL1 :
             psController_HID.getTriangleButton() ? ElevatorState.LEVEL3 :
             psController_HID.getCircleButton() ? ElevatorState.LEVEL2 :
@@ -119,7 +119,7 @@ public class SubsystemManager {
                     handlerState = HandlerState.STOP;
                 }
                 if ((lastElevatorState == ElevatorState.INTAKE_CORAL && Handler.isCoralIn()) && elevatorState != ElevatorState.LEVEL0) {
-                    elevatorState = ElevatorState.BASE;
+                    elevatorState = ElevatorState.BASE;//base
                 }
                 trayState = TrayState.BASE;
                 isLocked = false; // ????

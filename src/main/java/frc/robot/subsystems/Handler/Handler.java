@@ -18,6 +18,7 @@ public class Handler {
     private static TalonFX master = new TalonFX(HandlerConstants.HandlerMotorID);
     private static AnalogInput algaeIrInput = new AnalogInput(HandlerConstants.HandlerAnalogInputSensorID);
     private static int algaeIrValue = algaeIrInput.getValue();
+    private static int lastAlgaeIrValue = algaeIrInput.getValue();
     private static double power = HandlerConstants.HANDLER_POWER_STOP;
 
     private static DigitalInput coralIrInput = new DigitalInput(HandlerConstants.HandlerDigitalInputSensorID);
@@ -125,6 +126,7 @@ public class Handler {
 
         lastCoralIrVal = coralIrVal;
         lastCoralIn = isCoralIn;
+        lastAlgaeIrValue = algaeIrValue;
     }
 
     public static int getCounter() {
@@ -135,7 +137,7 @@ public class Handler {
         return isReset;
     }
     public static boolean isAlgaeIn() {
-        return algaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE;
+        return algaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE && lastAlgaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE;
     }
 
     public static boolean isCoralIn() {

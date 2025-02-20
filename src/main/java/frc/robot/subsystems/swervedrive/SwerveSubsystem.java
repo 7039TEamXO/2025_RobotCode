@@ -916,12 +916,11 @@ public class SwerveSubsystem extends SubsystemBase
       ((Elevator.getCurrentPosition() / ElevatorConstants.maxPos) * (maxV - minV)) + minV;
     
   }
+
   public static boolean isRobotVBelowOne(){
     return (Math.abs(swerveDrive.getRobotVelocity().vxMetersPerSecond) < 0.3) &&
             (Math.abs(swerveDrive.getRobotVelocity().vyMetersPerSecond) < 0.3) &&  
               (Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) < 0.2);
-
   }
-
-  } 
+} 
 

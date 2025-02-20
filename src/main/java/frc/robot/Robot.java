@@ -107,8 +107,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic()
   {
-    // Limelight.updatePosition();
-    
+    //Limelight.updatePosition();
     // if (disabledTimer.hasElapsed(Constants.DrivebaseConstants.WHEEL_LOCK_TIME))
     // {
     //   m_robotContainer.setMotorBrake(false);
@@ -173,6 +172,7 @@ public class Robot extends TimedRobot {
     // ));
     //System.out.println("x - " + Limelight.getTx() + "y - " + Limelight.getTy());
     SubsystemManager.operate(false);
+    //Limelight.updatePosition();
     // System.out.println();
     
     // the robot moves in SwerveSubsystem.driveCommand

@@ -8,6 +8,7 @@ public enum Autos {
     Double_Algae_Right("Double_Algae_Right"),
     Double_Algae_Left("Double_Algae_Left"),
     Test("Test");
+
     
     private final String autoName;
     

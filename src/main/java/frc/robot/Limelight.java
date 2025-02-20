@@ -137,7 +137,7 @@ public class Limelight {
         // LimelightHelpers.getBotPose2d_wpiRed("limelight").getY()),
         // Rotation2d.fromDegrees(LimelightHelpers.getBotPose2d_wpiRed("limelight").getRotation().getDegrees())));
 
-        // LEADS TO A ROBOT CODE FAIL:
+        // LEADS TO A ROBOT CODE FAIL [?]
         if(hasTarget) {
             if(tx.getDouble(0) != 0 && ty.getDouble(0) != 0){
                 if (Array.getLength(botPosWpiBlue.getDoubleArray(new Double[]{})) > 2) {
@@ -153,14 +153,14 @@ public class Limelight {
             }
         }
         
-        // printRobotPose();
+        printRobotPose();
         // System.out.println("X___" + SubsystemManager.getDriveBase().getPose().getX() + " Y___" + SubsystemManager.getDriveBase().getPose().getY() + "  Rot___" + SubsystemManager.getDriveBase().getPose().getRotation());
     }
 
     private static void printRobotPose() {
         System.out.println("x: " +  SubsystemManager.getDriveBase().getPose().getX());
-        System.out.println("tv : " + botPosWpiBlue.getDoubleArray(new Double[]{})[0]);
-        // System.out.println("y: " +  SubsystemManager.getDriveBase().getPose().getY());
+        //System.out.println("tv : " + botPosWpiRed.getDoubleArray(new Double[]{})[0]);
+        System.out.println("y: " +  SubsystemManager.getDriveBase().getPose().getY());
         // System.out.println("angle: " +  SubsystemManager.getDriveBase().getHeading().getDegrees());
 
         // if (RobotContainer.teamColorIsBlue()) {
