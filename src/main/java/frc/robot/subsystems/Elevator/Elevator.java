@@ -8,6 +8,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import frc.robot.Dashboard;
 import frc.robot.subsystems.Wrist.Wrist;
 import frc.robot.subsystems.Wrist.WristConstants;
 
@@ -31,11 +32,11 @@ public class Elevator {
                 break;
 
             case ALGAE_HIGH:
-                elevatorPosition = ElevatorConstants.ELEVATOR_POSE_ALGAE_HIGH;
+                elevatorPosition = ElevatorConstants.ELEVATOR_POSE_ALGAE_HIGH + Dashboard.setElevatorChanges();
                 break;
 
             case ALGAE_LOW:
-                elevatorPosition = ElevatorConstants.ELEVATOR_POSE_ALGAE_LOW;
+                elevatorPosition = ElevatorConstants.ELEVATOR_POSE_ALGAE_LOW + Dashboard.setElevatorChanges();
                 break;
 
             case LEVEL0:

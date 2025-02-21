@@ -6,6 +6,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import frc.robot.Dashboard;
+
 public class Wrist {
     private static TalonFX master = new TalonFX(WristConstants.WristMotorID);
     private static double wristPosition;
@@ -29,7 +31,7 @@ public class Wrist {
                 break;
 
             case INTAKE_ALGAE:
-                wristPosition = WristConstants.WRIST_POS_INTAKE_ALGAE;
+                wristPosition = WristConstants.WRIST_POS_INTAKE_ALGAE ; //+ Dashboard.setWristPositionChanges()
                 break;
                 
             case DEPLETE_CORAL:
@@ -41,6 +43,7 @@ public class Wrist {
                 break;
         }
 
+        wristPosition = wristPosition + Dashboard.setCriticalWristChanges(); // critical changes
         master.setControl(motorRequest.withPosition(wristPosition));
 
         // System.out.println("pose :" + master.getPosition().getValueAsDouble());

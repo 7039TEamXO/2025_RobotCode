@@ -1,5 +1,7 @@
 package frc.robot.subsystems.Elevator;
 
+import frc.robot.Dashboard;
+
 public class ElevatorConstants {
     public static final int ElevatorRightMotorID = 8;
     public static final int ElevatorLeftMotorID = 10;
@@ -25,8 +27,8 @@ public class ElevatorConstants {
     public static final double ELEVATOR_POSE_LEVEL1 = 4.84;
     public static final double ELEVATOR_POSE_LEVEL2 = 10.57;
     public static final double ELEVATOR_POSE_LEVEL3 = 18.25;
-    public static final double ELEVATOR_POSE_ALGAE_LOW = 7;
-    public static final double ELEVATOR_POSE_ALGAE_HIGH = 12.3;
+    public static final double ELEVATOR_POSE_ALGAE_LOW = 6.7;//7
+    public static final double ELEVATOR_POSE_ALGAE_HIGH = 11.9;//12.2
 
     public static final double ELEVATOR_POSE_SAFE_TO_ROTATE = 1;
 

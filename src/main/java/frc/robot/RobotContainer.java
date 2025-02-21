@@ -145,7 +145,7 @@ public class RobotContainer
       () -> (modifyAxis(-SubsystemManager.getpsJoystick().getRightX())));
     } else{
     
-    SubsystemManager.getDriveBase().zeroGyroWithAlliance();
+    // SubsystemManager.getDriveBase().zeroGyroWithAlliance();
       driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
       () -> (modifyAxis(SubsystemManager.getpsJoystick().getLeftY())),
       () -> (modifyAxis(SubsystemManager.getpsJoystick().getLeftX())),

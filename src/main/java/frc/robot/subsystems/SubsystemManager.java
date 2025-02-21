@@ -27,6 +27,7 @@ import frc.robot.RobotState;
 import frc.robot.subsystems.Climb.Climb;
 import frc.robot.subsystems.Climb.ClimbConstants;
 import frc.robot.subsystems.Climb.ClimbState;
+import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.Handler.HandlerState;
 import frc.robot.subsystems.Tray.Tray;
@@ -88,6 +89,7 @@ public class SubsystemManager {
     }
 
     public static void operate(boolean onAuto) {
+        Handler.updateHandlerIr();
         if (!onAuto) {
             state = psController_HID.getL2Button() ? RobotState.DEPLETE :
             psController_HID.getR2Button() ? RobotState.INTAKE :
@@ -107,7 +109,7 @@ public class SubsystemManager {
             psController_HID.getPOV(0) == 270 ? ElevatorState.ALGAE_LOW : // left
             lastElevatorState;
         }
-        Handler.updateHandlerIr();
+        
         switch (state) {
             case TRAVEL:
                 if(Handler.isAlgaeIn() && (elevatorState == ElevatorState.ALGAE_LOW || 
@@ -199,11 +201,14 @@ public class SubsystemManager {
             isAutoElevatorCounting = false;
             autoElevatorCounter = 0;
         }
+        
         DeliveryManager.operate(elevatorState);
         Handler.operate(handlerState);
         Climb.operate(climbState);
         Tray.operate(trayState);
         
+        // System.out.println("ElevatorSt: " + elevatorState + " HandlerSt: " + handlerState + " WristSt: " + DeliveryManager.getWristState() + " WristPos: " + Wrist.getCurrentPosition() + " AlgaeIR: " + Handler.getAlgaeIrValue());
+
         if (isLocked) drivebase.lock();   
         lastState = state;
         lastElevatorState = elevatorState;

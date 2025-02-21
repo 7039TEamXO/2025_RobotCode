@@ -3,6 +3,7 @@ package frc.robot;
 // import java.util.logging.Handler;
 
 import edu.wpi.first.cscore.HttpCamera;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -22,6 +23,13 @@ public class Dashboard {
     private static ShuffleboardTab subsystemsInformation = Shuffleboard.getTab("SubsystemsInformation");
     private static ShuffleboardTab debugging = Shuffleboard.getTab("Debugging");
     private static HttpCamera limelightcamera = new HttpCamera("limelight", "http://10.70.39.11:5801");
+
+    private static GenericEntry setWristPositionChanges = subsystemsInformation.add("wristPoseChange", 0)
+        .withPosition(11, 8).withSize(3, 3).getEntry();
+    private static GenericEntry setCriticalWristChanges = subsystemsInformation.add("CriticalPoseChange", 0)
+        .withPosition(3, 8).withSize(3, 3).getEntry();
+    private static GenericEntry setElevatorChanges = subsystemsInformation.add("elevatorPoseChange", 0)
+        .withPosition(18, 8).withSize(3, 3).getEntry();
 
     public static void init() {
         Autos[] states = Autos.values();
@@ -76,8 +84,17 @@ public class Dashboard {
 
     }
 
+    public static double setCriticalWristChanges() {
+        return setCriticalWristChanges.getDouble(0);
+    }
     public static String getSelectedAutonomy() {
         return m_autoSelected = m_chooser.getSelected();
+    }
+    public static double setWristPositionChanges() {
+        return setWristPositionChanges.getDouble(0);
+    }
+    public static double setElevatorChanges() {
+        return setElevatorChanges.getDouble(0);
     }
 
     // public static Autos getSelected() {

@@ -27,6 +27,10 @@ public class Handler {
     private static boolean isCoralIn = false;
     private static boolean lastCoralIn = false;
     private static boolean feedCoral = false;
+    private static boolean startCountingCoral = false;
+    private static boolean startCountingAlgae = false;
+    private static int countingAlgae = 0;
+    private static int countingCoral = 0;
     private static int counter = 0;
     private static boolean isReset = false;
     private static boolean lastCoralIrVal = coralIrInput.get();
@@ -119,11 +123,41 @@ public class Handler {
             isCoralIn = false;
             counter = 0;
         }
+        if (power == HandlerConstants.HANDLER_POWER_DEPLETE_CORAL ||
+                power == HandlerConstants.HANDLER_POWER_DEPLETE_ALGAE || 
+                    power == HandlerConstants.HANDLER_POWER_DEPLETE_CORAL_LEVEL0) {
+                        startCountingCoral = true;
+                        }
+        if (power == HandlerConstants.HANDLER_POWER_DEPLETE_ALGAE && SubsystemManager.getElevatorState() != ElevatorState.LEVEL3) {
+            startCountingAlgae = true;
+
+        }
+        if (startCountingCoral) {
+            countingCoral ++;
+        }
+        if (startCountingAlgae) {
+            power = HandlerConstants.HANDLER_POWER_DEPLETE_ALGAE;
+            countingAlgae ++;
+        }
+
         // System.out.println(counter);
         // if ((power == HandlerConstants.HANDLER_POWER_DEPLETE_ALGAE) && lastCoralIn) {
         //     isCoralIn = false;
         // }
+        if ((countingCoral > 15)) {
+            startCountingCoral = false;
+            countingCoral = 0;
+        }
+        if(countingAlgae > 20) {
+            startCountingAlgae = false;
+            countingAlgae = 0;
+        }
 
+        System.out.println("coral--" + countingCoral);
+        System.out.println("coral--" +startCountingCoral);
+        System.out.println("Algae++" +countingAlgae);
+        System.out.println("Algae++" +startCountingAlgae);
+        
         lastCoralIrVal = coralIrVal;
         lastCoralIn = isCoralIn;
         lastAlgaeIrValue = algaeIrValue;
@@ -137,7 +171,11 @@ public class Handler {
         return isReset;
     }
     public static boolean isAlgaeIn() {
-        return algaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE && lastAlgaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE;
+        if (isCoralIn) {
+            return false;
+        } else{
+            return ((countingAlgae < 20 && countingAlgae > 0) && !startCountingCoral) || algaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE; // return to this moment
+        }
     }
 
     public static boolean isCoralIn() {
@@ -150,6 +188,7 @@ public class Handler {
     public static boolean getCoralIr() {
         return coralIrInput.get();
     }
+
 
     public static int getAlgaeIrValue(){
         return algaeIrValue;
