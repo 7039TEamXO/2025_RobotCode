@@ -25,7 +25,7 @@ public final class Constants
   public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
   public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
         // Maximum speed of the robot in meters per second, used to limit acceleration.
-  public static final double MAX_SPEED  = Units.feetToMeters(10); //v14.5
+  public static final double MAX_SPEED  = Units.feetToMeters(12); //v14.5
   public static final double MIN_SPEED  = Units.feetToMeters(3);
 
   public static final double MAX_ROTATION_V = 5;
@@ -34,8 +34,8 @@ public final class Constants
 
   public static final class AutoConstants
   { 
-    public static final PIDConstants TRANSLATION_PID = new PIDConstants(2, 0.0, 0.0); //0.7
-    public static final PIDConstants ANGLE_PID       = new PIDConstants(3.5, 0, 0); //0.4,0,0.01
+    public static final PIDConstants TRANSLATION_PID = new PIDConstants(3.5, 0.0, 0.0); //0.7  4
+    public static final PIDConstants ANGLE_PID       = new PIDConstants(1.5, 0, 0); //0.4,0,0.01   3.5 
   }
 
   public static final class DrivebaseConstants

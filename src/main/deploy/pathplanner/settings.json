@@ -13,7 +13,7 @@
     "DoubleAlgae",
     "TripleCoral"
   ],
-  "defaultMaxVel": 3.2,
+  "defaultMaxVel": 3.6,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,

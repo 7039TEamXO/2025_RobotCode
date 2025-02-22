@@ -24,55 +24,81 @@ public class DeliveryManager {
     public static void operate(ElevatorState state) {
         elevatorState = state;
         switch (state) {
+            
+            /*===========================*/
+            
             case BASE:
                 if (Handler.isAlgaeIn()) {
                     elevatorState = ElevatorState.BASE;
                     wristState = WristState.INTAKE_ALGAE;
-                }else {
+                }
+                
+                else {
                     elevatorState = ElevatorState.INTAKE_CORAL;
                     wristState = WristState.BASE;
                 }
                 break;
+
+            /*===========================*/
 
             case ALGAE_HIGH:
                 if (Elevator.getCurrentPosition() >= ElevatorConstants.ELEVATOR_POSE_SAFE_TO_ROTATE) {
                     if (Handler.isAlgaeIn()) {
                         elevatorState = ElevatorState.ALGAE_HIGH_IN;
                     }
-                    wristState = WristState.INTAKE_ALGAE;
+                    
+                wristState = WristState.INTAKE_ALGAE;
                 }
+
                 break;
-                
+            
+            /*===========================*/
+            
             case ALGAE_LOW:
                 if (Elevator.getCurrentPosition() >= ElevatorConstants.ELEVATOR_POSE_SAFE_TO_ROTATE) {
                     if (Handler.isAlgaeIn()) {
                         elevatorState = ElevatorState.ALGAE_LOW_IN;
                     }
+
                 wristState = WristState.INTAKE_ALGAE;
                 }
+
                 break;
-            
+                
+            /*===========================*/
+
             case LEVEL0:
                 if (Elevator.getCurrentPosition() >= ElevatorConstants.ELEVATOR_POSE_SAFE_TO_ROTATE) {
                     wristState = WristState.DEPLETE_CORAL_LEVEL0;
-                }else{
+                }
+
+                else {
                     elevatorState = wristState != WristState.DEPLETE_CORAL_LEVEL0 ? ElevatorState.LEVEL1 : ElevatorState.LEVEL0;
                 }
                 break;
+
+            /*===========================*/
 
             case LEVEL1:
                 wristState = WristState.DEPLETE_CORAL;
                 break;
             
+            /*===========================*/
+
             case LEVEL2:
                 wristState = WristState.DEPLETE_CORAL;
                 break;
             
+            /*===========================*/
+
             case LEVEL3:
                 if (Elevator.getCurrentPosition() >= ElevatorConstants.ELEVATOR_POSE_SAFE_TO_ROTATE) {
                     wristState = WristState.HIGH;
                 }
                 break;
+
+            /*===========================*/
+
             case INTAKE_CORAL:
                 wristState = WristState.BASE;
                 break;

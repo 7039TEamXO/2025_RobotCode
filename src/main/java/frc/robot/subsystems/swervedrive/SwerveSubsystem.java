@@ -31,8 +31,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
-//import edu.wpi.first.wpilibj.DriverStation.Alliance;
-//import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
@@ -49,6 +47,8 @@ import java.lang.System.Logger;
 import java.rmi.server.ServerCloneException;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
+
+import org.opencv.core.Mat.Tuple2;
 import org.photonvision.PhotonCamera;
 //import org.photonvision.targeting.PhotonPipelineResult;
 import swervelib.SwerveController;
@@ -124,16 +124,8 @@ public class SwerveSubsystem extends SubsystemBase
       swerveDrive.setAngularVelocityCompensation(true, true, 0.1);
       swerveDrive.setModuleEncoderAutoSynchronize(false, 1);
   
-      // swerveDrive.setMaximumAllowableSpeeds(Constants.MAX_SPEED, 4);
       SwerveController controller = swerveDrive.getSwerveController();
-      // controller.setMaximumChassisAngularVelocity(5);
-      // controller.setMaximumChassisAngularVelocity(3);
-      // if (visionDriveTest)
-      // {
-      //   setupPhotonVision();
-      //   // Stop the odometry thread if we are using vision that way we can synchronize updates better.
-      //   swerveDrive.stopOdometryThread();
-      // }
+
       setupPathPlanner();
     }
   
@@ -149,59 +141,32 @@ public class SwerveSubsystem extends SubsystemBase
       new Pose2d(new Translation2d(Meter.of(0), Meter.of(0)), Rotation2d.fromDegrees(0)));
     }
 
-
-    /**
-     * Setup the photon vision class.
-     */
-    // public void setupPhotonVision()
-    // {
-    //   vision = new Vision(swerveDrive::getPose, swerveDrive.field);
-    // }
   
+    static int counter = 0;
     @Override
     public void periodic()
     {
       swerveDrive.setMaximumAllowableSpeeds(calculateSpeedAccordingToElevator(Constants.MAX_SPEED, Constants.MIN_SPEED)
       , calculateSpeedAccordingToElevator(Constants.MAX_ROTATION_V, Constants.MIN_ROTATION_V));
-      // updateCloserPoints();
-      // Limelight.updatePosition();
-      // if (Limelight.hasTarget()){
 
-      //   swerveDrive.addVisionMeasurement(Limelight.getVisionPose(), Timer.getFPGATimestamp());
-      // }
-
+    Tuple2<Pose2d> tuple = Limelight.update();
       
-        // When vision is enabled we must manually update odometry in SwerveDrive
-      // if (visionDriveTest)
-      // {
-        
-
-        // System.out.println("left point: " + currentLeftReefPos );\
-        // System.out.println("POS" + swerveDrive.getPose());
-        // System.out.println("right point: " + currentRightReefPos);
-        // System.out.println("Closest tag" + tag_pos);
-        
+      if (tuple != null && !Limelight.getTyGreaterThan7() && isRobotVBelowOne()) {
+        Pose2d pos = new Pose2d(tuple.get_0().getX(), tuple.get_0().getY(), SubsystemManager.getDriveBase().getHeading());
+        double timestampSeconds = tuple.get_1().getX();
+        swerveDrive.addVisionMeasurement(pos, timestampSeconds);
+      }
+      
         swerveDrive.updateOdometry();
-        // vision.updatePoseEstimation(swerveDrive);
-      // }
     }
 
     
     public void updateCloserPoints(){
       tag_pos = getClosestReefFace(swerveDrive.getPose());
+      currentTagX = tag_pos.getTranslation().getX();
+    currentTagY = tag_pos.getTranslation().getY();
+      currentTagAngle = tag_pos.getRotation().getRadians();
         
-        currentTagX = tag_pos.getTranslation().getX();
-        currentTagY = tag_pos.getTranslation().getY();
-        currentTagAngle = tag_pos.getRotation().getRadians();
-        
-        // System.out.println("X: " + (currentTagX - swerveDrive.getPose().getX()) + "Y: " + (currentTagY - swerveDrive.getPose().getY()) + 
-        // "YAW: " + (currentTagAngle - swerveDrive.getPose().getRotation().getRadians()));
-        //TODO: Enable this code to calculate reef points - not tested !!! 
-        // Pose2d reefPoints[] = calculateLeftAndRightReefPointsFromTag(currentTagX, currentTagY, currentTagAngle);
-        // currentLeftReefPos = reefPoints[0];
-        // currentRightReefPos = reefPoints[1];
-
-        // System.out.println(tag_pos);
     }
   
     @Override
@@ -274,73 +239,6 @@ public class SwerveSubsystem extends SubsystemBase
       }
     }
   
-    /**
-     * Get the distance to the speaker.
-     *
-     * @return Distance to speaker in meters.
-     *
-    public double getDistanceToSpeaker()
-    {
-      int allianceAprilTag = DriverStation.getAlliance().get() == Alliance.Blue ? 7 : 4;
-      // Taken from PhotonUtils.getDistanceToPose
-      Pose3d speakerAprilTagPose = aprilTagFieldLayout.getTagPose(allianceAprilTag).get();
-      return getPose().getTranslation().getDistance(speakerAprilTagPose.toPose2d().getTranslation());
-    }
-  
-    /**
-     * Get the yaw to aim at the speaker.
-     *
-     * @return {@link Rotation2d} of which you need to achieve.
-     *
-    public Rotation2d getSpeakerYaw()
-    {
-      int allianceAprilTag = DriverStation.getAlliance().get() == Alliance.Blue ? 7 : 4;
-      // Taken from PhotonUtils.getYawToPose()
-      Pose3d        speakerAprilTagPose = aprilTagFieldLayout.getTagPose(allianceAprilTag).get();
-      Translation2d relativeTrl         = speakerAprilTagPose.toPose2d().relativeTo(getPose()).getTranslation();
-      return new Rotation2d(relativeTrl.getX(), relativeTrl.getY()).plus(swerveDrive.getOdometryHeading());
-    }
-  
-    /**
-     * Aim the robot at the speaker.
-     *
-     * @param tolerance Tolerance in degrees.
-     * @return Command to turn the robot to the speaker.
-     *
-    public Command aimAtSpeaker(double tolerance)
-    {
-      SwerveController controller = swerveDrive.getSwerveController();
-      return run(
-          () -> {
-            drive(ChassisSpeeds.fromFieldRelativeSpeeds(0,
-                                                        0,
-                                                        controller.headingCalculate(getHeading().getRadians(),
-                                                                                    getSpeakerYaw().getRadians()),
-                                                        getHeading())
-                 );
-          }).until(() -> getSpeakerYaw().minus(getHeading()).getDegrees() < tolerance);
-    }
-  
-    /**
-     * Aim the robot at the target returned by PhotonVision.
-     *
-     * @param camera {@link PhotonCamera} to communicate with.
-     * @return A {@link Command} which will run the alignment.
-     *
-    public Command aimAtTarget(PhotonCamera camera)
-    {
-      return run(() -> {
-        PhotonPipelineResult result = camera.getLatestResult();
-        if (result.hasTargets())
-        {
-          drive(getTargetSpeeds(0,
-                                0,
-                                Rotation2d.fromDegrees(result.getBestTarget()
-                                                             .getYaw()))); // Not sure if this will work, more math may be required.
-        }
-      });
-    }
-    */
   
     public Command rotateToAngle(double wantedAngle, double tolerance) {
       SwerveController controller = swerveDrive.getSwerveController();
@@ -401,13 +299,6 @@ public class SwerveSubsystem extends SubsystemBase
       double kp = -0.6;
 
       return run(() -> {
-      // System.out.println("1" + swerveDrive.getPose().getX());
-      // System.out.println(currentRightReefPos.getX());
-      // System.out.println("X: " + (currentRightReefPos.getX() - swerveDrive.getPose().getX()));
-      // System.out.println("YYY: " + (currentRightReefPos.getY() - swerveDrive.getPose().getY()));
-      // System.out.println(currentRightReefPos.getY() - swerveDrive.getPose().getY());
-      // System.out.println( currentRightReefPos.getRotation().getDegrees() - swerveDrive.getPose().getRotation().getDegrees());
-      //   // Make the robot move
 
               swerveDrive.drive((new Translation2d(((swerveDrive.getPose().getX() - currentRightReefPos.getX()) * kp),
                                 ((swerveDrive.getPose().getY() - currentRightReefPos.getY()) * kp))), 
@@ -918,9 +809,26 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   public static boolean isRobotVBelowOne(){
-    return (Math.abs(swerveDrive.getRobotVelocity().vxMetersPerSecond) < 0.3) &&
-            (Math.abs(swerveDrive.getRobotVelocity().vyMetersPerSecond) < 0.3) &&  
-              (Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) < 0.2);
+    return (Math.abs(swerveDrive.getRobotVelocity().vxMetersPerSecond) < 1.5) &&
+            (Math.abs(swerveDrive.getRobotVelocity().vyMetersPerSecond) < 1.5) &&  
+              ((Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) < 1.5));
   }
+
+  public static double getAngleFromCurrentTag(){
+    int tagId = (int) Limelight.getMainAprilTagId();
+    
+    double tagRot = fieldLayout.getTagPose(tagId).get().toPose2d().getRotation().getRotations();
+    
+    double flippedDeg = (tagRot + 180) % 360;
+
+    if (flippedDeg > 180){
+      flippedDeg -= 360;
+    }
+    
+    return flippedDeg;
+
+  }
+
 } 
+
 

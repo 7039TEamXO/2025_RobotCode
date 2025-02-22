@@ -124,7 +124,7 @@ public class RobotContainer
   private void configureBindings()
   {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    SubsystemManager.getpsJoystick().PS().onTrue((Commands.runOnce(SubsystemManager.getDriveBase()::zeroGyroWithAlliance)));// if we will use it, in case if driver push this buttom, our rotation will be messed up
+    SubsystemManager.getpsJoystick().PS().onTrue((Commands.runOnce(SubsystemManager.getDriveBase()::zeroGyro)));// if we will use it, in case if driver push this buttom, our rotation will be messed up
 
     SubsystemManager.getpsJoystick().R1().onTrue(Commands.runOnce( () -> Limelight.setPipeline(0)));
     SubsystemManager.getpsJoystick().L1().onTrue(Commands.runOnce( () -> Limelight.setPipeline(1)));
@@ -134,8 +134,8 @@ public class RobotContainer
     SubsystemManager.getpsJoystick().L1().whileTrue(SubsystemManager.getDriveBase().alignByLimelight( () -> modifyAxis(-SubsystemManager.getpsJoystick().getLeftY())));
     SubsystemManager.getpsJoystick().button(12).whileTrue(SubsystemManager.getDriveBase().alignByLimelight( () -> modifyAxis(-SubsystemManager.getpsJoystick().getLeftY())));
 
-    //SubsystemManager.getpsJoystick().triangle().onTrue(Commands.runOnce(() -> SubsystemManager.getDriveBase().resetOdometry(new Pose2d(1,1,new Rotation2d(0)))));
   }
+
 
   private void configureDriveCommand() {
     if (teamColorIsBlue()) {
@@ -155,24 +155,7 @@ public class RobotContainer
     SubsystemManager.setDefaultCommand(driveFieldOrientedAngularVelocity);
   }
 
-  // private void configureDriveCommand(){
-
-  //   if (teamColorIsBlue()) {
-  //     driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
-  //     () -> MathUtil.applyDeadband(-SubsystemManager.getpsJoystick().getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-  //     () -> MathUtil.applyDeadband(-SubsystemManager.getpsJoystick().getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-  //     () -> -SubsystemManager.getpsJoystick().getRightX());
-  //   } else{
-  //    SubsystemManager.getDriveBase().zeroGyroWithAlliance();
-  //    driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
-  //    () -> MathUtil.applyDeadband(SubsystemManager.getpsJoystick().getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-  //    () -> MathUtil.applyDeadband(SubsystemManager.getpsJoystick().getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-  //    () -> -SubsystemManager.getpsJoystick().getRightX());
-  //   }
-
-  //   SubsystemManager.setDefaultCommand(driveFieldOrientedAngularVelocity);
-  // }
-
+ 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -181,7 +164,6 @@ public class RobotContainer
   public Command getAutonomousCommand()
   {
     // An example command will be run in autonomous
-    // return SubsystemManager.getDriveBase().getAutonomousCommand(Dashboard.getSelected().getAutoName());
     return SubsystemManager.getDriveBase().getAutonomousCommand(Dashboard.getSelectedAutonomy());
   }
 

@@ -43,7 +43,6 @@ public class Wrist {
 
         master.setControl(motorRequest.withPosition(wristPosition));
 
-        // System.out.println("pose :" + master.getPosition().getValueAsDouble());
     }
 
     public static double getCurrentPosition() {

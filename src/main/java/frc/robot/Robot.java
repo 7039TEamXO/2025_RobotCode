@@ -54,14 +54,12 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit()
   {
-    // SubsystemManager.initDriveBase();
     SubsystemManager.init();
     Dashboard.init();
     Limelight.init();
-
     LED.init();
+
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-    // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
 
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
@@ -83,14 +81,13 @@ public class Robot extends TimedRobot {
       //Limelight.updatePosition();
     }
     LED.setLedData();
+    Limelight.update();
 
-    // m_robotContainer.print();
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    // m_robotContainer.print();
   }
 
   /**
@@ -164,18 +161,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic()
   {
-    // System.out.println(Dashboard.getSelected());
-    // SubsystemManager.getDriveBase().resetOdometry( new Pose2d(
-    //   Math.abs(SubsystemManager.getDriveBase().getPose().getX()),
-    //   Math.abs(SubsystemManager.getDriveBase().getPose().getX()),
-    //   SubsystemManager.getDriveBase().getPose().getRotation()
-    // ));
-    //System.out.println("x - " + Limelight.getTx() + "y - " + Limelight.getTy());
     SubsystemManager.operate(false);
-    //Limelight.updatePosition();
-    // System.out.println();
     
-    // the robot moves in SwerveSubsystem.driveCommand
   }
 
   @Override

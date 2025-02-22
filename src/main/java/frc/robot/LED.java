@@ -28,7 +28,6 @@ public class LED {
     }
 
     public static void setLedData() {
-        
         color = Color.kOrangeRed;
         if (Handler.isCoralIn() || Handler.isAlgaeIn()) {
             color = Color.kDeepPink;
@@ -40,26 +39,18 @@ public class LED {
         for (int i = 0; i < buffer.getLength(); i++) {
             buffer.setLED(i, color);
         }
+
         // Maybe cache the patterns instead
 
-        
         // Apply the LED pattern to the data buffer
-        
         
         // Write the data to the LED strip
         
         // LEDPattern pattern = LEDPattern.solid(color);
         // pattern.applyTo(buffer);
+        
         midChannel.setData(buffer);
         // rightChannel.setData(buffer);
         // leftChannel.setData(buffer);
-
-
-
-
-        // Distance ledSpacing = Meters.of(1 / 120.0);
-        // LEDPattern base = LEDPattern.discontinuousGradient(Color.kRed, Color.kBlue);
-        // LEDPattern pattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(25));
-        // LEDPattern absolute = base.scrollAtAbsoluteSpeed(Centimeters.per(Second).of(12.5), ledSpacing);
     }
 }

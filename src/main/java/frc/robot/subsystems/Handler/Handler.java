@@ -48,12 +48,10 @@ public class Handler {
         // updateHandlerIr();
         switch (state) {
             case INTAKE_ALGAE: // intake coral, deplete coral 1 - 3 (level), intake algae
-                // isReset = true;
                 power = HandlerConstants.HANDLER_POWER_INTAKE_ALGAE;
                 break;
 
             case DEPLETE_CORAL: // deplete algae, deplete coral level 4
-                // isReset = true;
                 power = HandlerConstants.HANDLER_POWER_DEPLETE_CORAL;
                 break;
             
@@ -62,7 +60,6 @@ public class Handler {
                 break;
 
             case DEPLETE_ALGAE:
-                // isReset = true;
                 power = HandlerConstants.HANDLER_POWER_DEPLETE_ALGAE;
                 break;
 
@@ -71,12 +68,10 @@ public class Handler {
                 break;
 
             case INTAKE_CORAL:
-                // isReset = false;
                 power = HandlerConstants.HANDLER_POWER_INTAKE_CORAL;
                 break;
 
             case DEPLETE_CORAL_LEVEL0:
-                // isReset = true;
                 power = HandlerConstants.HANDLER_POWER_DEPLETE_CORAL_LEVEL0;
                 break;
                 
@@ -92,22 +87,14 @@ public class Handler {
     public static void updateHandlerIr(RobotState state){ //boolean isReset
         algaeIrValue = algaeIrInput.getValue();
         coralIrVal = getCoralIr();
-        // System.out.println("UpdHIR [!]");
         
-        // System.out.println("[IsReset] " + isReset);
-        // if (!coralIrVal && lastCoralIrVal) {
-        //         isCoralIn = true;
-        // }
         if (coralIrVal) {
             coralIntakeCounter++;
-        } else if(!lastCoralIrVal) {
+        } 
+        
+        else if(!lastCoralIrVal) {
             coralIntakeCounter = 0;
         }
-        // if (isReset) {
-        //     isCoralIn = false;
-        //     counter = 0;
-
-        // }
 
         if (!coralIrVal && state != RobotState.DEPLETE && coralIntakeCounter > 16) {
             isCoralIn = true;
