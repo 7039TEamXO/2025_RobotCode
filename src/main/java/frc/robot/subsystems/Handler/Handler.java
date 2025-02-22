@@ -153,10 +153,10 @@ public class Handler {
             countingAlgae = 0;
         }
 
-        System.out.println("coral--" + countingCoral);
-        System.out.println("coral--" +startCountingCoral);
-        System.out.println("Algae++" +countingAlgae);
-        System.out.println("Algae++" +startCountingAlgae);
+        System.out.println("Coral -- " + countingCoral);
+        System.out.println("Coral -- " + startCountingCoral);
+        System.out.println("Algae -- " + countingAlgae);
+        System.out.println("Algae -- " + startCountingAlgae);
         
         lastCoralIrVal = coralIrVal;
         lastCoralIn = isCoralIn;

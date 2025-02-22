@@ -75,7 +75,7 @@ public class SubsystemManager {
     public static Command level3Command = Commands.run(() -> operateAuto(null, ElevatorState.LEVEL3));
     public static Command depleteCommand = Commands.run(() -> operateAuto(RobotState.DEPLETE, null));
     public static Command alignCommand = Commands.run(() -> getDriveBase().alignByLimelight(() -> 0));
-    public static Command SelectLeftLimelight = Commands.runOnce(() -> Limelight.setPipeline(1));
+    // public static Command SelectLeftLimelight = Commands.runOnce(() -> Limelight.setPipeline(1));
 
     // public static Command alighRightCommand = SubsystemManager.getDriveBase().alignByLimelight((-psController_HID.getLeftY()));
 
@@ -116,15 +116,14 @@ public class SubsystemManager {
                                             elevatorState == ElevatorState.ALGAE_HIGH ||
                                               elevatorState == ElevatorState.BASE)){
                     handlerState = HandlerState.HOLD_ALGAE;
-                    // System.out.println("I am holding ALGAE");
                 } else {
                     handlerState = HandlerState.STOP;
                 }
                 if ((lastElevatorState == ElevatorState.INTAKE_CORAL && Handler.isCoralIn()) && elevatorState != ElevatorState.LEVEL0) {
-                    elevatorState = ElevatorState.BASE;//base
+                    elevatorState = ElevatorState.BASE;
                 }
                 trayState = TrayState.BASE;
-                isLocked = false; // ????
+                isLocked = false; // ???
                 break;
 
             case CLIMB:
@@ -214,9 +213,9 @@ public class SubsystemManager {
         lastElevatorState = elevatorState;
     }
 
-    private static void operateAuto(RobotState chosenState, ElevatorState choosenElevatorState) {
+    private static void operateAuto(RobotState chosenState, ElevatorState chosenElevatorState) {
         state = chosenState == null ? state : chosenState;
-        elevatorState = choosenElevatorState == null ? elevatorState : choosenElevatorState;
+        elevatorState = chosenElevatorState == null ? elevatorState : chosenElevatorState;
         operate(true);
     }
 
@@ -224,8 +223,8 @@ public class SubsystemManager {
         return drivebase;
     }
 
-    public static void setDefaultCommand(Command defultCommand){
-        drivebase.setDefaultCommand(defultCommand);
+    public static void setDefaultCommand(Command defaultCommand){
+        drivebase.setDefaultCommand(defaultCommand);
     }
 
     public static CommandPS4Controller getpsJoystick() {

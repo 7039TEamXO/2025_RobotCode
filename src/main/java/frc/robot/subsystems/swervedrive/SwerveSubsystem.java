@@ -419,16 +419,14 @@ public class SwerveSubsystem extends SubsystemBase
 
     }
 
-    public Command alignByLimelight(DoubleSupplier joystickY){
-
-     return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(
-                                      new Translation2d((joystickY.getAsDouble() * (swerveDrive.getMaximumChassisVelocity() ))
-                                      ,Limelight.getTx() * SwerveDriveConstants.ALIGN_LIMMELIGHT_X_KP), 0.8),
-                                      (Limelight.getTx() * SwerveDriveConstants.ALIGN_LIMMELIGHT_ROTATION_KP), 
-                                      false,
-                                      false));
-
-      }
+    public Command alignByLimelight(DoubleSupplier joystickY) {
+      return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(
+                                         new Translation2d((joystickY.getAsDouble() * (swerveDrive.getMaximumChassisVelocity())),
+                                         Limelight.getTx() * SwerveDriveConstants.ALIGN_LIMMELIGHT_X_KP), 0.8),
+                                         Limelight.getTx() * SwerveDriveConstants.ALIGN_LIMMELIGHT_ROTATION_KP, 
+                                         false,
+                                         false));
+    }
 
   
     /**
@@ -891,8 +889,8 @@ public class SwerveSubsystem extends SubsystemBase
       }
   
     
-    public Pose2d getcurrentRightReefPos(){
-      return currentRightReefPos;
+  public Pose2d getcurrentRightReefPos(){
+    return currentRightReefPos;
   } 
 
   public Pose2d getcurrentLeftReefPos(){

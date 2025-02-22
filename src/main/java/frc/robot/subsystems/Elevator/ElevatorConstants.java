@@ -22,7 +22,7 @@ public class ElevatorConstants {
     public static final double StatorCurrentLimit = 80;
     public static final double SupplyCurrentLimit = 60;
 
-    public static final double ELEVATOR_POSE_BASE = 1; //0
+    public static final double ELEVATOR_POSE_BASE = 0; //0
     public static final double ELEVATOR_POSE_LEVEL0 = 1;
     public static final double ELEVATOR_POSE_LEVEL1 = 4.84;
     public static final double ELEVATOR_POSE_LEVEL2 = 10.57;

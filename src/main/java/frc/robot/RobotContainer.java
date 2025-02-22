@@ -110,7 +110,7 @@ public class RobotContainer
     NamedCommands.registerCommand("Level_2", SubsystemManager.level2Command);
     NamedCommands.registerCommand("Level_3", SubsystemManager.level3Command);
     NamedCommands.registerCommand("Deplete", SubsystemManager.depleteCommand);
-    //NamedCommands.registerCommand("Align", SubsystemManager.alignCommand);
+    NamedCommands.registerCommand("Align", SubsystemManager.alignCommand);
     //NamedCommands.registerCommand("selectLeftReef", SubsystemManager.SelectLeftLimelight);
   }
 
@@ -143,8 +143,7 @@ public class RobotContainer
       () -> (modifyAxis(-SubsystemManager.getpsJoystick().getLeftY())),
       () -> (modifyAxis(-SubsystemManager.getpsJoystick().getLeftX())),
       () -> (modifyAxis(-SubsystemManager.getpsJoystick().getRightX())));
-    } else{
-    
+    } else {
     // SubsystemManager.getDriveBase().zeroGyroWithAlliance();
       driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
       () -> (modifyAxis(SubsystemManager.getpsJoystick().getLeftY())),
@@ -155,8 +154,7 @@ public class RobotContainer
     SubsystemManager.setDefaultCommand(driveFieldOrientedAngularVelocity);
   }
 
-  // private void configureDriveCommand(){
-
+  // private void configureDriveCommand() {
   //   if (teamColorIsBlue()) {
   //     driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
   //     () -> MathUtil.applyDeadband(-SubsystemManager.getpsJoystick().getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
