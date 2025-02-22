@@ -95,7 +95,7 @@ public class SubsystemManager {
             psController_HID.getPOV(0) == 0 ? RobotState.TRAVEL : 
             psController_HID.getPOV(0) == 90 ? RobotState.INTAKE :
             psController_HID.getPOV(0) == 270 ? RobotState.INTAKE :
-            psController_HID.getCrossButton() && !Handler.isAlgaeIn() && lastElevatorState != ElevatorState.BASE ? 
+            psController_HID.getCrossButton() && !Handler.isAlgaeIn() ? 
                 RobotState.INTAKE : lastState;
 
             elevatorState = psController_HID.getCrossButton() ? ElevatorState.BASE : // BASE
@@ -107,7 +107,7 @@ public class SubsystemManager {
             psController_HID.getPOV(0) == 270 ? ElevatorState.ALGAE_LOW : // left
             lastElevatorState;
         }
-        Handler.updateHandlerIr();
+        Handler.updateHandlerIr(state);
         switch (state) {
             case TRAVEL:
                 if(Handler.isAlgaeIn() && (elevatorState == ElevatorState.ALGAE_LOW || 
@@ -148,13 +148,14 @@ public class SubsystemManager {
                 else {
                     handlerState = HandlerState.DEPLETE_CORAL;
                 }   
+                state = Handler.isFinishedDepletingAlgae() ? RobotState.INTAKE : RobotState.DEPLETE;
                 break;
 
             case INTAKE: 
                 // System.out.println(elevatorState);
                 if ((elevatorState != ElevatorState.ALGAE_HIGH && elevatorState != ElevatorState.ALGAE_LOW) && !Handler.isCoralIn()) {
                     handlerState = HandlerState.INTAKE_CORAL;
-                    elevatorState = ElevatorState.INTAKE_CORAL;
+                    elevatorState = ElevatorState.BASE;
                 }
                 else if (elevatorState == ElevatorState.ALGAE_HIGH || elevatorState == ElevatorState.ALGAE_LOW) {
                     handlerState = HandlerState.INTAKE_ALGAE;

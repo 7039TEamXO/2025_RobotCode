@@ -26,21 +26,28 @@ public class DeliveryManager {
         switch (state) {
             case BASE:
                 if (Handler.isAlgaeIn()) {
+                    elevatorState = ElevatorState.BASE;
                     wristState = WristState.INTAKE_ALGAE;
                 }else {
+                    elevatorState = ElevatorState.INTAKE_CORAL;
                     wristState = WristState.BASE;
                 }
-                
                 break;
 
             case ALGAE_HIGH:
                 if (Elevator.getCurrentPosition() >= ElevatorConstants.ELEVATOR_POSE_SAFE_TO_ROTATE) {
+                    if (Handler.isAlgaeIn()) {
+                        elevatorState = ElevatorState.ALGAE_HIGH_IN;
+                    }
                     wristState = WristState.INTAKE_ALGAE;
                 }
                 break;
                 
             case ALGAE_LOW:
                 if (Elevator.getCurrentPosition() >= ElevatorConstants.ELEVATOR_POSE_SAFE_TO_ROTATE) {
+                    if (Handler.isAlgaeIn()) {
+                        elevatorState = ElevatorState.ALGAE_LOW_IN;
+                    }
                 wristState = WristState.INTAKE_ALGAE;
                 }
                 break;
@@ -48,6 +55,8 @@ public class DeliveryManager {
             case LEVEL0:
                 if (Elevator.getCurrentPosition() >= ElevatorConstants.ELEVATOR_POSE_SAFE_TO_ROTATE) {
                     wristState = WristState.DEPLETE_CORAL_LEVEL0;
+                }else{
+                    elevatorState = wristState != WristState.DEPLETE_CORAL_LEVEL0 ? ElevatorState.LEVEL1 : ElevatorState.LEVEL0;
                 }
                 break;
 
@@ -70,7 +79,7 @@ public class DeliveryManager {
 
         }
             
-        // wristState = Handler.isAlgaeIn() ? WristState.INTAKE_ALGAE : wristState;
+        wristState = Handler.isAlgaeIn() ? WristState.INTAKE_ALGAE : wristState;
 
         Wrist.operate(wristState);
         Elevator.operate(elevatorState);

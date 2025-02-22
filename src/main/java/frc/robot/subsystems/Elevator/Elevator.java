@@ -39,11 +39,7 @@ public class Elevator {
                 break;
 
             case LEVEL0:
-                if (Wrist.getCurrentPosition() <= WristConstants.WRIST_POS_DEPLETE_CORAL_LEVEL0_ELEVATOR_SAFE) {
-                    elevatorPosition = ElevatorConstants.ELEVATOR_POSE_LEVEL1;
-                } else {
-                    elevatorPosition = ElevatorConstants.ELEVATOR_POSE_BASE;
-                }
+                elevatorPosition = ElevatorConstants.ELEVATOR_POSE_LEVEL0;
                 break;
 
             case LEVEL1:
@@ -58,7 +54,15 @@ public class Elevator {
                 elevatorPosition = ElevatorConstants.ELEVATOR_POSE_LEVEL3;
                 break;
             case INTAKE_CORAL:
-                elevatorPosition = ElevatorConstants.ELEVATOR_POSE_LEVEL0;
+                elevatorPosition = ElevatorConstants.ELEVATOR_POSE_INTAKE_CORAL;
+                break;
+            case ALGAE_HIGH_IN:
+                elevatorPosition = ElevatorConstants.ELEVATOR_POSE_ALGAE_HIGH + ElevatorConstants.ELEVATOR_POSE_ALGAE_IN_OFFSET;
+                break;
+            case ALGAE_LOW_IN:
+                elevatorPosition = ElevatorConstants.ELEVATOR_POSE_ALGAE_LOW + ElevatorConstants.ELEVATOR_POSE_ALGAE_IN_OFFSET;
+                break;
+            default:
                 break;
 
         }

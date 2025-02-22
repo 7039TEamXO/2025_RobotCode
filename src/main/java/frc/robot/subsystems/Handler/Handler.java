@@ -13,23 +13,28 @@ import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.Wrist.Wrist;
 import frc.robot.subsystems.Wrist.WristState;
+import frc.robot.RobotState;
+
 
 public class Handler {
     private static TalonFX master = new TalonFX(HandlerConstants.HandlerMotorID);
     private static AnalogInput algaeIrInput = new AnalogInput(HandlerConstants.HandlerAnalogInputSensorID);
     private static int algaeIrValue = algaeIrInput.getValue();
-    private static int lastAlgaeIrValue = algaeIrInput.getValue();
+    private static boolean lastIsAlgaeIn = false;
     private static double power = HandlerConstants.HANDLER_POWER_STOP;
 
     private static DigitalInput coralIrInput = new DigitalInput(HandlerConstants.HandlerDigitalInputSensorID);
     private static DigitalOutput coralIrOutput = new DigitalOutput(HandlerConstants.HandlerDigitalOutPutSensorID);
     private static boolean coralIrVal = coralIrInput.get();
     private static boolean isCoralIn = false;
+    private static boolean isAlgaeIn = false;
     private static boolean lastCoralIn = false;
     private static boolean feedCoral = false;
-    private static int counter = 0;
+    private static int coralIntakeCounter = 0;
+    private static int algaeDepleteCounter = 0;
     private static boolean isReset = false;
     private static boolean lastCoralIrVal = coralIrInput.get();
+    private static boolean isFinishedDepletingAlgae = false;
 
     public static void init() {
         coralIrOutput.set(true);
@@ -80,14 +85,11 @@ public class Handler {
                 break;
         }
 
-        //System.out.println(algaeIrInput.getValue());
         master.setControl(new DutyCycleOut(power)); //set percent output
-        // System.out.println(power);
-        // System.out.println(coralIrInput.get());
     }   
 
 
-    public static void updateHandlerIr(){ //boolean isReset
+    public static void updateHandlerIr(RobotState state){ //boolean isReset
         algaeIrValue = algaeIrInput.getValue();
         coralIrVal = getCoralIr();
         // System.out.println("UpdHIR [!]");
@@ -97,9 +99,9 @@ public class Handler {
         //         isCoralIn = true;
         // }
         if (coralIrVal) {
-            counter++;
+            coralIntakeCounter++;
         } else if(!lastCoralIrVal) {
-            counter = 0;
+            coralIntakeCounter = 0;
         }
         // if (isReset) {
         //     isCoralIn = false;
@@ -107,37 +109,44 @@ public class Handler {
 
         // }
 
-        if (!coralIrVal && (power != HandlerConstants.HANDLER_POWER_DEPLETE_CORAL &&
-                power != HandlerConstants.HANDLER_POWER_DEPLETE_ALGAE && 
-                    power != HandlerConstants.HANDLER_POWER_DEPLETE_CORAL_LEVEL0) && counter > 16) {
+        if (!coralIrVal && state != RobotState.DEPLETE && coralIntakeCounter > 16) {
             isCoralIn = true;
         }
-        if (power == HandlerConstants.HANDLER_POWER_DEPLETE_CORAL ||
-                power == HandlerConstants.HANDLER_POWER_DEPLETE_ALGAE || 
-                    power == HandlerConstants.HANDLER_POWER_DEPLETE_CORAL_LEVEL0 ||
-                        power == HandlerConstants.HANDLER_POWER_INTAKE_ALGAE) {
+        if (state == RobotState.DEPLETE) {
             isCoralIn = false;
-            counter = 0;
+            coralIntakeCounter = 0;
         }
-        // System.out.println(counter);
-        // if ((power == HandlerConstants.HANDLER_POWER_DEPLETE_ALGAE) && lastCoralIn) {
-        //     isCoralIn = false;
-        // }
+
+        
+
+        if (state == RobotState.DEPLETE) {
+            algaeDepleteCounter++;
+        }
+        else{
+            algaeDepleteCounter = 0;
+        }
+
+
+        if (!isCoralIn) {
+            isAlgaeIn = algaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE || (lastIsAlgaeIn && algaeDepleteCounter < 20); // if algae is detected isAlgaeIn will be true until deplete
+        } else isAlgaeIn = false;
+
+        isFinishedDepletingAlgae = !isAlgaeIn && lastIsAlgaeIn;
 
         lastCoralIrVal = coralIrVal;
         lastCoralIn = isCoralIn;
-        lastAlgaeIrValue = algaeIrValue;
+        lastIsAlgaeIn = isAlgaeIn;
     }
 
-    public static int getCounter() {
-        return counter;
+    public static int getCoralIntakeCounter() {
+        return coralIntakeCounter;
     }
 
     public static boolean getReset() {
         return isReset;
     }
     public static boolean isAlgaeIn() {
-        return algaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE && lastAlgaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE;
+        return isAlgaeIn;
     }
 
     public static boolean isCoralIn() {
@@ -153,6 +162,10 @@ public class Handler {
 
     public static int getAlgaeIrValue(){
         return algaeIrValue;
+    }
+
+    public static boolean isFinishedDepletingAlgae(){
+        return isFinishedDepletingAlgae;
     }
 }
 
