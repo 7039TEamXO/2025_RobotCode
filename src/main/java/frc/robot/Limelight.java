@@ -127,10 +127,9 @@ public class Limelight {
         return pose;
     }
 
+    // DEPRECATED
     public static void updatePosition() {
         // MT1 
-            
-        // LEADS TO A ROBOT CODE FAIL [?]
         if(hasTarget()) {
             if(tx.getDouble(0) != 0 && ty.getDouble(0) != 0){
                 if (Array.getLength(botPosWpiBlue.getDoubleArray(new Double[]{})) > 2) {
@@ -138,14 +137,13 @@ public class Limelight {
                         botPosWpiBlue.getDoubleArray(new Double[]{})[0],
                         botPosWpiBlue.getDoubleArray(new Double[]{})[1], 
                         SubsystemManager.getDriveBase().getHeading()));  
-
                 }
             }
         }
-        
     }
 
-    private static void printRobotPose() {
+    // DEPRECATED
+    public static void printRobotPose() {
         System.out.println("x: " +  SubsystemManager.getDriveBase().getPose().getX());
         System.out.println("y: " +  SubsystemManager.getDriveBase().getPose().getY());
     }
@@ -154,8 +152,8 @@ public class Limelight {
         return limelightTable.getEntry("tx").getNumber(0).doubleValue();
     }
 
-    public static void setPointOfIntrest(double offsetX){
-        double[] array=  {0, offsetX, 0};
+    public static void setPointOfInterest(double offsetX){
+        double[] array = {0, offsetX, 0};
         LimelightHelpers.setFiducial3DOffset("limelight", offsetX, 0, 0);
     }
 

@@ -77,9 +77,6 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic()
   {
-    if (SwerveSubsystem.isRobotVBelowOne()){
-      //Limelight.updatePosition();
-    }
     LED.setLedData();
     Limelight.update();
 
@@ -104,12 +101,13 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic()
   {
-    //Limelight.updatePosition();
     // if (disabledTimer.hasElapsed(Constants.DrivebaseConstants.WHEEL_LOCK_TIME))
     // {
     //   m_robotContainer.setMotorBrake(false);
     //   disabledTimer.stop();
     // }
+
+    Limelight.printRobotPose();
   }
 
   /**
@@ -136,7 +134,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic()
   { 
-    SubsystemManager.operate(true);
+    // SubsystemManager.operate(true);
   }
 
   @Override
@@ -169,14 +167,14 @@ public class Robot extends TimedRobot {
   public void testInit()
   {
     // Cancels all running commands at the start of test mode.
-    CommandScheduler.getInstance().cancelAll();
-    try
-    {
-      new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve"));
-    } catch (IOException e)
-    {
-      throw new RuntimeException(e);
-    }
+    // CommandScheduler.getInstance().cancelAll();
+    // try
+    // {
+    //   new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve"));
+    // } catch (IOException e)
+    // {
+    //   throw new RuntimeException(e);
+    // }
   }
 
   /**

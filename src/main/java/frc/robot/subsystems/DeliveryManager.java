@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 
-import frc.robot.Gamepiece;
+import frc.robot.RobotState;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.Elevator.ElevatorState;
@@ -21,7 +21,7 @@ public class DeliveryManager {
         return elevatorState;
     }
     
-    public static void operate(ElevatorState state) {
+    public static void operate(ElevatorState state, RobotState robotState) {
         elevatorState = state;
         switch (state) {
             
@@ -33,8 +33,11 @@ public class DeliveryManager {
                     wristState = WristState.INTAKE_ALGAE;
                 }
                 
-                else {
+                else if (robotState != RobotState.CLIMB) {
                     elevatorState = ElevatorState.INTAKE_CORAL;
+                    wristState = WristState.BASE;
+                }else{
+                    elevatorState = ElevatorState.BASE;
                     wristState = WristState.BASE;
                 }
                 break;

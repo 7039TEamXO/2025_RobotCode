@@ -75,7 +75,7 @@ public class Handler {
                 power = HandlerConstants.HANDLER_POWER_DEPLETE_CORAL_LEVEL0;
                 break;
                 
-            case PUSH_BACK_CORAL:
+            case PUSH_BACK_CORAL: // Inactive
                 power = HandlerConstants.HANDLER_POWER_PUSH_BACK_CORAL;
                 break;
         }
@@ -84,7 +84,7 @@ public class Handler {
     }   
 
 
-    public static void updateHandlerIr(RobotState state){ //boolean isReset
+    public static void updateHandlerIr(RobotState state) { // boolean isReset
         algaeIrValue = algaeIrInput.getValue();
         coralIrVal = getCoralIr();
         
@@ -96,23 +96,20 @@ public class Handler {
             coralIntakeCounter = 0;
         }
 
-        if (!coralIrVal && state != RobotState.DEPLETE && coralIntakeCounter > 16) {
+        if (!coralIrVal && state != RobotState.DEPLETE && state != RobotState.DEPLETE && coralIntakeCounter > 16) {
             isCoralIn = true;
         }
-        if (state == RobotState.DEPLETE) {
+        if (state == RobotState.DEPLETE || state == RobotState.DEPLETE) {
             isCoralIn = false;
             coralIntakeCounter = 0;
         }
 
-        
-
         if (state == RobotState.DEPLETE) {
             algaeDepleteCounter++;
         }
-        else{
+        else {
             algaeDepleteCounter = 0;
         }
-
 
         if (!isCoralIn) {
             isAlgaeIn = algaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE || (lastIsAlgaeIn && algaeDepleteCounter < 20); // if algae is detected isAlgaeIn will be true until deplete

@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
-import frc.robot.Gamepiece;
 import frc.robot.LED;
 import frc.robot.Limelight;
 import frc.robot.RobotState;
@@ -68,9 +67,10 @@ public class SubsystemManager {
     public static Command level2Command = Commands.run(() -> operateAuto(null, ElevatorState.LEVEL2));
     public static Command level3Command = Commands.run(() -> operateAuto(null, ElevatorState.LEVEL3));
     public static Command depleteCommand = Commands.run(() -> operateAuto(RobotState.DEPLETE, null));
-    public static Command alignCommand = Commands.run(() -> getDriveBase().alignByLimelight(() -> 0));
-    // public static Command SelectLeftLimelight = Commands.runOnce(() -> Limelight.setPipeline(1));
-
+    // public static Command alignCommand = Commands.run(() -> getDriveBase().alignByLimelight(() -> 0));
+    // public static Command selectRightLimelight = Commands.runOnce(() -> Limelight.setPipeline(0));
+    // public static Command selectLeftLimelight = Commands.runOnce(() -> Limelight.setPipeline(1));
+    // public static Command selectMidLimelight = Commands.runOnce(() -> Limelight.setPipeline(2));
 
     public static void init() {
         state = RobotState.TRAVEL;
@@ -83,16 +83,18 @@ public class SubsystemManager {
 
     public static void operate(boolean onAuto) {
         if (!onAuto) {
-            state = psController_HID.getL2Button() ? RobotState.DEPLETE :
+            state = psController_HID.getPOV(0) == 0 ? RobotState.TRAVEL : 
+            state == RobotState.CLIMB ? RobotState.CLIMB :
+            psController_HID.getL2Button() ? RobotState.DEPLETE :
             psController_HID.getR2Button() ? RobotState.INTAKE :
             psController_HID.getShareButton() ? RobotState.CLIMB :
-            psController_HID.getPOV(0) == 0 ? RobotState.TRAVEL : 
             psController_HID.getPOV(0) == 90 ? RobotState.INTAKE :
             psController_HID.getPOV(0) == 270 ? RobotState.INTAKE :
             psController_HID.getCrossButton() && !Handler.isAlgaeIn() ? 
                 RobotState.INTAKE : lastState;
 
-            elevatorState = psController_HID.getCrossButton() ? ElevatorState.BASE : // BASE
+            elevatorState = state == RobotState.CLIMB ? ElevatorState.BASE :
+            psController_HID.getCrossButton() ? ElevatorState.BASE : // BASE
             psController_HID.getSquareButton() ? ElevatorState.LEVEL1 :
             psController_HID.getTriangleButton() ? ElevatorState.LEVEL3 :
             psController_HID.getCircleButton() ? ElevatorState.LEVEL2 :
@@ -108,19 +110,17 @@ public class SubsystemManager {
                                             elevatorState == ElevatorState.ALGAE_HIGH ||
                                               elevatorState == ElevatorState.BASE)){
                     handlerState = HandlerState.HOLD_ALGAE;
-
                 } 
                 
-                else {
+                else
                     handlerState = HandlerState.STOP;
-                }
                 
-                if ((lastElevatorState == ElevatorState.INTAKE_CORAL && Handler.isCoralIn()) && elevatorState != ElevatorState.LEVEL0) {
+                if ((lastElevatorState == ElevatorState.INTAKE_CORAL && Handler.isCoralIn()) && elevatorState != ElevatorState.LEVEL0)
                     elevatorState = ElevatorState.BASE;
-                }
                 
                 trayState = TrayState.BASE;
                 isLocked = false;
+                climbState = ClimbState.STOP;
                 break;
 
         /************/     
@@ -128,17 +128,11 @@ public class SubsystemManager {
             case CLIMB:
                 handlerState = HandlerState.STOP;
                 elevatorState = ElevatorState.BASE;
-                if (psController_HID.getOptionsButton()) {
-                    climbState = ClimbState.UP;
-                } 
                 
-                else if (psController_HID.getShareButton()) {
-                    climbState = ClimbState.DOWN;
-                }
-
-                else {
-                    climbState = ClimbState.STOP;
-                }
+                climbState = psController_HID.getOptionsButton() ? ClimbState.CLIMB :
+                 psController_HID.getL3Button() ? ClimbState.DESCEND : 
+                 psController_HID.getSquareButton() ? ClimbState.STOP :
+                  climbState;
 
                 trayState = TrayState.UP;
                 break;
@@ -146,19 +140,21 @@ public class SubsystemManager {
         /************/
 
             case DEPLETE:
-                if (elevatorState == ElevatorState.LEVEL3 || Handler.isAlgaeIn()) {
+                if (elevatorState == ElevatorState.LEVEL3 || Handler.isAlgaeIn())
                     handlerState = HandlerState.DEPLETE_ALGAE;
-                }
-
-                else if (elevatorState == ElevatorState.LEVEL0 ) {
+                else if (elevatorState == ElevatorState.LEVEL0)
                     handlerState =  HandlerState.DEPLETE_CORAL_LEVEL0;
-                }
-
-                else {
+                else
                     handlerState = HandlerState.DEPLETE_CORAL;
-                } 
                   
-                state = Handler.isFinishedDepletingAlgae() ? RobotState.INTAKE : RobotState.DEPLETE;
+                if(Handler.isFinishedDepletingAlgae()) {
+                    state = RobotState.INTAKE;
+                    elevatorState = ElevatorState.INTAKE_CORAL;
+                } else
+                    state = RobotState.DEPLETE;
+
+                climbState = ClimbState.STOP;
+                trayState = TrayState.BASE;
                 break;
 
         /************/
@@ -168,29 +164,25 @@ public class SubsystemManager {
                     handlerState = HandlerState.INTAKE_CORAL;
                     elevatorState = ElevatorState.BASE;
                 }
-
-                else if (elevatorState == ElevatorState.ALGAE_HIGH || elevatorState == ElevatorState.ALGAE_LOW) {
+                else if (elevatorState == ElevatorState.ALGAE_HIGH || elevatorState == ElevatorState.ALGAE_LOW)
                     handlerState = HandlerState.INTAKE_ALGAE;
-                    
-                }
                 
                 state = Handler.isAlgaeIn() || Handler.isCoralIn() ? RobotState.TRAVEL : RobotState.INTAKE;
+
+                climbState = ClimbState.STOP;
+                trayState = TrayState.BASE;
                 break;
         }
 
         if ((psController_HID.getR1Button() || psController_HID.getL1Button() || psController_HID.getR3Button()) &&
-             Math.abs(Limelight.getTx()) <= 2) { // cheking for leds
+             Math.abs(Limelight.getTx()) <= 2) // checking for LEDs
             isTxSeen = true;
-        } 
-        
-        else {
-            isTxSeen = false;
-        }
+        else isTxSeen = false;
         
         /****** Auto Counter ******/
         waitForElevatorInAuto(onAuto);
 
-        DeliveryManager.operate(elevatorState);
+        DeliveryManager.operate(elevatorState, state);
         Handler.operate(handlerState);
         Climb.operate(climbState);
         Tray.operate(trayState);
@@ -210,25 +202,22 @@ public class SubsystemManager {
     private static void waitForElevatorInAuto(boolean onAuto){
         isAutoElevatorCounting = onAuto && elevatorState != ElevatorState.LEVEL3 && lastElevatorState == ElevatorState.LEVEL3 ? true : isAutoElevatorCounting;
 
-        if (isAutoElevatorCounting && onAuto) {
-            autoElevatorCounter++;
-        }
+        if (isAutoElevatorCounting && onAuto) autoElevatorCounter++;
 
-        if (autoElevatorCounter < 40 && onAuto && lastElevatorState == ElevatorState.LEVEL3) {
-                elevatorState = ElevatorState.LEVEL3;
-        } else {
+        if (autoElevatorCounter < 40 && onAuto && lastElevatorState == ElevatorState.LEVEL3)
+            elevatorState = ElevatorState.LEVEL3;
+        else {
             isAutoElevatorCounting = false;
             autoElevatorCounter = 0;
         }
-        
     }
 
     public static SwerveSubsystem getDriveBase() {
         return drivebase;
     }
 
-    public static void setDefaultCommand(Command defultCommand){
-        drivebase.setDefaultCommand(defultCommand);
+    public static void setDefaultCommand(Command defaultCommand) {
+        drivebase.setDefaultCommand(defaultCommand);
     }
 
     public static CommandPS4Controller getpsJoystick() {
@@ -246,6 +235,7 @@ public class SubsystemManager {
     public static ElevatorState getElevatorState() {
         return elevatorState;
     }
+
     public static ElevatorState getLastElevatorState() {
         return lastElevatorState;
     }

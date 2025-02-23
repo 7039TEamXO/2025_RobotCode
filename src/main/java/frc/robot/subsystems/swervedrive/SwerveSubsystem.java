@@ -146,27 +146,24 @@ public class SwerveSubsystem extends SubsystemBase
     @Override
     public void periodic()
     {
-      swerveDrive.setMaximumAllowableSpeeds(calculateSpeedAccordingToElevator(Constants.MAX_SPEED, Constants.MIN_SPEED)
-      , calculateSpeedAccordingToElevator(Constants.MAX_ROTATION_V, Constants.MIN_ROTATION_V));
+      swerveDrive.setMaximumAllowableSpeeds(calculateSpeedAccordingToElevator(Constants.MAX_SPEED, Constants.MIN_SPEED),
+       calculateSpeedAccordingToElevator(Constants.MAX_ROTATION_V, Constants.MIN_ROTATION_V));
 
-    Tuple2<Pose2d> tuple = Limelight.update();
-      
+      Tuple2<Pose2d> tuple = Limelight.update();
       if (tuple != null && !Limelight.getTyGreaterThan7() && isRobotVBelowOne()) {
         Pose2d pos = new Pose2d(tuple.get_0().getX(), tuple.get_0().getY(), SubsystemManager.getDriveBase().getHeading());
         double timestampSeconds = tuple.get_1().getX();
         swerveDrive.addVisionMeasurement(pos, timestampSeconds);
       }
-      
-        swerveDrive.updateOdometry();
+      swerveDrive.updateOdometry();
     }
 
     
     public void updateCloserPoints(){
       tag_pos = getClosestReefFace(swerveDrive.getPose());
       currentTagX = tag_pos.getTranslation().getX();
-    currentTagY = tag_pos.getTranslation().getY();
+      currentTagY = tag_pos.getTranslation().getY();
       currentTagAngle = tag_pos.getRotation().getRadians();
-        
     }
   
     @Override

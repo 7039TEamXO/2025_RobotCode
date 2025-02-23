@@ -110,8 +110,9 @@ public class RobotContainer
     NamedCommands.registerCommand("Level_2", SubsystemManager.level2Command);
     NamedCommands.registerCommand("Level_3", SubsystemManager.level3Command);
     NamedCommands.registerCommand("Deplete", SubsystemManager.depleteCommand);
-    //NamedCommands.registerCommand("Align", SubsystemManager.alignCommand);
-    //NamedCommands.registerCommand("selectLeftReef", SubsystemManager.SelectLeftLimelight);
+    // NamedCommands.registerCommand("Align", SubsystemManager.alignCommand);
+    // NamedCommands.registerCommand("SelectLeftLimelight", SubsystemManager.selectLeftLimelight);
+    // NamedCommands.registerCommand("SelectRightLimelight", SubsystemManager.selectLimelight);
   }
 
   /**
