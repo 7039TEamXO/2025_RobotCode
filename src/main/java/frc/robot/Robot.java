@@ -32,7 +32,7 @@ import swervelib.parser.SwerveParser;
  */
 public class Robot extends TimedRobot {
   private static Robot   instance;
-  private        Command m_autonomousCommand;
+  private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
 
@@ -107,7 +107,7 @@ public class Robot extends TimedRobot {
     //   disabledTimer.stop();
     // }
 
-    Limelight.printRobotPose();
+    // Limelight.printRobotPose();
   }
 
   /**
@@ -134,7 +134,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic()
   { 
-    // SubsystemManager.operate(true);
+    SubsystemManager.operate(true);
   }
 
   @Override
@@ -160,7 +160,6 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic()
   {
     SubsystemManager.operate(false);
-    
   }
 
   @Override

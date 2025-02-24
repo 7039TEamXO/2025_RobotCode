@@ -35,6 +35,7 @@ public class Handler {
     private static boolean isReset = false;
     private static boolean lastCoralIrVal = coralIrInput.get();
     private static boolean isFinishedDepletingAlgae = false;
+    private static boolean isAlgaeDepleteCounting = false;
 
     public static void init() {
         coralIrOutput.set(true);
@@ -45,7 +46,6 @@ public class Handler {
     }
 
     public static void operate(HandlerState state) {
-        // updateHandlerIr();
         switch (state) {
             case INTAKE_ALGAE: // intake coral, deplete coral 1 - 3 (level), intake algae
                 power = HandlerConstants.HANDLER_POWER_INTAKE_ALGAE;
@@ -88,32 +88,30 @@ public class Handler {
         algaeIrValue = algaeIrInput.getValue();
         coralIrVal = getCoralIr();
         
-        if (coralIrVal) {
+        if (coralIrVal)
             coralIntakeCounter++;
-        } 
-        
-        else if(!lastCoralIrVal) {
+        else if(!lastCoralIrVal)
             coralIntakeCounter = 0;
-        }
 
-        if (!coralIrVal && state != RobotState.DEPLETE && state != RobotState.DEPLETE && coralIntakeCounter > 16) {
+        if (!coralIrVal && state != RobotState.DEPLETE && coralIntakeCounter > 16)
             isCoralIn = true;
-        }
-        if (state == RobotState.DEPLETE || state == RobotState.DEPLETE) {
+
+        if (state == RobotState.DEPLETE) {
             isCoralIn = false;
             coralIntakeCounter = 0;
         }
 
-        if (state == RobotState.DEPLETE) {
-            algaeDepleteCounter++;
-        }
-        else {
-            algaeDepleteCounter = 0;
-        }
+        isAlgaeDepleteCounting = (state == RobotState.DEPLETE) ? true : isAlgaeDepleteCounting;
 
-        if (!isCoralIn) {
+        if(!isAlgaeIn) isAlgaeDepleteCounting = false;
+
+        if (isAlgaeDepleteCounting) 
+            algaeDepleteCounter++;
+        else algaeDepleteCounter = 0;
+
+        if (!isCoralIn)
             isAlgaeIn = algaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE || (lastIsAlgaeIn && algaeDepleteCounter < 20); // if algae is detected isAlgaeIn will be true until deplete
-        } else isAlgaeIn = false;
+        else isAlgaeIn = false;
 
         isFinishedDepletingAlgae = !isAlgaeIn && lastIsAlgaeIn;
 
@@ -129,6 +127,7 @@ public class Handler {
     public static boolean getReset() {
         return isReset;
     }
+
     public static boolean isAlgaeIn() {
         return isAlgaeIn;
     }
@@ -140,6 +139,7 @@ public class Handler {
     public static boolean getFeedCoral() {
         return feedCoral;
     }
+
     public static boolean getCoralIr() {
         return coralIrInput.get();
     }

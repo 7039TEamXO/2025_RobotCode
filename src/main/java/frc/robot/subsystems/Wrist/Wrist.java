@@ -6,6 +6,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import frc.robot.Dashboard;
+
 public class Wrist {
     private static TalonFX master = new TalonFX(WristConstants.WristMotorID);
     private static double wristPosition;
@@ -40,9 +42,8 @@ public class Wrist {
                 wristPosition = WristConstants.WRIST_POS_DEPLETE_CORAL_LEVEL0;
                 break;
         }
-
+        // wristPosition = wristPosition + Dashboard.add_value_to_Wrist();
         master.setControl(motorRequest.withPosition(wristPosition));
-
     }
 
     public static double getCurrentPosition() {

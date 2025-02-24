@@ -112,7 +112,8 @@ public class RobotContainer
     NamedCommands.registerCommand("Deplete", SubsystemManager.depleteCommand);
     // NamedCommands.registerCommand("Align", SubsystemManager.alignCommand);
     // NamedCommands.registerCommand("SelectLeftLimelight", SubsystemManager.selectLeftLimelight);
-    // NamedCommands.registerCommand("SelectRightLimelight", SubsystemManager.selectLimelight);
+    // NamedCommands.registerCommand("SelectRightLimelight", SubsystemManager.selectRightLimelight);
+    // NamedCommands.registerCommand("SelectMidLimelight", SubsystemManager.selectMidLimelight);
   }
 
   /**
@@ -144,9 +145,8 @@ public class RobotContainer
       () -> (modifyAxis(-SubsystemManager.getpsJoystick().getLeftY())),
       () -> (modifyAxis(-SubsystemManager.getpsJoystick().getLeftX())),
       () -> (modifyAxis(-SubsystemManager.getpsJoystick().getRightX())));
-    } else{
-    
-    SubsystemManager.getDriveBase().zeroGyroWithAlliance();
+    } else {
+      // SubsystemManager.getDriveBase().zeroGyroWithAlliance();
       driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
       () -> (modifyAxis(SubsystemManager.getpsJoystick().getLeftY())),
       () -> (modifyAxis(SubsystemManager.getpsJoystick().getLeftX())),

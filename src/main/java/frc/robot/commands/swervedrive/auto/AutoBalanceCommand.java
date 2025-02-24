@@ -7,14 +7,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
-
 /**
  * Auto Balance command using a simple PID controller. Created by Team 3512
  * <a href="https://github.com/frc3512/Robot-2023/blob/main/src/main/java/frc3512/robot/commands/AutoBalance.java">...</a>
  */
 public class AutoBalanceCommand extends Command
 {
-
   private final SwerveSubsystem swerveSubsystem;
   private final PIDController   controller;
 
@@ -47,8 +45,7 @@ public class AutoBalanceCommand extends Command
   {
     SmartDashboard.putBoolean("At Tolerance", controller.atSetpoint());
 
-    double translationVal = MathUtil.clamp(controller.calculate(swerveSubsystem.getPitch().getDegrees(), 0.0), -0.5,
-                                           0.5);
+    double translationVal = MathUtil.clamp(controller.calculate(swerveSubsystem.getPitch().getDegrees(), 0.0), -0.5, 0.5);
     swerveSubsystem.drive(new Translation2d(translationVal, 0.0), 0.0, true);
   }
 

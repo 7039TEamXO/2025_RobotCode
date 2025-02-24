@@ -16,7 +16,7 @@ package frc.robot.subsystems.swervedrive;
  *       
  */                   
 public class SwerveDriveConstants {
-    //x, y
+    // x, y
     public static final int BLUE_REEF_POS_FACE_ONE_ID   = 18;
     public static final int BLUE_REEF_POS_FACE_TWO_ID   = 19;
     public static final int BLUE_REEF_POS_FACE_THREE_ID = 20;

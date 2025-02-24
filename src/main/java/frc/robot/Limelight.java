@@ -62,57 +62,46 @@ public class Limelight {
         LimelightHelpers.SetFiducialIDFiltersOverride("limelight", allValidIDs); // Only track these tag IDs
         LimelightHelpers.SetFiducialDownscalingOverride("limelight", 2.0f); // Process at half resolution for improved framerate and reduced range
         LimelightHelpers.setCameraPose_RobotSpace("limelight", 
-        0.4,    // Forward offset (meters)
-        0.0,    // Side offset (meters)
-        0.2,    // Height offset (meters)
-        0.0,    // Roll (degrees)
-        20,   // Pitch (degrees)
-        0
-             // Yaw (degrees)
+        0.4,   // Forward offset (meters)
+        0.0,      // Side offset (meters)
+        0.2,        // Height offset (meters)
+        0.0,      // Roll (degrees)
+        20,      // Pitch (degrees)
+        0          // Yaw (degrees)
         );
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static Tuple2<Pose2d> update() {
-
         boolean doRejectUpdate = false;
         double yawRate = SubsystemManager.getDriveBase().getRobotVelocity().omegaRadiansPerSecond;
         double pitch = 20;
-
 
         LimelightHelpers.SetRobotOrientation("limelight", (SubsystemManager.getDriveBase().getHeading().getDegrees()), 0, 0, 0, 0, 0);
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
       
         if (mt2 != null) {
-      
-        if(Math.abs(SubsystemManager.getDriveBase().getRobotVelocity().omegaRadiansPerSecond) > 2 * Math.PI) // if our angular velocity is greater than 360 degrees per second, ignore vision updates
-            {
-            doRejectUpdate = true;
-            }
-       
-        else if(mt2.tagCount == 0)
-            {
-            doRejectUpdate = true;
-            }
-       
-        else if (hasTarget() == false)
-            {
+            if(Math.abs(SubsystemManager.getDriveBase().getRobotVelocity().omegaRadiansPerSecond) > 2 * Math.PI) // if our angular velocity is greater than 360 degrees per second, ignore vision updates
                 doRejectUpdate = true;
-            }
-       
-        if(!doRejectUpdate)
-            {
+        
+            else if(mt2.tagCount == 0)
+                doRejectUpdate = true;
+        
+            else if (hasTarget() == false)
+                doRejectUpdate = true;
+        
+            if(!doRejectUpdate) {
                 return new Tuple2(mt2.pose, new Pose2d(mt2.timestampSeconds,0 ,new Rotation2d(0)));
-
-            // m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
-            // m_poseEstimator.addVisionMeasurement(
-            //     mt2.pose,
-            //     mt2.timestampSeconds);
-            //     updatePosition();
+                // m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
+                // m_poseEstimator.addVisionMeasurement(
+                //     mt2.pose,
+                //     mt2.timestampSeconds);
+                // updatePosition();
             }
         }
-                return null;
-
-        // printRobotPose();   
+        
+        // printRobotPose(); 
+        return null;  
     }
 
     public static boolean hasTarget() {

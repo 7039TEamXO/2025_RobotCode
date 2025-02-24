@@ -39,12 +39,6 @@ public class LED {
         for (int i = 0; i < buffer.getLength(); i++) {
             buffer.setLED(i, color);
         }
-
-        // Maybe cache the patterns instead
-
-        // Apply the LED pattern to the data buffer
-        
-        // Write the data to the LED strip
         
         // LEDPattern pattern = LEDPattern.solid(color);
         // pattern.applyTo(buffer);

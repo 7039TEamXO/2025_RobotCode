@@ -21,7 +21,6 @@ import swervelib.math.SwerveMath;
  */
 public class AbsoluteDrive extends Command
 {
-
   private final SwerveSubsystem swerve;
   private final DoubleSupplier  vX, vY;
   private final DoubleSupplier headingHorizontal, headingVertical;
@@ -69,7 +68,6 @@ public class AbsoluteDrive extends Command
   @Override
   public void execute()
   {
-
     // Get the desired chassis speeds based on a 2 joystick module.
     ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(vX.getAsDouble(), vY.getAsDouble(),
                                                          headingHorizontal.getAsDouble(),
@@ -86,7 +84,7 @@ public class AbsoluteDrive extends Command
         // Set the Current Heading to the desired Heading
         desiredSpeeds = swerve.getTargetSpeeds(0, 0, firstLoopHeading.getSin(), firstLoopHeading.getCos());
       }
-      //Dont Init Rotation Again
+      // Dont Init Rotation Again
       initRotation = false;
     }
 
@@ -98,14 +96,10 @@ public class AbsoluteDrive extends Command
     SmartDashboard.putNumber("LimitedTranslation", translation.getX());
     SmartDashboard.putString("Translation", translation.toString());
 
-    //
-    
-    //
     // Make the robot move
     swerve.drive(translation, desiredSpeeds.omegaRadiansPerSecond, true);
 
-    //System.out.println(translation.getX());
-
+    // System.out.println(translation.getX());
   }
   
     
@@ -121,6 +115,4 @@ public class AbsoluteDrive extends Command
   {
     return false;
   }
-
-
 }

@@ -22,7 +22,6 @@ import swervelib.math.SwerveMath;
  */
 public class AbsoluteDriveAdv extends Command
 {
-
   private final SwerveSubsystem swerve;
   private final DoubleSupplier  vX, vY;
   private final DoubleSupplier  headingAdjust;
@@ -76,15 +75,12 @@ public class AbsoluteDriveAdv extends Command
     resetHeading = true;
   }
 
-
   private double headingX = 0;
   private double headingY = 0;
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute()
   {
-   
-
     // These are written to allow combinations for 45 angles
     // Face Away from Drivers
     if (lookAway.getAsBoolean())
@@ -119,7 +115,7 @@ public class AbsoluteDriveAdv extends Command
         headingX = currentHeading.getSin();
         headingY = currentHeading.getCos();
       }
-      //Dont reset Heading Again
+      // Dont reset Heading Again
       resetHeading = false;
     }
 
@@ -140,7 +136,7 @@ public class AbsoluteDriveAdv extends Command
     if (headingX == 0 && headingY == 0 && Math.abs(headingAdjust.getAsDouble()) > 0)
     {
       resetHeading = true;
-      //swerve.drive(translation, 3 * (Constants.OperatorConstants.TURN_CONSTANT * -headingAdjust.getAsDouble()), true);
+      // swerve.drive(translation, 3 * (Constants.OperatorConstants.TURN_CONSTANT * -headingAdjust.getAsDouble()), true);
     } else
     {
       swerve.drive(translation, 3 * desiredSpeeds.omegaRadiansPerSecond, true);
@@ -159,6 +155,4 @@ public class AbsoluteDriveAdv extends Command
   {
     return headingX == 0 && headingY == 0 && Math.abs(headingAdjust.getAsDouble()) > 0;
   }
-
-
 }

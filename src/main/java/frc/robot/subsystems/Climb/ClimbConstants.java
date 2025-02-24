@@ -22,8 +22,8 @@ public class ClimbConstants {
     public static final double MotionMagicAcceleration = 80; // Target acceleration of 160 rps/s (0.5 seconds)
     public static final double MotionMagicJerk = 800; // Target jerk of 1600 rps/s/s (0.1 seconds)
 
-    public static final double StatorCurrentLimit = 30;
-    public static final double SupplyCurrentLimit = 20;
+    public static final double StatorCurrentLimit = 100;
+    public static final double SupplyCurrentLimit = 100;
 
     public static final double MaxEncoderPos = 13.77;
 }

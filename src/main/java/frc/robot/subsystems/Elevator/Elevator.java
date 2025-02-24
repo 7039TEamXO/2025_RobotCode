@@ -1,4 +1,5 @@
 package frc.robot.subsystems.Elevator;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -6,6 +7,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import frc.robot.Dashboard;
 
 public class Elevator {
     private static double elevatorPosition; 
@@ -61,12 +63,8 @@ public class Elevator {
             case ALGAE_LOW_IN:
                 elevatorPosition = ElevatorConstants.ELEVATOR_POSE_ALGAE_LOW + ElevatorConstants.ELEVATOR_POSE_ALGAE_IN_OFFSET;
                 break;
-
-            default:
-                break;
-
         }
-
+        // elevatorPosition = elevatorPosition + Dashboard.add_value_to_Elevator();
         elevatorMasterMotor.setControl(motorRequest.withPosition(elevatorPosition)); //set position for elevator
     }
 

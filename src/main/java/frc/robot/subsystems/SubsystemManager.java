@@ -31,8 +31,6 @@ import frc.robot.subsystems.Wrist.WristState;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 public class SubsystemManager {
-
-    // The robot's subsystems and commands are defined here...
     private static final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                          "swerve/falcon"));
 
@@ -108,10 +106,8 @@ public class SubsystemManager {
             case TRAVEL:
                 if(Handler.isAlgaeIn() && (elevatorState == ElevatorState.ALGAE_LOW || 
                                             elevatorState == ElevatorState.ALGAE_HIGH ||
-                                              elevatorState == ElevatorState.BASE)){
+                                              elevatorState == ElevatorState.BASE))
                     handlerState = HandlerState.HOLD_ALGAE;
-                } 
-                
                 else
                     handlerState = HandlerState.STOP;
                 
@@ -130,9 +126,9 @@ public class SubsystemManager {
                 elevatorState = ElevatorState.BASE;
                 
                 climbState = psController_HID.getOptionsButton() ? ClimbState.CLIMB :
-                 psController_HID.getL3Button() ? ClimbState.DESCEND : 
-                 psController_HID.getSquareButton() ? ClimbState.STOP :
-                  climbState;
+                    psController_HID.getL3Button() ? ClimbState.DESCEND : 
+                    psController_HID.getSquareButton() ? ClimbState.STOP :
+                        climbState;
 
                 trayState = TrayState.UP;
                 break;
@@ -187,7 +183,8 @@ public class SubsystemManager {
         Climb.operate(climbState);
         Tray.operate(trayState);
         
-        if (isLocked) drivebase.lock();   
+        if (isLocked) drivebase.lock();
+
         lastState = state;
         lastElevatorState = elevatorState;
     }
