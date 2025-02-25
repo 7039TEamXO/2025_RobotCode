@@ -24,10 +24,10 @@ public class Dashboard {
     private static ShuffleboardTab debugging = Shuffleboard.getTab("Debugging");
     private static HttpCamera limelightcamera = new HttpCamera("limelight", "http://10.70.39.11:5801");
 
-    // private static GenericEntry add_value_to_Wrist = subsystemsInformation.add("Auto delay", 0).withPosition(3, 8).withSize(3, 3)
-    //         .getEntry();
-    // private static GenericEntry add_value_to_Elevator = subsystemsInformation.add("Auto delay", 0).withPosition(8, 8).withSize(3, 3)
-    //         .getEntry();
+    private static GenericEntry add_value_to_Wrist = subsystemsInformation.add("SetWristValue", 0).withPosition(3, 8).withSize(3, 3)
+            .getEntry();
+    private static GenericEntry add_value_to_Elevator = subsystemsInformation.add("SetElevatorValue", 0).withPosition(8, 8).withSize(3, 3)
+            .getEntry();
     
 
     public static void init() {
@@ -80,11 +80,11 @@ public class Dashboard {
         return m_autoSelected = m_chooser.getSelected();
     }
 
-    // public static double add_value_to_Elevator() {
-    //     return add_value_to_Elevator.getDouble(0);
-    // }
+    public static double add_value_to_Elevator() {
+        return add_value_to_Elevator.getDouble(0);
+    }
 
-    // public static double add_value_to_Wrist() {
-    //     return add_value_to_Wrist.getDouble(0);
-    // }
+    public static double add_value_to_Wrist() {
+        return add_value_to_Wrist.getDouble(0);
+    }
 }

@@ -7,7 +7,8 @@ public enum Autos {
     Level_4_Left("Level_4_Left"),
     Double_Algae_Right("Double_Algae_Right"),
     Double_Algae_Left("Double_Algae_Left"),
-    Test("Test");
+    CoralAndAlgaeCenter("CoralAndAlgaeCenter");
+    
 
     
     private final String autoName;

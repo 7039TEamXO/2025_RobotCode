@@ -93,13 +93,14 @@ public class Handler {
         else if(!lastCoralIrVal)
             coralIntakeCounter = 0;
 
-        if (!coralIrVal && state != RobotState.DEPLETE && coralIntakeCounter > 16)
+        if (!coralIrVal && state != RobotState.DEPLETE && coralIntakeCounter > 16) //16
             isCoralIn = true;
 
         if (state == RobotState.DEPLETE) {
             isCoralIn = false;
             coralIntakeCounter = 0;
         }
+        // System.out.println(coralIntakeCounter);
 
         isAlgaeDepleteCounting = (state == RobotState.DEPLETE) ? true : isAlgaeDepleteCounting;
 

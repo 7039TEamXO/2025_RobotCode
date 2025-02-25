@@ -5,11 +5,13 @@
   "pathFolders": [
     "DoubleAlgaeLeft",
     "DoubleAlgaeRight",
+    "CenterCoral",
     "TripleCoralLeft",
     "TripleCoralRight"
   ],
   "autoFolders": [
     "DoubleAlgae",
+    "Center",
     "TripleCoral"
   ],
   "defaultMaxVel": 3.6,

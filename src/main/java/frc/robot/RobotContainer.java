@@ -141,6 +141,9 @@ public class RobotContainer
 
   private void configureDriveCommand() {
     if (teamColorIsBlue()) {
+      // SubsystemManager.getDriveBase().zeroGyroWithAlliance();
+      SubsystemManager.getDriveBase().zeroGyro();
+      SubsystemManager.getDriveBase().resetOdometry(new Pose2d(SubsystemManager.getDriveBase().getPose().getTranslation(), Rotation2d.fromDegrees(180)));
       driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
       () -> (modifyAxis(-SubsystemManager.getpsJoystick().getLeftY())),
       () -> (modifyAxis(-SubsystemManager.getpsJoystick().getLeftX())),
@@ -178,8 +181,12 @@ public class RobotContainer
   }
 
   public static boolean teamColorIsBlue() {
-    Optional<Alliance> color = DriverStation.getAlliance();
-	  return color.get() == DriverStation.Alliance.Blue;
+    try {
+      Optional<Alliance> color = DriverStation.getAlliance();
+	    return color.get() == DriverStation.Alliance.Blue;
+    } catch (Exception e) {
+      return true;
+    }
   }
 
   private static double modifyAxis(double joystickInput) {
