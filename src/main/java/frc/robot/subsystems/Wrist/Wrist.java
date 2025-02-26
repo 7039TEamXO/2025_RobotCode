@@ -50,6 +50,10 @@ public class Wrist {
         return master.getPosition().getValueAsDouble();
     }
 
+    public static void resetEncoder(){
+        master.setPosition(0);
+    }
+
     private static void setMotorConfigs() {
         var talonFXConfigs = new TalonFXConfiguration();
         talonFXConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;

@@ -106,4 +106,8 @@ public class DeliveryManager {
     public static WristState getWristState() {
         return wristState;
     }
+
+    public static void resetWrist(){
+        Wrist.resetEncoder();
+    }
 }

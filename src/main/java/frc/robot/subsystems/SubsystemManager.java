@@ -80,6 +80,9 @@ public class SubsystemManager {
     }
 
     public static void operate(boolean onAuto) {
+        if (psController_HID.getTouchpadButton()) {
+            DeliveryManager.resetWrist();
+        }
         if (!onAuto) {
             state = psController_HID.getPOV(0) == 0 ? RobotState.TRAVEL : 
             state == RobotState.CLIMB ? RobotState.CLIMB :

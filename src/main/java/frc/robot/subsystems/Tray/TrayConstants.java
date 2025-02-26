@@ -17,9 +17,9 @@ public class TrayConstants {
     public static final double StatorCurrentLimit = 30;
     public static final double SupplyCurrentLimit = 20;
 
-    public static final double MaxEncoderPos = 13.77;
+    public static final double MaxEncoderPos = 14;
 
     public static final double TRAY_POS_BASE = -0.02;
-    public static final double TRAY_POS_UP = 1.3; // CHANGE [!]
-    public static final double TRAY_MAX_POSE = 1.55;
+    public static final double TRAY_POS_UP = 1.6; // CHANGE [!]
+    public static final double TRAY_MAX_POSE = 1.8;
 }

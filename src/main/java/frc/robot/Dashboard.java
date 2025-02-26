@@ -28,6 +28,8 @@ public class Dashboard {
             .getEntry();
     private static GenericEntry add_value_to_Elevator = subsystemsInformation.add("SetElevatorValue", 0).withPosition(8, 8).withSize(3, 3)
             .getEntry();
+    // private static GenericEntry restart_wrist = subsystemsInformation.add("restart_wrist", 0).withPosition(12, 8).withSize(3, 3)
+    //         .getEntry().getBoolean(false);
     
 
     public static void init() {
@@ -79,6 +81,10 @@ public class Dashboard {
     public static String getSelectedAutonomy() {
         return m_autoSelected = m_chooser.getSelected();
     }
+
+    // public static boolean isRestartWrist() {
+    //     return restart_wrist;
+    // }
 
     public static double add_value_to_Elevator() {
         return add_value_to_Elevator.getDouble(0);
