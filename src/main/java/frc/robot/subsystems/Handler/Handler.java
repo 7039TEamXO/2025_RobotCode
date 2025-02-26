@@ -84,7 +84,7 @@ public class Handler {
     }   
 
 
-    public static void updateHandlerIr(RobotState state, ) { // boolean isReset
+    public static void updateHandlerIr(RobotState state, ElevatorState elevatorState) { // boolean isReset
         algaeIrValue = algaeIrInput.getValue();
         coralIrVal = getCoralIr();
         
@@ -110,9 +110,12 @@ public class Handler {
             algaeDepleteCounter++;
         else algaeDepleteCounter = 0;
 
-        if (!isCoralIn)
-            isAlgaeIn = algaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE || (lastIsAlgaeIn && algaeDepleteCounter < 20); // if algae is detected isAlgaeIn will be true until deplete
-        else isAlgaeIn = false;
+        if (!isCoralIn && (elevatorState == ElevatorState.ALGAE_HIGH || elevatorState == ElevatorState.ALGAE_LOW
+        || elevatorState == ElevatorState.ALGAE_HIGH_IN || elevatorState == ElevatorState.ALGAE_LOW_IN 
+        || elevatorState == ElevatorState.BASE)){
+            isAlgaeIn = (algaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE || (lastIsAlgaeIn && algaeDepleteCounter < 20)) && elevatorState != ElevatorState.BASE
+            ? true : elevatorState == ElevatorState.BASE && (lastIsAlgaeIn && algaeDepleteCounter < 20) ? isAlgaeIn : false; // if algae is detected isAlgaeIn will be true until deplete
+        }else{ isAlgaeIn = false;}
 
         isFinishedDepletingAlgae = !isAlgaeIn && lastIsAlgaeIn;
 

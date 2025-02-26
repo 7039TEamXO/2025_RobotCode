@@ -4,7 +4,7 @@ public class ClimbConstants {
     public static final int ClimbMotorID = 3;
     public static final int ServoMotorID = 5;
 
-    public static final double CLIMB_WANTED_POWER_CLIMB = 0.5;
+    public static final double CLIMB_WANTED_POWER_CLIMB = 0.8;
     public static final double CLIMB_WANTED_POWER_STOP = 0;
     public static final double CLIMB_WANTED_POWER_DESCEND = -0.5;
 

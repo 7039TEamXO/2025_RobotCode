@@ -101,7 +101,7 @@ public class SubsystemManager {
             psController_HID.getPOV(0) == 270 ? ElevatorState.ALGAE_LOW : // left
             lastElevatorState;
         }
-        Handler.updateHandlerIr(state);
+        Handler.updateHandlerIr(state, elevatorState);
         switch (state) {
             case TRAVEL:
                 if(Handler.isAlgaeIn() && (elevatorState == ElevatorState.ALGAE_LOW || 
