@@ -84,7 +84,7 @@ public class Handler {
     }   
 
 
-    public static void updateHandlerIr(RobotState state) { // boolean isReset
+    public static void updateHandlerIr(RobotState state, ) { // boolean isReset
         algaeIrValue = algaeIrInput.getValue();
         coralIrVal = getCoralIr();
         
