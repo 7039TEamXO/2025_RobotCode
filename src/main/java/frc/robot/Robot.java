@@ -55,7 +55,10 @@ public class Robot extends TimedRobot {
   public void robotInit()
   {
     SubsystemManager.init();
+    // shuflboard
     Dashboard.init();
+    Dashboard.setElevatorState();
+    Dashboard.setWristState();
     Limelight.init();
     LED.init();
 

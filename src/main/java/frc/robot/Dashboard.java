@@ -4,6 +4,10 @@ package frc.robot;
 
 import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -11,12 +15,18 @@ import frc.robot.subsystems.DeliveryManager;
 import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.Climb.Climb;
 import frc.robot.subsystems.Elevator.Elevator;
+import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.Wrist.Wrist;
+import frc.robot.subsystems.Wrist.WristState;
 import frc.robot.subsystems.Handler.Handler;
 import frc.robot.subsystems.Tray.Tray;
 
 public class Dashboard {
     private final static SendableChooser<String> m_chooser = new SendableChooser<>();
+
+    private final static SendableChooser<String> choosen_elevatorStates = new SendableChooser<>();
+    private final static SendableChooser<String> choosen_WristStates = new SendableChooser<>();
+
     private static String m_autoSelected;
     private static ShuffleboardTab driver = Shuffleboard.getTab("Driver");
     private static ShuffleboardTab telemetry = Shuffleboard.getTab("Telemetry");
@@ -32,6 +42,13 @@ public class Dashboard {
     //         .getEntry().getBoolean(false);
     
 
+
+    // started changes ---------------
+    // private static NetworkTableEntry stateEntry;
+    // private static ElevatorState currentState = ElevatorState.BASE;
+
+    
+
     public static void init() {
         Autos[] states = Autos.values();
         for (int i = 0; i < states.length; i++) {
@@ -41,7 +58,30 @@ public class Dashboard {
                 m_chooser.setDefaultOption(name_state, name_state);
             }
             m_chooser.addOption(name_state, name_state);
-        }  
+
+
+        // elevator chooser
+        
+
+        // wrist chooser
+        // WristState[] wristStates = WristState.values();
+        // for (int h = 0; h < elevatorStates.length; h++) {
+        //     WristState wristState = wristStates[k];
+        //     String name_wristStates = wristState.name();
+        //         if (h == 0) {
+        //             choosen_WristStates.setDefaultOption(name_elevatorStates, name_elevatorStates);
+        //         }
+        //         choosen_WristStates.addOption(name_elevatorStates, name_elevatorStates);
+
+        }
+
+        // // -----------------------
+        // NetworkTable table = NetworkTableInstance.getDefault().getTable("RobotState");
+        // stateEntry = table.getEntry("CurrentState");
+        
+        // // Настройка начального значения
+        // stateEntry.setString(currentState.name());
+          
 
         driver.add("Autos", m_chooser).withPosition(0, 0).withSize(5, 3);
         driver.add("Limelight Camera", limelightcamera).withPosition(17, 0).withSize(9, 6);
@@ -76,10 +116,48 @@ public class Dashboard {
 
         debugging.addString("ElevatorState",() -> SubsystemManager.getElevatorState().name()).withPosition(17, 0).withSize(5, 3);
         debugging.addString("LastElevatorState",() -> SubsystemManager.getLastElevatorState().name()).withPosition(22, 0).withSize(5, 3);
+        // --------
+        
     }
 
+    public static void setElevatorState() {
+        ElevatorState[] elevatorStates = ElevatorState.values();
+        for (int k = 0; k < elevatorStates.length; k++) {
+            ElevatorState elevatorState = elevatorStates[k];
+            String name_elevatorStates = elevatorState.name();
+                if (k == 0) {
+                    choosen_elevatorStates.setDefaultOption(name_elevatorStates, name_elevatorStates);
+                }
+                choosen_elevatorStates.addOption(name_elevatorStates, name_elevatorStates);
+            }
+
+        debugging.add("choose Elevator state ", choosen_elevatorStates).withSize(6, 5).withPosition(3, 3);
+    }
+
+    public static void setWristState() {
+        WristState[] wristStates = WristState.values();
+        for (int i = 0; i < wristStates.length; i++) {
+            WristState wristState = wristStates[i];
+            String name_wristStates = wristState.name();
+                if (i == 0) {
+                    choosen_WristStates.setDefaultOption(name_wristStates, name_wristStates);
+                }
+                choosen_WristStates.addOption(name_wristStates, name_wristStates);
+            }
+        debugging.add("choose Wrist state", choosen_WristStates).withSize(6, 5).withPosition(10, 3);
+    }
+
+
     public static String getSelectedAutonomy() {
-        return m_autoSelected = m_chooser.getSelected();
+        return m_chooser.getSelected(); // m_autoSelected = m_chooser.getSelected();
+    }
+
+    public static String getSelectedElevatorState() {
+        return choosen_elevatorStates.getSelected();
+    }
+
+    public static String getSelectedWristState() {
+        return choosen_WristStates.getSelected(); 
     }
 
     // public static boolean isRestartWrist() {
