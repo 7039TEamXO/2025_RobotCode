@@ -1,16 +1,21 @@
 package frc.robot.subsystems.Wrist;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import frc.robot.Dashboard;
+import frc.robot.subsystems.SubsystemManager;
 
 public class Wrist {
     private static TalonFX master = new TalonFX(WristConstants.WristMotorID);
     private static double wristPosition;
+
+    private static boolean isResetWrist = false;
+    private static double resetWristCounter = 0;
 
     private static final MotionMagicVoltage motorRequest = new MotionMagicVoltage(0);
     
@@ -43,7 +48,20 @@ public class Wrist {
                 break;
         }
         // wristPosition = wristPosition + Dashboard.add_value_to_Wrist();
+        if (SubsystemManager.getResetWrist()) {
+            if (resetWristCounter <=40) {
+                resetWrist();
+                master.setPosition(0);
+                // System.out.println("i exist");
+            } else {
+                isResetWrist = false;
+                resetWristCounter = 0;
+                stopWrist();
+                
+            }
+        } else {
         master.setControl(motorRequest.withPosition(wristPosition));
+        }
     }
 
     public static double getCurrentPosition() {
@@ -52,6 +70,16 @@ public class Wrist {
 
     public static void resetEncoder(){
         master.setPosition(0);
+    }
+
+    public static void resetWrist() {
+        master.setControl(new DutyCycleOut(-0.1));
+        resetWristCounter ++;
+
+    }
+
+    public static void stopWrist(){
+        master.setControl(new DutyCycleOut(0));
     }
 
     private static void setMotorConfigs() {

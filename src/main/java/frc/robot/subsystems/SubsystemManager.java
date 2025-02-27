@@ -55,6 +55,8 @@ public class SubsystemManager {
 
     private static boolean isTxSeen = false;
 
+    private static boolean isResetWrist = false;
+
     public static Command travelCommand = Commands.run(() -> operateAuto(RobotState.TRAVEL, null));
     public static Command intakeCoralCommand = Commands.run(() -> operateAuto(RobotState.INTAKE, ElevatorState.BASE));
     public static Command intakeAlgaeLowCommand = Commands.run(() -> operateAuto(RobotState.INTAKE, ElevatorState.ALGAE_LOW));
@@ -80,9 +82,13 @@ public class SubsystemManager {
     }
 
     public static void operate(boolean onAuto) {
-        if (psController_HID.getTouchpadButton()) {
-            DeliveryManager.resetWrist();
-        }
+        isResetWrist = psController_HID.getTouchpadButton();
+        // System.out.println();
+        // if (psController_HID.getTouchpadButton()) {
+        //     DeliveryManager.resetWrist();
+
+        // }
+        
         if (!onAuto) {
             state = psController_HID.getPOV(0) == 0 ? RobotState.TRAVEL : 
             state == RobotState.CLIMB ? RobotState.CLIMB :
@@ -250,5 +256,9 @@ public class SubsystemManager {
 
     public static boolean getTxSeen() {
         return isTxSeen;
+    }
+
+    public static boolean getResetWrist() {
+        return isResetWrist;
     }
 }

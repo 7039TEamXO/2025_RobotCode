@@ -806,9 +806,9 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   public static boolean isRobotVBelowOne(){
-    return (Math.abs(swerveDrive.getRobotVelocity().vxMetersPerSecond) < 1.5) &&
-            (Math.abs(swerveDrive.getRobotVelocity().vyMetersPerSecond) < 1.5) &&  
-              ((Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) < 1.5));
+    return (Math.abs(swerveDrive.getRobotVelocity().vxMetersPerSecond) < 2) &&
+            (Math.abs(swerveDrive.getRobotVelocity().vyMetersPerSecond) < 2) &&  
+              ((Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) < 1));
   }
 
   public static double getAngleFromCurrentTag(){

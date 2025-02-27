@@ -117,7 +117,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit()
   {
-    SubsystemManager.init();
+    // SubsystemManager.init();
 
     m_robotContainer.setMotorBrake(true);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();

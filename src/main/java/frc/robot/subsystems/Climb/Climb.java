@@ -43,7 +43,9 @@ public class Climb {
         }
         if (climbMotor.getPosition().getValueAsDouble() >= 220 && wantedPower == ClimbConstants.CLIMB_WANTED_POWER_CLIMB) {  //climbMotor.getPosition().getValueAsDouble() <= -220 && wantedPower == ClimbConstants.CLIMB_WANTED_POWER_DESCEND
             wantedPower = ClimbConstants.CLIMB_WANTED_POWER_STOP;
-        }
+        } 
+        
+        
         climbMotor.setControl(new DutyCycleOut(wantedPower));
         climbServo.setAngle(wantedAngle);
     } 
