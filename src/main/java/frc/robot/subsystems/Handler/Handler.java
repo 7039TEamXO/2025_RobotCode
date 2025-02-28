@@ -74,13 +74,22 @@ public class Handler {
             case DEPLETE_CORAL_LEVEL0:
                 power = HandlerConstants.HANDLER_POWER_DEPLETE_CORAL_LEVEL0;
                 break;
-                
-            case PUSH_BACK_CORAL: // Inactive
-                power = HandlerConstants.HANDLER_POWER_PUSH_BACK_CORAL;
-                break;
+
         }
 
-        master.setControl(new DutyCycleOut(power)); //set percent output
+        if((SubsystemManager.getElevatorState() == ElevatorState.INTAKE_CORAL ||
+                SubsystemManager.getElevatorState() == ElevatorState.LEVEL0 ||
+                    SubsystemManager.getElevatorState() == ElevatorState.LEVEL1 || 
+                        SubsystemManager.getElevatorState() == ElevatorState.LEVEL2 || 
+                            SubsystemManager.getElevatorState() == ElevatorState.BASE) && SubsystemManager.getIsMooveCoral()) {
+                                master.setControl(new DutyCycleOut(HandlerConstants.HANDLER_POWER_PUSH_BACK_CORAL));
+                            } else if (SubsystemManager.getElevatorState() == ElevatorState.LEVEL3 && SubsystemManager.getIsMooveCoral())
+                            master.setControl(new DutyCycleOut(-HandlerConstants.HANDLER_POWER_PUSH_BACK_CORAL));
+                            else {
+                                master.setControl(new DutyCycleOut(power)); //set percent output
+                            }
+
+        
     }   
 
 

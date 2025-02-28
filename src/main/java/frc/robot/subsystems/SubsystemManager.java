@@ -57,6 +57,9 @@ public class SubsystemManager {
 
     private static boolean isResetWrist = false;
 
+    private static boolean isMooveCoral = false;
+
+
     public static Command travelCommand = Commands.run(() -> operateAuto(RobotState.TRAVEL, null));
     public static Command intakeCoralCommand = Commands.run(() -> operateAuto(RobotState.INTAKE, ElevatorState.BASE));
     public static Command intakeAlgaeLowCommand = Commands.run(() -> operateAuto(RobotState.INTAKE, ElevatorState.ALGAE_LOW));
@@ -81,7 +84,7 @@ public class SubsystemManager {
         Tray.init();
     }
 
-    public static void operate(boolean onAuto) {
+    public static void operate(boolean onAuto) { 
         isResetWrist = psController_HID.getTouchpadButton();
         // System.out.println();
         // if (psController_HID.getTouchpadButton()) {
@@ -187,6 +190,14 @@ public class SubsystemManager {
         /****** Auto Counter ******/
         waitForElevatorInAuto(onAuto);
 
+
+        // ---------- debuging in game
+        if (psController_HID.getOptionsButton() && state != RobotState.CLIMB) {
+            isMooveCoral = true;
+        } else {
+            isMooveCoral = false;
+        }
+
         DeliveryManager.operate(elevatorState, state);
         Handler.operate(handlerState);
         Climb.operate(climbState);
@@ -260,5 +271,9 @@ public class SubsystemManager {
 
     public static boolean getResetWrist() {
         return isResetWrist;
+    }
+
+    public static boolean getIsMooveCoral() {
+        return isMooveCoral;
     }
 }
