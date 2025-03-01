@@ -59,6 +59,7 @@ public class Robot extends TimedRobot {
     Dashboard.init();
     Dashboard.setElevatorState();
     Dashboard.setWristState();
+    Dashboard.acceptChanges();
     Limelight.init();
     LED.init();
 

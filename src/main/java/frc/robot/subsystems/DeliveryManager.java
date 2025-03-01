@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import frc.robot.Dashboard;
 import frc.robot.RobotState;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorConstants;
@@ -23,6 +24,7 @@ public class DeliveryManager {
     
     public static void operate(ElevatorState state, RobotState robotState) {
         elevatorState = state;
+
         switch (state) {
             
             /*===========================*/
@@ -98,6 +100,12 @@ public class DeliveryManager {
         }
             
         wristState = Handler.isAlgaeIn() ? WristState.INTAKE_ALGAE : wristState;
+        
+        if (Dashboard.getAcceptChages()) {
+            elevatorState = Dashboard.getSelectedElevatorState();
+            wristState = Dashboard.getSelectedWristState();
+        }
+        System.out.println(Dashboard.getAcceptChages());
 
         Wrist.operate(wristState);
         Elevator.operate(elevatorState);

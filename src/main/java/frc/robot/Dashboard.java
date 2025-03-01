@@ -27,6 +27,8 @@ public class Dashboard {
     private final static SendableChooser<String> choosen_elevatorStates = new SendableChooser<>();
     private final static SendableChooser<String> choosen_WristStates = new SendableChooser<>();
 
+    private final static SendableChooser<String> choosen_acceptChanges = new SendableChooser<>();
+
     private static String m_autoSelected;
     private static ShuffleboardTab driver = Shuffleboard.getTab("Driver");
     private static ShuffleboardTab telemetry = Shuffleboard.getTab("Telemetry");
@@ -34,10 +36,15 @@ public class Dashboard {
     private static ShuffleboardTab debugging = Shuffleboard.getTab("Debugging");
     private static HttpCamera limelightcamera = new HttpCamera("limelight", "http://10.70.39.11:5801");
 
+    private static boolean isAcceptChanges[] = {false, true};
+
     private static GenericEntry add_value_to_Wrist = subsystemsInformation.add("SetWristValue", 0).withPosition(3, 8).withSize(3, 3)
             .getEntry();
     private static GenericEntry add_value_to_Elevator = subsystemsInformation.add("SetElevatorValue", 0).withPosition(8, 8).withSize(3, 3)
             .getEntry();
+
+    // private static GenericEntry is = subsystemsInformation.add("SetElevatorValue", 0).withPosition(8, 8).withSize(3, 3)
+    //         .getEntry();
     // private static GenericEntry restart_wrist = subsystemsInformation.add("restart_wrist", 0).withPosition(12, 8).withSize(3, 3)
     //         .getEntry().getBoolean(false);
     
@@ -89,7 +96,6 @@ public class Dashboard {
         telemetry.addNumber("X", () -> SubsystemManager.getDriveBase().getPose().getX()).withPosition(0, 0).withSize(8, 3);
         telemetry.addNumber("Y", () -> SubsystemManager.getDriveBase().getPose().getY()).withPosition(0, 3).withSize(8, 3);
         telemetry.addNumber("Rot", () -> SubsystemManager.getDriveBase().getPose().getRotation().getDegrees()).withPosition(0, 6).withSize(8, 3);
-    
         telemetry.addNumber("Front Left Rot", () -> SubsystemManager.getDriveBase().getSwerveDriveConfiguration().modules[0].getPosition().angle.getDegrees()).withPosition(9, 0).withSize(8, 3);
         telemetry.addNumber("Front Right Rot", () -> SubsystemManager.getDriveBase().getSwerveDriveConfiguration().modules[1].getPosition().angle.getDegrees()).withPosition(17, 0).withSize(8, 3);
         telemetry.addNumber("Back Left Rot", () -> SubsystemManager.getDriveBase().getSwerveDriveConfiguration().modules[2].getPosition().angle.getDegrees()).withPosition(9, 3).withSize(8, 3);
@@ -120,45 +126,60 @@ public class Dashboard {
         
     }
 
+    public static void acceptChanges() {
+        for (int i = 0; i < isAcceptChanges.length; i++) {
+            boolean isAcceptChange = isAcceptChanges[i];
+            if (i == 0) {
+                choosen_acceptChanges.setDefaultOption(String.valueOf(isAcceptChange), String.valueOf(isAcceptChange)); // convert to string
+            }
+            choosen_acceptChanges.addOption(String.valueOf(isAcceptChange), String.valueOf(isAcceptChange));
+        }
+        
+        debugging.add("accept to chages ", choosen_acceptChanges).withSize(4, 5).withPosition(10, 3);
+    }
+
+    public static boolean getAcceptChages() {
+        return Boolean.parseBoolean(choosen_acceptChanges.getSelected());
+    }
+
     public static void setElevatorState() {
         ElevatorState[] elevatorStates = ElevatorState.values();
         for (int k = 0; k < elevatorStates.length; k++) {
             ElevatorState elevatorState = elevatorStates[k];
-            String name_elevatorStates = elevatorState.name();
                 if (k == 0) {
-                    choosen_elevatorStates.setDefaultOption(name_elevatorStates, name_elevatorStates);
+                    choosen_elevatorStates.setDefaultOption(elevatorState.name(), elevatorState.name());
                 }
-                choosen_elevatorStates.addOption(name_elevatorStates, name_elevatorStates);
+                choosen_elevatorStates.addOption(elevatorState.name(), elevatorState.name());
             }
+        debugging.add("choose Elevator state ", choosen_elevatorStates).withSize(4, 5).withPosition(0, 3);
+    }
 
-        debugging.add("choose Elevator state ", choosen_elevatorStates).withSize(6, 5).withPosition(3, 3);
+    public static ElevatorState getSelectedElevatorState() {
+        return ElevatorState.valueOf(choosen_elevatorStates.getSelected());
     }
 
     public static void setWristState() {
         WristState[] wristStates = WristState.values();
         for (int i = 0; i < wristStates.length; i++) {
             WristState wristState = wristStates[i];
-            String name_wristStates = wristState.name();
                 if (i == 0) {
-                    choosen_WristStates.setDefaultOption(name_wristStates, name_wristStates);
+                    choosen_WristStates.setDefaultOption(wristState.name(), wristState.name());
                 }
-                choosen_WristStates.addOption(name_wristStates, name_wristStates);
+                choosen_WristStates.addOption(wristState.name(), wristState.name());
             }
-        debugging.add("choose Wrist state", choosen_WristStates).withSize(6, 5).withPosition(10, 3);
+            
+        debugging.add("choose Wrist state", choosen_WristStates).withSize(4, 5).withPosition(5, 3);
     }
-
+    
+    public static WristState getSelectedWristState() {
+        return WristState.valueOf(choosen_WristStates.getSelected()); 
+    }
 
     public static String getSelectedAutonomy() {
         return m_chooser.getSelected(); // m_autoSelected = m_chooser.getSelected();
     }
 
-    public static String getSelectedElevatorState() {
-        return choosen_elevatorStates.getSelected();
-    }
 
-    public static String getSelectedWristState() {
-        return choosen_WristStates.getSelected(); 
-    }
 
     // public static boolean isRestartWrist() {
     //     return restart_wrist;

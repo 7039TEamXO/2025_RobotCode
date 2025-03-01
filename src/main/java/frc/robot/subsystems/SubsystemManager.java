@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
+import frc.robot.Dashboard;
 import frc.robot.LED;
 import frc.robot.Limelight;
 import frc.robot.RobotState;
@@ -114,6 +115,8 @@ public class SubsystemManager {
             lastElevatorState;
         }
         Handler.updateHandlerIr(state, elevatorState);
+
+        
         switch (state) {
             case TRAVEL:
                 if(Handler.isAlgaeIn() && (elevatorState == ElevatorState.ALGAE_LOW || 
