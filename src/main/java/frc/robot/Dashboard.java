@@ -1,12 +1,18 @@
 package frc.robot;
 
+import edu.wpi.first.cscore.CvSink;
+import edu.wpi.first.cscore.CvSource;
+
 // import java.util.logging.Handler;
 
 import edu.wpi.first.cscore.HttpCamera;
+import edu.wpi.first.cscore.MjpegServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.util.PixelFormat;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -20,6 +26,8 @@ import frc.robot.subsystems.Wrist.Wrist;
 import frc.robot.subsystems.Wrist.WristState;
 import frc.robot.subsystems.Handler.Handler;
 import frc.robot.subsystems.Tray.Tray;
+
+
 
 public class Dashboard {
     private final static SendableChooser<String> m_chooser = new SendableChooser<>();
@@ -191,5 +199,19 @@ public class Dashboard {
 
     public static double add_value_to_Wrist() {
         return add_value_to_Wrist.getDouble(0);
+    }
+
+
+    public void cameraInit(){
+        UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
+        MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
+        mjpegServer1.setSource(usbCamera);
+        // Creates the CvSink and connects it to the UsbCamera
+        CvSink cvSink = new CvSink("opencv_USB Camera 0");
+        cvSink.setSource(usbCamera);
+        // Creates the CvSource and MjpegServer [2] and connects them
+        CvSource outputStream = new CvSource("Blur", PixelFormat.kMJPEG, 640, 480, 30);
+        MjpegServer mjpegServer2 = new MjpegServer("serve_Blur", 1182);
+        mjpegServer2.setSource(outputStream);
     }
 }
