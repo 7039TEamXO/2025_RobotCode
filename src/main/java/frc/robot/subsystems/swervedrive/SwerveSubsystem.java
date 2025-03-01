@@ -318,6 +318,17 @@ public class SwerveSubsystem extends SubsystemBase
 
       }
 
+
+    public Command advancedAlignByLimelight(DoubleSupplier joystickY, int tagId){
+      return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(
+                                    new Translation2d((joystickY.getAsDouble() * (swerveDrive.getMaximumChassisVelocity())),
+                                    Limelight.getTx() * SwerveDriveConstants.ALIGN_LIMMELIGHT_X_KP), 0.8),
+                                    (getAngleFromCurrentTag() * SwerveDriveConstants.ALIGN_BY_TAG_ANGLE_ROTATION_KP), 
+                                    false,
+                                    false));
+    
+  }
+
   
     /**
      * Command to drive the robot using translative values and heading as a setpoint.
@@ -811,18 +822,36 @@ public class SwerveSubsystem extends SubsystemBase
               ((Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) < 1));
   }
 
-  public static double getAngleFromCurrentTag(){
-    int tagId = (int) Limelight.getMainAprilTagId();
-    
-    double tagRot = fieldLayout.getTagPose(tagId).get().toPose2d().getRotation().getRotations();
+  public double getAngleFromCurrentTag(){
+    try {
+    int tagId = Limelight.getMainAprilTagId();
+    double tagRot = fieldLayout.getTagPose(tagId).get().toPose2d().getRotation().getDegrees();
     
     double flippedDeg = (tagRot + 180) % 360;
 
     if (flippedDeg > 180){
       flippedDeg -= 360;
     }
+
+    double currentHeading = swerveDrive.getOdometryHeading().getDegrees();
+    double angleDiff = currentHeading - flippedDeg;
+
+    if (angleDiff > 180) {
+      angleDiff -= 360;
+    } 
+    else if (angleDiff < -180) {
+      angleDiff += 360;
+    }
+
+    System.out.println(angleDiff);
+
+    return (angleDiff);
+
+  }
+  catch (Exception e){
+    return 0;
     
-    return flippedDeg;
+  }
 
   }
 

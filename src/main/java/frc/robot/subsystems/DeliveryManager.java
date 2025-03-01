@@ -105,7 +105,6 @@ public class DeliveryManager {
             elevatorState = Dashboard.getSelectedElevatorState();
             wristState = Dashboard.getSelectedWristState();
         }
-        System.out.println(Dashboard.getAcceptChages());
 
         Wrist.operate(wristState);
         Elevator.operate(elevatorState);

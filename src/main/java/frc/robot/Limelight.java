@@ -150,8 +150,17 @@ public class Limelight {
         limelightTable.getEntry("pipeline").setNumber(pipeline);
     }
 
-    public static double getMainAprilTagId(){
-        return LimelightHelpers.getFiducialID("limelight");
+    public static int getMainAprilTagId(){
+        return (int) LimelightHelpers.getFiducialID("limelight");
+    }
+
+    public static void setPriorityTagId(int tagId){
+        System.out.println(tagId);
+        LimelightHelpers.setPriorityTagID("limelight", tagId);
+    }
+
+    public static void resetPriorityTagId(){
+        LimelightHelpers.setPriorityTagID("limelight", -1);    
     }
 
     public static boolean getTyGreaterThan7(){
