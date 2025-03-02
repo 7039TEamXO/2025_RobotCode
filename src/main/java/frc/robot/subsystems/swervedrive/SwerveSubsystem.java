@@ -282,6 +282,8 @@ public class SwerveSubsystem extends SubsystemBase
           edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
       );
     }
+
+    // DEPRECATED
     public Command driveToRightReefPoint(){
       // Create the constraints to use while pathfinding
       tag_pos = getClosestReefFace(swerveDrive.getPose());
@@ -303,33 +305,27 @@ public class SwerveSubsystem extends SubsystemBase
                           false,
                           false);
       });
-    
-
     }
 
+    // DEPRECATED
     public Command alignByLimelight(DoubleSupplier joystickY){
-
-     return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(
-                                      new Translation2d((joystickY.getAsDouble() * (swerveDrive.getMaximumChassisVelocity() ))
-                                      ,Limelight.getTx() * SwerveDriveConstants.ALIGN_LIMMELIGHT_X_KP), 0.8),
-                                      (Limelight.getTx() * SwerveDriveConstants.ALIGN_LIMMELIGHT_ROTATION_KP), 
-                                      false,
-                                      false));
-
-      }
-
-
-    public Command advancedAlignByLimelight(DoubleSupplier joystickY, int tagId){
       return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(
                                     new Translation2d((joystickY.getAsDouble() * (swerveDrive.getMaximumChassisVelocity())),
-                                    Limelight.getTx() * SwerveDriveConstants.ALIGN_LIMMELIGHT_X_KP), 0.8),
+                                    Limelight.getTx() * SwerveDriveConstants.ALIGN_LIMELIGHT_X_KP), 0.8),
+                                    (Limelight.getTx() * SwerveDriveConstants.ALIGN_LIMELIGHT_ROTATION_KP), // ?
+                                    false,
+                                    false));
+    }
+
+    public Command advancedAlignByLimelight(DoubleSupplier joystickY, int tagId) {
+      return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(
+                                    new Translation2d((joystickY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()),
+                                    Limelight.getTx() * SwerveDriveConstants.ALIGN_LIMELIGHT_X_KP), 0.8),
                                     (getAngleFromCurrentTag() * SwerveDriveConstants.ALIGN_BY_TAG_ANGLE_ROTATION_KP), 
                                     false,
                                     false));
-    
-  }
+    }
 
-  
     /**
      * Command to drive the robot using translative values and heading as a setpoint.
      *
@@ -822,7 +818,7 @@ public class SwerveSubsystem extends SubsystemBase
               ((Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) < 1));
   }
 
-  public double getAngleFromCurrentTag(){
+  public double getAngleFromCurrentTag() {
     try {
     int tagId = Limelight.getMainAprilTagId();
     double tagRot = fieldLayout.getTagPose(tagId).get().toPose2d().getRotation().getDegrees();
@@ -850,7 +846,6 @@ public class SwerveSubsystem extends SubsystemBase
   }
   catch (Exception e){
     return 0;
-    
   }
 
   }

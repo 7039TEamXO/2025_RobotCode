@@ -37,9 +37,11 @@ public class DeliveryManager {
 
             case ALGAE_HIGH:
                 if (Elevator.getCurrentPosition() >= ElevatorConstants.ELEVATOR_POSE_SAFE_TO_ROTATE) {
-                    if (Handler.isAlgaeIn())
-                        elevatorState = ElevatorState.ALGAE_HIGH_IN;
-                    wristState = WristState.INTAKE_ALGAE;
+                    if (Handler.isAlgaeIn()) {
+                     elevatorState = ElevatorState.ALGAE_HIGH_IN;
+                    }else{
+                        wristState = WristState.INTAKE_ALGAE;
+                    }
                 }
                 break;
             

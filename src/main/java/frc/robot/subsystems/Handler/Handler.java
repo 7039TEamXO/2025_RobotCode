@@ -97,8 +97,10 @@ public class Handler {
         algaeIrValue = algaeIrInput.getValue();
         coralIrVal = getCoralIr();
         
-        if (coralIrVal)
+        if (coralIrVal){
             coralIntakeCounter++;
+            isCoralIn = false;
+        }
         else if(!lastCoralIrVal)
             coralIntakeCounter = 0;
 

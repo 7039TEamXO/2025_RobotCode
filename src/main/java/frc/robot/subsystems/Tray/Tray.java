@@ -24,7 +24,7 @@ public class Tray {
                 trayPosition = TrayConstants.TRAY_POS_BASE;
                 break;
             case UP:
-                trayPosition = TrayConstants.TRAY_MAX_POSE;
+                trayPosition = TrayConstants.TRAY_POS_UP;
                 break;
         }
         // System.out.println(trayMotor.getPosition().getValueAsDouble());

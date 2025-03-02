@@ -46,6 +46,9 @@ public class Wrist {
             case DEPLETE_CORAL_LEVEL0:
                 wristPosition = WristConstants.WRIST_POS_DEPLETE_CORAL_LEVEL0;
                 break;
+                case HOLD_ALGAE_HIGH:
+                wristPosition = WristConstants.WRIST_POS_HOLD_ALGAE_HIGH;
+                break;
         }
         // wristPosition = wristPosition + Dashboard.add_value_to_Wrist();
         if (SubsystemManager.getResetWrist()) {
