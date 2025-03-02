@@ -30,17 +30,7 @@ public class DeliveryManager {
             /*===========================*/
             
             case BASE:
-                if (Handler.isAlgaeIn()) {
-                    elevatorState = ElevatorState.BASE;
-                    wristState = WristState.INTAKE_ALGAE;
-                }
-                else if (robotState != RobotState.CLIMB) {
-                    elevatorState = ElevatorState.INTAKE_CORAL;
                     wristState = WristState.BASE;
-                } else{
-                    elevatorState = ElevatorState.BASE;
-                    wristState = WristState.BASE;
-                }
                 break;
 
             /*===========================*/
