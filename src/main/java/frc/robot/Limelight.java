@@ -155,7 +155,6 @@ public class Limelight {
     }
 
     public static void setPriorityTagId(int tagId){
-        System.out.println(tagId);
         LimelightHelpers.setPriorityTagID("limelight", tagId);
     }
 
@@ -164,6 +163,6 @@ public class Limelight {
     }
 
     public static boolean getTyGreaterThan7(){
-        return Math.abs(LimelightHelpers.getTY("limelight")) >= 7;
+        return Math.abs(LimelightHelpers.getTY("limelight")) <= 7;
     }
 }

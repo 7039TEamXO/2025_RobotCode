@@ -101,11 +101,14 @@ public class Handler {
             coralIntakeCounter++;
             isCoralIn = false;
         }
-        else if(!lastCoralIrVal)
+        else if(!lastCoralIrVal){
             coralIntakeCounter = 0;
+        }
 
-        if (!coralIrVal && state != RobotState.DEPLETE && coralIntakeCounter > 16) //16
+        
+        if (!coralIrVal && state != RobotState.DEPLETE && coralIntakeCounter > 9){ //16
             isCoralIn = true;
+        }
 
         if (state == RobotState.DEPLETE) {
             isCoralIn = false;

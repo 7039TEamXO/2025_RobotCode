@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 //import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.Handler.Handler;
@@ -19,6 +20,8 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 import java.io.File;
 import java.io.IOException;
+
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 //import org.photonvision.estimation.VisionEstimation;
 
@@ -33,6 +36,11 @@ import swervelib.parser.SwerveParser;
 public class Robot extends TimedRobot {
   private static Robot   instance;
   private Command m_autonomousCommand;
+  private Command autoCommand;
+  private Command autoInitCommand;
+
+
+  private boolean isFirstTimeAtDisabled = true;
 
   private RobotContainer m_robotContainer;
 
@@ -98,6 +106,14 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit()
   {
+
+    if (isFirstTimeAtDisabled) {
+      autoInitCommand = new PathPlannerAuto(m_robotContainer.getAutonomousCommand()).ignoringDisable(true);
+      autoInitCommand.schedule();
+      isFirstTimeAtDisabled = false;
+      System.out.println("first time at disabled");
+    }
+
     m_robotContainer.setMotorBrake(true);
     disabledTimer.reset();
     disabledTimer.start();
@@ -106,6 +122,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic()
   {
+
     // if (disabledTimer.hasElapsed(Constants.DrivebaseConstants.WHEEL_LOCK_TIME))
     // {
     //   m_robotContainer.setMotorBrake(false);
@@ -121,15 +138,21 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit()
   {
-    // SubsystemManager.init();
 
     m_robotContainer.setMotorBrake(true);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
+    // SubsystemManager.init();
+    if (m_autonomousCommand != null) {
+      autoCommand = new WaitCommand(0.01).andThen(m_autonomousCommand);
+    }
+
     // schedule the autonomous command (example)
-    if (m_autonomousCommand != null)
+    
+    if (autoCommand != null)
     {
-      m_autonomousCommand.schedule();
+      // m_autonomousCommand.schedule();
+      autoCommand.schedule();
     }
   }
 
@@ -139,6 +162,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic()
   { 
+    SubsystemManager.getDriveBase().isAuto = true;
     SubsystemManager.operate(true);
   }
 
@@ -149,10 +173,14 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+
+    if (autoInitCommand != null) {
+      autoInitCommand.cancel();
+    }
     
-    if (m_autonomousCommand != null)
+    if (autoCommand != null)
     {
-      m_autonomousCommand.cancel();
+      autoCommand.cancel();
     }
     m_robotContainer.setDriveMode();
     m_robotContainer.setMotorBrake(true);

@@ -3,9 +3,10 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
+    "CenterCoral",
     "DoubleAlgaeLeft",
     "DoubleAlgaeRight",
-    "CenterCoral",
+    "Test",
     "TripleCoralLeft",
     "TripleCoralRight"
   ],

@@ -30,6 +30,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -142,18 +143,24 @@ public class SwerveSubsystem extends SubsystemBase
     }
 
   
-    static int counter = 0;
+    private int counter = 0;
+    public boolean isAuto = false;
     @Override
     public void periodic()
     {
       swerveDrive.setMaximumAllowableSpeeds(calculateSpeedAccordingToElevator(Constants.MAX_SPEED, Constants.MIN_SPEED),
        calculateSpeedAccordingToElevator(Constants.MAX_ROTATION_V, Constants.MIN_ROTATION_V));
 
+       if (isAuto) {
+        counter++;
+       }
+
       Tuple2<Pose2d> tuple = Limelight.update();
-      if (tuple != null && !Limelight.getTyGreaterThan7() && isRobotVBelowOne()) {
+      if (tuple != null && !Limelight.getTyGreaterThan7() && isRobotVBelowOne() && counter > 20) {
         Pose2d pos = new Pose2d(tuple.get_0().getX(), tuple.get_0().getY(), SubsystemManager.getDriveBase().getHeading());
         double timestampSeconds = tuple.get_1().getX();
         swerveDrive.addVisionMeasurement(pos, timestampSeconds);
+        
       }
       swerveDrive.updateOdometry();
     }
@@ -815,7 +822,7 @@ public class SwerveSubsystem extends SubsystemBase
   public static boolean isRobotVBelowOne(){
     return (Math.abs(swerveDrive.getRobotVelocity().vxMetersPerSecond) < 2) &&
             (Math.abs(swerveDrive.getRobotVelocity().vyMetersPerSecond) < 2) &&  
-              ((Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) < 1));
+              ((Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) < 1.5));
   }
 
   public double getAngleFromCurrentTag() {
@@ -838,8 +845,6 @@ public class SwerveSubsystem extends SubsystemBase
     else if (angleDiff < -180) {
       angleDiff += 360;
     }
-
-    System.out.println(angleDiff);
 
     return (angleDiff);
 

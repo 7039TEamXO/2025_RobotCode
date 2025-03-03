@@ -1,6 +1,7 @@
 package frc.robot;
 
 public enum Autos {
+    Test("Test"),
     Safe_Right("Safe_Right"),
     Level_4_Right("Level_4_Right"),
     Safe_Left("Safe_Left"),
