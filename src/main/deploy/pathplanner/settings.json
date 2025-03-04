@@ -3,16 +3,19 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
-    "CenterCoral",
     "DoubleAlgaeLeft",
     "DoubleAlgaeRight",
     "Test",
-    "TripleCoralLeft",
-    "TripleCoralRight"
+    "TripleCoralRightRed",
+    "TripleCoralLeftBlue",
+    "TripleCoralLeftRed",
+    "TripleCoralRightBlue"
   ],
   "autoFolders": [
     "DoubleAlgae",
-    "Center",
+    "SingleAlgae",
+    "SafeCoral",
+    "Test",
     "TripleCoral"
   ],
   "defaultMaxVel": 3.6,

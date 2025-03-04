@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.389448783361146,
-        "y": 2.2926582021399353
+        "x": 3.3652036299496757,
+        "y": 2.43687334744202
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,8 @@
         "y": 2.879
       },
       "prevControl": {
-        "x": 3.7798092180458105,
-        "y": 2.7269575001248034
+        "x": 3.5060061521450203,
+        "y": 2.5105913115987195
       },
       "nextControl": null,
       "isLocked": false,
@@ -59,7 +59,7 @@
     "rotation": 59.99999999999999
   },
   "reversed": false,
-  "folder": "TripleCoralRight",
+  "folder": "TripleCoralRightBlue",
   "idealStartingState": {
     "velocity": 0.0,
     "rotation": 55.0

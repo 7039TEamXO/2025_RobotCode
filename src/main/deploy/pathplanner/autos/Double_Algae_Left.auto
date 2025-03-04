@@ -11,13 +11,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "14To21"
+                  "pathName": "CenterTo21"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeAlgaeHigh"
+                  "name": "Level_3"
                 }
               }
             ]
@@ -30,7 +30,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeAlgaeHigh"
+                  "name": "Deplete"
                 }
               },
               {
@@ -49,7 +49,45 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "21ToProc+"
+                  "pathName": "21to21A"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeAlgaeLow"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeAlgaeLow"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "21AToProc+"
                 }
               },
               {
@@ -93,7 +131,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeAlgaeLow"
+                  "name": "IntakeAlgaeHigh"
                 }
               }
             ]
@@ -106,7 +144,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeAlgaeLow"
+                  "name": "IntakeAlgaeHigh"
                 }
               },
               {
