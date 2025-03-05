@@ -160,6 +160,7 @@ public class SwerveSubsystem extends SubsystemBase
         Pose2d pos = new Pose2d(tuple.get_0().getX(), tuple.get_0().getY(), SubsystemManager.getDriveBase().getHeading());
         double timestampSeconds = tuple.get_1().getX();
         swerveDrive.addVisionMeasurement(pos, timestampSeconds);
+        System.out.println(counter);
         
       }
       swerveDrive.updateOdometry();
