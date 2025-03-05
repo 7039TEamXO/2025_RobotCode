@@ -151,8 +151,8 @@ public class Handler {
     }
 
     public static boolean isAlgaeIn() {
-        // return isAlgaeIn;
-        return false;
+        return isAlgaeIn;
+        
     }
 
     public static boolean isCoralIn() {
