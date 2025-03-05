@@ -280,4 +280,8 @@ public class SubsystemManager {
     public static boolean getIsMooveCoral() {
         return isMooveCoral;
     }
+
+    public static void setState(RobotState sState){
+        state = sState;
+    }
 }

@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "15to22R"
+                  "pathName": "Copy of 15to22"
                 }
               },
               {
@@ -49,7 +49,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "22to12R"
+                  "pathName": "Copy of 22to12"
                 }
               },
               {
@@ -68,7 +68,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 0.5
+                  "waitTime": 0.3
                 }
               },
               {
@@ -87,7 +87,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "12to17DR"
+                  "pathName": "Copy of 12to17D"
                 }
               },
               {
@@ -125,7 +125,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "17Dto12R"
+                  "pathName": "Copy of 17Dto12"
                 }
               },
               {
@@ -142,15 +142,15 @@
           "data": {
             "commands": [
               {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.5
-                }
-              },
-              {
                 "type": "named",
                 "data": {
                   "name": "IntakeCoral"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.3
                 }
               }
             ]
@@ -163,7 +163,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "12to17UR"
+                  "pathName": "Copy of 12to17U"
                 }
               },
               {
@@ -198,35 +198,16 @@
           "type": "race",
           "data": {
             "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Copy of 17Uto12"
+                }
+              },
               {
                 "type": "named",
                 "data": {
                   "name": "Travel"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "17Uto12R"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Level_3"
                 }
               }
             ]
