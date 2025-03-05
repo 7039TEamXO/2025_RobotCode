@@ -20,6 +20,5 @@ public class TrayConstants {
     public static final double MaxEncoderPos = 14;
 
     public static final double TRAY_POS_BASE = -0.02;
-    public static final double TRAY_POS_UP = 1.6; // CHANGE [!]
-    public static final double TRAY_MAX_POSE = 1.8;
+    public static final double TRAY_POS_UP = 1.8; // CHANGE [
 }

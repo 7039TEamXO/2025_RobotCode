@@ -43,6 +43,7 @@ public class Dashboard {
     private static ShuffleboardTab subsystemsInformation = Shuffleboard.getTab("SubsystemsInformation");
     private static ShuffleboardTab debugging = Shuffleboard.getTab("Debugging");
     private static HttpCamera limelightcamera = new HttpCamera("limelight", "http://10.70.39.11:5801");
+    private static HttpCamera usbCamera = new HttpCamera("USB Camera 0", "http://10.70.39.11:5801");
 
     private static boolean isAcceptChanges[] = {false, true};
 
@@ -98,7 +99,7 @@ public class Dashboard {
         // stateEntry.setString(currentState.name());
           
 
-        driver.add("Autos", m_chooser).withPosition(0, 0).withSize(5, 3);
+        driver.add("Autos", m_chooser).withPosition(17, 7).withSize(5, 3);
         driver.add("Limelight Camera", limelightcamera).withPosition(17, 0).withSize(9, 6);
 
         telemetry.addNumber("X", () -> SubsystemManager.getDriveBase().getPose().getX()).withPosition(0, 0).withSize(8, 3);
@@ -130,8 +131,13 @@ public class Dashboard {
 
         debugging.addString("ElevatorState",() -> SubsystemManager.getElevatorState().name()).withPosition(17, 0).withSize(5, 3);
         debugging.addString("LastElevatorState",() -> SubsystemManager.getLastElevatorState().name()).withPosition(22, 0).withSize(5, 3);
+
+
+
         // --------
-        
+        setElevatorState();
+        setWristState();
+        acceptChanges();
     }
 
     public static void acceptChanges() {
@@ -202,7 +208,7 @@ public class Dashboard {
     }
 
 
-    public void cameraInit(){
+    public static void cameraInit(){
         UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
         MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
         mjpegServer1.setSource(usbCamera);

@@ -68,7 +68,11 @@ public class Handler {
                 break;
 
             case INTAKE_CORAL:
-                power = HandlerConstants.HANDLER_POWER_INTAKE_CORAL;
+            if(SubsystemManager.getDriveBase().isAuto){
+                power = HandlerConstants.HANDLER_POWER_INTAKE_CORAL_AUTO;
+            }else{
+                power = HandlerConstants.HANDLER_POWER_INTAKE_CORAL_TELEOP;
+            }
                 break;
 
             case DEPLETE_CORAL_LEVEL0:
@@ -106,7 +110,7 @@ public class Handler {
         }
 
         
-        if (!coralIrVal && state != RobotState.DEPLETE && coralIntakeCounter > 9){ //16
+        if (!coralIrVal && state != RobotState.DEPLETE && coralIntakeCounter > HandlerConstants.CORAL_IN_DEBOUCE_COUNTER){ //16
             isCoralIn = true;
         }
 
@@ -163,7 +167,9 @@ public class Handler {
     }
 
     public static int getAlgaeIrValue(){
-        return algaeIrValue;
+        return algaeIrInput.getValue();
+        // return algaeIrValue;
+
     }
 
     public static boolean isFinishedDepletingAlgae(){

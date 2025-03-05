@@ -43,7 +43,7 @@ public class SwerveDriveConstants {
                                                     RED_REEF_POS_FACE_FIVE_ID,
                                                     RED_REEF_POS_FACE_SIX_ID}; 
     public static final double M_FROM_TAG_TO_POLES = 0.2;
-    public static final double ALIGN_LIMELIGHT_X_KP = -0.052;
+    public static final double ALIGN_LIMELIGHT_X_KP = -0.06;
     public static final double ALIGN_LIMELIGHT_ROTATION_KP = -0.02; //align to tx 
-    public static final double ALIGN_BY_TAG_ANGLE_ROTATION_KP = -0.043; //align to reef angle
+    public static final double ALIGN_BY_TAG_ANGLE_ROTATION_KP = -0.047; //align to reef angle
 }

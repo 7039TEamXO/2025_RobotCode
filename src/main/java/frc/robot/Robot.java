@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Pose2d;
 //import edu.wpi.first.math.geometry.Pose2d;
 //import edu.wpi.first.math.kinematics.Odometry;
@@ -65,9 +66,11 @@ public class Robot extends TimedRobot {
     SubsystemManager.init();
     // shuflboard
     Dashboard.init();
-    Dashboard.setElevatorState();
-    Dashboard.setWristState();
-    Dashboard.acceptChanges();
+    // Dashboard.setElevatorState();
+    // Dashboard.setWristState();
+    // Dashboard.acceptChanges();
+    // Dashboard.cameraInit();
+    cameraSetup();
     Limelight.init();
     LED.init();
 
@@ -122,6 +125,8 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic()
   {
+
+    SubsystemManager.getDriveBase().isAuto = false;
 
     // if (disabledTimer.hasElapsed(Constants.DrivebaseConstants.WHEEL_LOCK_TIME))
     // {
@@ -231,5 +236,13 @@ public class Robot extends TimedRobot {
   @Override
   public void simulationPeriodic()
   {
+  }
+  public void cameraSetup() {
+    // USB CAMERA //
+    try {
+      CameraServer.startAutomaticCapture();
+    } catch (Exception e) {
+      System.out.println("--------------- CameraSetup ERROR ---------------");
+    }
   }
 }

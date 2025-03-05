@@ -8,14 +8,17 @@ public class HandlerConstants {
     public static final int HandlerDigitalOutPutSensorID = 0;
 
     public static final double HANDLER_POWER_INTAKE_ALGAE = 0.55; // 0.55
-    public static final double HANDLER_POWER_DEPLETE_CORAL = 0.6;
+    public static final double HANDLER_POWER_DEPLETE_CORAL = 0.65;
     public static final double HANDLER_POWER_STOP = 0;
     public static final double HANDLER_POWER_DEPLETE_ALGAE = -0.6;// -0.6
     public static final double HANDLER_POWER_HOLD_ALGAE = 0.3;// 0.3
-    public static final double HANDLER_POWER_INTAKE_CORAL = 0.3;
+    public static final double HANDLER_POWER_INTAKE_CORAL_TELEOP = 0.22;
+    
+    public static final double HANDLER_POWER_INTAKE_CORAL_AUTO = 0.35;//0.3
     public static final double HANDLER_POWER_DEPLETE_CORAL_LEVEL0 = 0.3;
     public static final double HANDLER_POWER_FEED_CORAL = -0.05;
     public static final double HANDLER_POWER_PUSH_BACK_CORAL = -0.05;
 
+    public static final int CORAL_IN_DEBOUCE_COUNTER = 0;
     public static final double ALGAE_IR_IN_VALUE = 230;
 }
