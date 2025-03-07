@@ -63,6 +63,10 @@ public class Elevator {
             case ALGAE_LOW_IN:
                 elevatorPosition = ElevatorConstants.ELEVATOR_POSE_ALGAE_LOW + ElevatorConstants.ELEVATOR_POSE_ALGAE_IN_OFFSET;
                 break;
+            
+            case SHOOT_ALGAE:
+                elevatorPosition = ElevatorConstants.ELEVATOR_POSE_LEVEL3;
+                break;
         }
         // elevatorPosition = elevatorPosition + Dashboard.add_value_to_Elevator();
         elevatorMasterMotor.setControl(motorRequest.withPosition(elevatorPosition)); //set position for elevator

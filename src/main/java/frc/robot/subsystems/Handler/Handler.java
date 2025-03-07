@@ -8,9 +8,10 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.subsystems.DeliveryManager;
 import frc.robot.subsystems.SubsystemManager;
-import frc.robot.subsystems.Elevator.ElevatorState;
+import frc.robot.subsystems.Elevator.*;
 import frc.robot.subsystems.Wrist.Wrist;
 import frc.robot.subsystems.Wrist.WristState;
 import frc.robot.RobotState;
@@ -67,6 +68,8 @@ public class Handler {
                 power = HandlerConstants.HANDLER_POWER_HOLD_ALGAE;
                 break;
 
+            
+
             case INTAKE_CORAL:
             if(SubsystemManager.getDriveBase().isAuto){
                 power = HandlerConstants.HANDLER_POWER_INTAKE_CORAL_AUTO;
@@ -77,6 +80,15 @@ public class Handler {
 
             case DEPLETE_CORAL_LEVEL0:
                 power = HandlerConstants.HANDLER_POWER_DEPLETE_CORAL_LEVEL0;
+                break;
+                 
+            case SHOOT_ALGAE:
+            if (Elevator.getCurrentPosition() > 10){
+                power = HandlerConstants.SHOOT_ALGAE;
+            }
+            else {
+                power = HandlerConstants.HOLD_ALGAE_FOR_SHOOT;
+            }
                 break;
 
         }

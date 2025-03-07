@@ -97,7 +97,7 @@ public class SubsystemManager {
             state = psController_HID.getPOV(0) == 0 ? RobotState.TRAVEL : 
             state == RobotState.CLIMB ? RobotState.CLIMB :
             psController_HID.getL2Button() ? RobotState.DEPLETE :
-            psController_HID.getR2Button() ? RobotState.INTAKE :
+            // psController_HID.getR2Button() ? RobotState.INTAKE :
             psController_HID.getShareButton() ? RobotState.CLIMB :
             psController_HID.getPOV(0) == 90 ? RobotState.INTAKE :
             psController_HID.getPOV(0) == 270 ? RobotState.INTAKE :
@@ -112,7 +112,10 @@ public class SubsystemManager {
             psController_HID.getPOV(0) == 90 ? ElevatorState.ALGAE_HIGH : // right
             psController_HID.getPOV(0) == 180 ? ElevatorState.LEVEL0 : // down
             psController_HID.getPOV(0) == 270 ? ElevatorState.ALGAE_LOW : // left
+            psController_HID.getR2Button() ? ElevatorState.SHOOT_ALGAE :
             lastElevatorState;
+
+
         }
         Handler.updateHandlerIr(state, elevatorState);
 
@@ -121,10 +124,15 @@ public class SubsystemManager {
             case TRAVEL:
                 if(Handler.isAlgaeIn() && (elevatorState == ElevatorState.ALGAE_LOW || 
                                             elevatorState == ElevatorState.ALGAE_HIGH ||
-                                              elevatorState == ElevatorState.BASE))
+                                              elevatorState == ElevatorState.BASE)) {
                     handlerState = HandlerState.HOLD_ALGAE;
-                else
+                                              }
+                else if(elevatorState == ElevatorState.SHOOT_ALGAE){
+                    handlerState = HandlerState.SHOOT_ALGAE;
+                }
+                else {
                     handlerState = HandlerState.STOP;
+                }
                 
                 if ((lastElevatorState == ElevatorState.INTAKE_CORAL && Handler.isCoralIn()) && elevatorState != ElevatorState.LEVEL0)
                     elevatorState = ElevatorState.BASE;

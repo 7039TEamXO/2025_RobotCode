@@ -89,6 +89,15 @@ public class DeliveryManager {
             case INTAKE_CORAL:
                 wristState = WristState.BASE;
                 break;
+
+            case SHOOT_ALGAE:
+                if (Elevator.getCurrentPosition() > 10){
+                wristState = WristState.SHOOT_ALGAE;
+                }
+                // else if (Elevator.getCurrentPosition() > 7) {
+                //     wristState = WristState.INTAKE_ALGAE;
+
+                // }
         }
             
         wristState = Handler.isAlgaeIn() ? WristState.INTAKE_ALGAE : wristState;
@@ -97,6 +106,7 @@ public class DeliveryManager {
             elevatorState = Dashboard.getSelectedElevatorState();
             wristState = Dashboard.getSelectedWristState();
         }
+
 
         Wrist.operate(wristState);
         Elevator.operate(elevatorState);
