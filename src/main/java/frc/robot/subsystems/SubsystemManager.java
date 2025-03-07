@@ -201,6 +201,10 @@ public class SubsystemManager {
             isMooveCoral = false;
         }
 
+        if (Dashboard.getAcceptChages()){
+            handlerState = Dashboard.getSelectedHandlerState();
+        }
+
         DeliveryManager.operate(elevatorState, state);
         Handler.operate(handlerState);
         Climb.operate(climbState);

@@ -1,7 +1,7 @@
 package frc.robot.subsystems.Tray;
 
 public class TrayConstants {
-    public static final int TrayMotorID = 5; // CHANGE [!]
+    public static final int TrayMotorID = 5;
 
     public static final double kS = 0.1; // Add 0.25 V output to overcome static friction
     public static final double kV = 0.05; // A velocity target of 1 rps results in 0.12 V output
@@ -20,5 +20,5 @@ public class TrayConstants {
     public static final double MaxEncoderPos = 14;
 
     public static final double TRAY_POS_BASE = -0.02;
-    public static final double TRAY_POS_UP = 1.8; // CHANGE [
+    public static final double TRAY_POS_UP = 1.8;
 }

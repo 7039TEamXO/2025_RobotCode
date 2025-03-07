@@ -17,6 +17,8 @@ public class Wrist {
     private static boolean isResetWrist = false;
     private static double resetWristCounter = 0;
 
+    private static boolean isPushWrist;
+
     private static final MotionMagicVoltage motorRequest = new MotionMagicVoltage(0);
     
     public static void init() {
@@ -51,6 +53,11 @@ public class Wrist {
                 break;
         }
         // wristPosition = wristPosition + Dashboard.add_value_to_Wrist();
+
+        //
+            // if(state == WristState.BASE &&  master.getStatorCurrent().getValueAsDouble() > 20)
+        //
+
         if (SubsystemManager.getResetWrist()) {
             if (resetWristCounter <=40) {
                 resetWrist();

@@ -25,6 +25,7 @@ import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.Wrist.Wrist;
 import frc.robot.subsystems.Wrist.WristState;
 import frc.robot.subsystems.Handler.Handler;
+import frc.robot.subsystems.Handler.*;
 import frc.robot.subsystems.Tray.Tray;
 
 
@@ -34,6 +35,7 @@ public class Dashboard {
 
     private final static SendableChooser<String> choosen_elevatorStates = new SendableChooser<>();
     private final static SendableChooser<String> choosen_WristStates = new SendableChooser<>();
+    private final static SendableChooser<String> choosen_HandlerStates = new SendableChooser<>();
 
     private final static SendableChooser<String> choosen_acceptChanges = new SendableChooser<>();
 
@@ -51,6 +53,9 @@ public class Dashboard {
             .getEntry();
     private static GenericEntry add_value_to_Elevator = subsystemsInformation.add("SetElevatorValue", 0).withPosition(8, 8).withSize(3, 3)
             .getEntry();
+    private static GenericEntry add_value_to_Handler = subsystemsInformation.add("SetHandlerValue", 0).withPosition(12, 8).withSize(3, 3)
+            .getEntry();
+    
 
     // private static GenericEntry is = subsystemsInformation.add("SetElevatorValue", 0).withPosition(8, 8).withSize(3, 3)
     //         .getEntry();
@@ -137,6 +142,7 @@ public class Dashboard {
         // --------
         setElevatorState();
         setWristState();
+        setHandlerState();
         acceptChanges();
     }
 
@@ -149,7 +155,7 @@ public class Dashboard {
             choosen_acceptChanges.addOption(String.valueOf(isAcceptChange), String.valueOf(isAcceptChange));
         }
         
-        debugging.add("accept to chages ", choosen_acceptChanges).withSize(4, 5).withPosition(10, 3);
+        debugging.add("accept to chages ", choosen_acceptChanges).withSize(4, 5).withPosition(15, 3);
     }
 
     public static boolean getAcceptChages() {
@@ -188,6 +194,23 @@ public class Dashboard {
     public static WristState getSelectedWristState() {
         return WristState.valueOf(choosen_WristStates.getSelected()); 
     }
+
+    public static void setHandlerState() {
+        HandlerState[] handlerStates = HandlerState.values();
+        for (int i = 0; i < handlerStates.length; i++) {
+            HandlerState handlerStaste = handlerStates[i];
+                if (i == 0) {
+                    choosen_HandlerStates.setDefaultOption(handlerStaste.name(), handlerStaste.name());
+                }
+                choosen_HandlerStates.addOption(handlerStaste.name(), handlerStaste.name());
+            }
+        debugging.add("choose Handler state", choosen_HandlerStates).withSize(4, 5).withPosition(10, 3);
+    }
+    
+    public static HandlerState getSelectedHandlerState() {
+        return HandlerState.valueOf(choosen_HandlerStates.getSelected()); 
+    }
+    
 
     public static String getSelectedAutonomy() {
         return m_chooser.getSelected(); // m_autoSelected = m_chooser.getSelected();

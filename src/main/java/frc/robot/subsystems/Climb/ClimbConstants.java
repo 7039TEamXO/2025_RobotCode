@@ -2,9 +2,9 @@ package frc.robot.subsystems.Climb;
 
 public class ClimbConstants {
     public static final int ClimbMotorID = 3;
-    public static final int ServoMotorID = 5;
+    public static final int ServoMotorID = 5; // DEPRECATED
 
-    public static final double CLIMB_WANTED_POWER_CLIMB = 1;//0.8
+    public static final double CLIMB_WANTED_POWER_CLIMB = 1; //0.8
     public static final double CLIMB_WANTED_POWER_STOP = 0;
     public static final double CLIMB_WANTED_POWER_DESCEND = -0.5;
 
