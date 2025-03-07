@@ -131,6 +131,8 @@ public class Dashboard {
         subsystemsInformation.addBoolean("isCoralIn", () -> Handler.isCoralIn()).withPosition(6, 3).withSize(3, 3);
         subsystemsInformation.addBoolean("isAlgaelIn", () -> Handler.isAlgaeIn()).withPosition(9, 3).withSize(3, 3);
 
+        // subsystemsInformation.addNumber("HandlerEncoder", () -> Handler.getHandlerMotorDistance());
+        
         debugging.addNumber("HandlerCounter", () -> Handler.getCoralIntakeCounter()).withPosition(0, 0).withSize(3,3);
         debugging.addBoolean("HandlerReset", () -> Handler.getReset()).withPosition(3, 0).withSize(3,3);
 
@@ -138,6 +140,7 @@ public class Dashboard {
         debugging.addString("LastElevatorState",() -> SubsystemManager.getLastElevatorState().name()).withPosition(22, 0).withSize(5, 3);
 
 
+        
 
         // --------
         setElevatorState();

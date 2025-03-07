@@ -12,14 +12,14 @@ public class WristConstants {
 
     public static final double MotionMagicCruiseVelocity = 200; // Target cruise velocity of 80 rps
     public static final double MotionMagicAcceleration = 120; // Target acceleration of 160 rps/s (0.5 seconds)
-    public static final double MotionMagicJerk = 800; // Target jerk of 1600 rps/s/s (0.1 seconds)
+    public static final double MotionMagicJerk = 1000; // Target jerk of 1600 rps/s/s (0.1 seconds)
 
     public static final double StatorCurrentLimit = 30;
     public static final double SupplyCurrentLimit = 20;
 
     public static final double MaxEncoderPos = 13.77;
 
-    public static final double WRIST_POS_BASE = 0;
+    public static final double WRIST_POS_BASE = 0.01;
     public static final double WRIST_POS_DEPLETE_CORAL_LEVEL0 = 3.5;
     public static final double WRIST_POS_HIGH = 9.7;
     public static final double WRIST_POS_INTAKE_ALGAE = 7.7;//7.7

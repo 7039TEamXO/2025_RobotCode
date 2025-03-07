@@ -32,6 +32,7 @@ public class Handler {
     private static boolean feedCoral = false;
     private static int coralIntakeCounter = 0;
     private static int algaeDepleteCounter = 0;
+    private static double CurrenthandlerEncoderPosition = 0;
     private static boolean isReset = false;
     private static boolean lastCoralIrVal = coralIrInput.get();
     private static boolean isFinishedDepletingAlgae = false;
@@ -87,12 +88,18 @@ public class Handler {
                         SubsystemManager.getElevatorState() == ElevatorState.LEVEL2 || 
                             SubsystemManager.getElevatorState() == ElevatorState.BASE) && SubsystemManager.getIsMooveCoral()) {
                                 master.setControl(new DutyCycleOut(HandlerConstants.HANDLER_POWER_PUSH_BACK_CORAL));
-                            } else if (SubsystemManager.getElevatorState() == ElevatorState.LEVEL3 && SubsystemManager.getIsMooveCoral())
+                            } else if (SubsystemManager.getElevatorState() == ElevatorState.LEVEL3 && SubsystemManager.getIsMooveCoral()){
                             master.setControl(new DutyCycleOut(-HandlerConstants.HANDLER_POWER_PUSH_BACK_CORAL));
+                            }
+                            else if (state != HandlerState.DEPLETE_ALGAE && SubsystemManager.getElevatorState() == ElevatorState.LEVEL3 && 
+                            Math.abs(getHandlerMotorDistance() - CurrenthandlerEncoderPosition) <= HandlerConstants.LEVEL4_CORAL_PUSH_DISTANCE){
+                                System.out.println(state);
+                                master.setControl(new DutyCycleOut(-HandlerConstants.HANDLER_POWER_PUSH_BACK_CORAL));
+                            } 
                             else {
                                 master.setControl(new DutyCycleOut(power)); //set percent output
                             }
-
+        
         
     }   
 
@@ -112,6 +119,7 @@ public class Handler {
         
         if (!coralIrVal && state != RobotState.DEPLETE && coralIntakeCounter > HandlerConstants.CORAL_IN_DEBOUCE_COUNTER){ //16
             isCoralIn = true;
+            CurrenthandlerEncoderPosition = getHandlerMotorDistance();
         }
 
         if (state == RobotState.DEPLETE) {
@@ -171,6 +179,10 @@ public class Handler {
         return algaeIrInput.getValue();
         // return algaeIrValue;
 
+    }
+
+    public static double getHandlerMotorDistance(){
+        return master.getPosition().getValueAsDouble();
     }
 
     public static boolean isFinishedDepletingAlgae(){

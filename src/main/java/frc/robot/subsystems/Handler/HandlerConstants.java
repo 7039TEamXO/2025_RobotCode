@@ -21,4 +21,5 @@ public class HandlerConstants {
 
     public static final int CORAL_IN_DEBOUCE_COUNTER = 0;
     public static final double ALGAE_IR_IN_VALUE = 223;
+    public static final double LEVEL4_CORAL_PUSH_DISTANCE = 1.5;
 }
