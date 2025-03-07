@@ -13,6 +13,7 @@ import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.Wrist.Wrist;
 import frc.robot.subsystems.Wrist.WristState;
+import frc.robot.Dashboard;
 import frc.robot.RobotState;
 
 
@@ -144,6 +145,10 @@ public class Handler {
         }else{ isAlgaeIn = false;}
 
         isFinishedDepletingAlgae = !isAlgaeIn && lastIsAlgaeIn;
+
+        if(Dashboard.getAcceptChangesCoral()) {
+            isCoralIn = Dashboard.getSimCoralIn();
+        }
 
         lastCoralIrVal = coralIrVal;
         lastCoralIn = isCoralIn;

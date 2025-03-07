@@ -93,7 +93,7 @@ public class DeliveryManager {
             
         wristState = Handler.isAlgaeIn() ? WristState.INTAKE_ALGAE : wristState;
         
-        if (Dashboard.getAcceptChages()) {
+        if (Dashboard.getAcceptChanges()) {
             elevatorState = Dashboard.getSelectedElevatorState();
             wristState = Dashboard.getSelectedWristState();
         }
