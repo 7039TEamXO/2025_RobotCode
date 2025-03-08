@@ -201,7 +201,7 @@ public class SubsystemManager {
             isMooveCoral = false;
         }
 
-        if (Dashboard.getAcceptChages()){
+        if (Dashboard.getAcceptChanges()){
             handlerState = Dashboard.getSelectedHandlerState();
         }
 

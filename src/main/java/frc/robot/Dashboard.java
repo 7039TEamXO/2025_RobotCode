@@ -1,9 +1,13 @@
 package frc.robot;
 
+import java.util.Map;
+
 import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.CvSource;
 
-// import java.util.logging.Handler;
+import edu.wpi.first.networktables.NetworkTableInstance;
+
+
 
 import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.cscore.MjpegServer;
@@ -24,7 +28,6 @@ import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.Wrist.Wrist;
 import frc.robot.subsystems.Wrist.WristState;
-import frc.robot.subsystems.Handler.Handler;
 import frc.robot.subsystems.Handler.*;
 import frc.robot.subsystems.Tray.Tray;
 
@@ -55,7 +58,16 @@ public class Dashboard {
             .getEntry();
     private static GenericEntry add_value_to_Handler = subsystemsInformation.add("SetHandlerValue", 0).withPosition(12, 8).withSize(3, 3)
             .getEntry();
-    
+
+
+    private static GenericEntry acceptCoralChanges;
+    private static GenericEntry simIsCoralIn;
+
+//  private static GenericEntry myBoolean = Shuffleboard.getTab("Example Tab")
+//         .add("My Boolean", false)
+//         .withWidget("Boolean Box")
+//         .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "maroon"))
+//         .getEntry();
 
     // private static GenericEntry is = subsystemsInformation.add("SetElevatorValue", 0).withPosition(8, 8).withSize(3, 3)
     //         .getEntry();
@@ -79,8 +91,8 @@ public class Dashboard {
                 m_chooser.setDefaultOption(name_state, name_state);
             }
             m_chooser.addOption(name_state, name_state);
-
-
+        }
+            
         // elevator chooser
         
 
@@ -94,7 +106,7 @@ public class Dashboard {
         //         }
         //         choosen_WristStates.addOption(name_elevatorStates, name_elevatorStates);
 
-        }
+        
 
         // // -----------------------
         // NetworkTable table = NetworkTableInstance.getDefault().getTable("RobotState");
@@ -106,7 +118,8 @@ public class Dashboard {
 
         driver.add("Autos", m_chooser).withPosition(17, 7).withSize(5, 3);
         driver.add("Limelight Camera", limelightcamera).withPosition(17, 0).withSize(9, 6);
-        // driver.add("USB Camera", Robot.getVideo()).withPosition(17, 0).withSize(9, 6);
+        
+
         telemetry.addNumber("X", () -> SubsystemManager.getDriveBase().getPose().getX()).withPosition(0, 0).withSize(8, 3);
         telemetry.addNumber("Y", () -> SubsystemManager.getDriveBase().getPose().getY()).withPosition(0, 3).withSize(8, 3);
         telemetry.addNumber("Rot", () -> SubsystemManager.getDriveBase().getPose().getRotation().getDegrees()).withPosition(0, 6).withSize(8, 3);
@@ -131,6 +144,9 @@ public class Dashboard {
         subsystemsInformation.addBoolean("isCoralIn", () -> Handler.isCoralIn()).withPosition(6, 3).withSize(3, 3);
         subsystemsInformation.addBoolean("isAlgaelIn", () -> Handler.isAlgaeIn()).withPosition(9, 3).withSize(3, 3);
 
+
+        acceptCoralChanges = subsystemsInformation.add("acceptCoralChanges", false).withWidget(BuiltInWidgets.kToggleButton).withPosition(15, 8).withSize(3, 3).getEntry();
+        simIsCoralIn = subsystemsInformation.add("isCoralInToggle", false).withWidget(BuiltInWidgets.kToggleButton).withPosition(18, 8).withSize(3, 3).getEntry();
         // subsystemsInformation.addNumber("HandlerEncoder", () -> Handler.getHandlerMotorDistance());
         
         debugging.addNumber("HandlerCounter", () -> Handler.getCoralIntakeCounter()).withPosition(0, 0).withSize(3,3);
@@ -149,6 +165,14 @@ public class Dashboard {
         acceptChanges();
     }
 
+
+    public static boolean getAcceptChangesCoral() {
+        return acceptCoralChanges.getBoolean(false);
+    }
+    public static boolean getSimCoralIn() {
+        return simIsCoralIn.getBoolean(false);
+    }
+
     public static void acceptChanges() {
         for (int i = 0; i < isAcceptChanges.length; i++) {
             boolean isAcceptChange = isAcceptChanges[i];
@@ -161,7 +185,7 @@ public class Dashboard {
         debugging.add("accept to chages ", choosen_acceptChanges).withSize(4, 5).withPosition(15, 3);
     }
 
-    public static boolean getAcceptChages() {
+    public static boolean getAcceptChanges() {
         return Boolean.parseBoolean(choosen_acceptChanges.getSelected());
     }
 
@@ -214,16 +238,15 @@ public class Dashboard {
         return HandlerState.valueOf(choosen_HandlerStates.getSelected()); 
     }
     
-
+    
+    
+    
     public static String getSelectedAutonomy() {
         return m_chooser.getSelected(); // m_autoSelected = m_chooser.getSelected();
     }
 
 
 
-    // public static boolean isRestartWrist() {
-    //     return restart_wrist;
-    // }
 
     public static double add_value_to_Elevator() {
         return add_value_to_Elevator.getDouble(0);
@@ -233,6 +256,9 @@ public class Dashboard {
         return add_value_to_Wrist.getDouble(0);
     }
 
+    public static double add_value_to_Handler() {
+        return add_value_to_Handler.getDouble(0);
+    }
 
     public static void cameraInit(){
         UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);

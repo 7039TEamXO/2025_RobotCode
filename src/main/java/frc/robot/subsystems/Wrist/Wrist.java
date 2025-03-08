@@ -17,7 +17,9 @@ public class Wrist {
     private static boolean isResetWrist = false;
     private static double resetWristCounter = 0;
 
-    private static boolean isPushWrist;
+    private static boolean isMoovehWrist = false;
+
+    private static WristState lastState = WristState.BASE;
 
     private static final MotionMagicVoltage motorRequest = new MotionMagicVoltage(0);
     
@@ -57,21 +59,34 @@ public class Wrist {
         //
             // if(state == WristState.BASE &&  master.getStatorCurrent().getValueAsDouble() > 20)
         //
-
-        if (SubsystemManager.getResetWrist()) {
-            if (resetWristCounter <=40) {
-                resetWrist();
-                master.setPosition(0);
-                // System.out.println("i exist");
-            } else {
-                isResetWrist = false;
-                resetWristCounter = 0;
-                stopWrist();
-                
-            }
-        } else {
-        master.setControl(motorRequest.withPosition(wristPosition));
+        if(lastState != state) {
+            isMoovehWrist = true;
         }
+
+        if (state == WristState.BASE && master.getStatorCurrent().getValueAsDouble() < 20 && isMoovehWrist){
+            master.setControl(new DutyCycleOut(-0.2));
+            master.setPosition(0);
+        } else{
+            isMoovehWrist = false;
+            master.setControl(motorRequest.withPosition(wristPosition));
+        }
+
+
+        lastState = state;
+        // if (SubsystemManager.getResetWrist()) {
+        //     if (resetWristCounter <=40) {
+        //         resetWrist();
+        //         master.setPosition(0);
+        //         // System.out.println("i exist");
+        //     } else {
+        //         isResetWrist = false;
+        //         resetWristCounter = 0;
+        //         stopWrist();
+                
+        //     }
+        // } else {
+        // master.setControl(motorRequest.withPosition(wristPosition));
+        // }
     }
 
     public static double getCurrentPosition() {
