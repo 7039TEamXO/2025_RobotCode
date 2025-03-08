@@ -58,8 +58,7 @@ public class SubsystemManager {
 
     private static boolean isResetWrist = false;
 
-    private static boolean isMooveCoral = false;
-
+    private static boolean isMoveCoral = false;
 
     public static Command travelCommand = Commands.run(() -> operateAuto(RobotState.TRAVEL, null));
     public static Command intakeCoralCommand = Commands.run(() -> operateAuto(RobotState.INTAKE, ElevatorState.BASE));
@@ -90,7 +89,6 @@ public class SubsystemManager {
         // System.out.println();
         // if (psController_HID.getTouchpadButton()) {
         //     DeliveryManager.resetWrist();
-
         // }
         
         if (!onAuto) {
@@ -112,10 +110,10 @@ public class SubsystemManager {
             psController_HID.getPOV(0) == 90 ? ElevatorState.ALGAE_HIGH : // right
             psController_HID.getPOV(0) == 180 ? ElevatorState.LEVEL0 : // down
             psController_HID.getPOV(0) == 270 ? ElevatorState.ALGAE_LOW : // left
-            lastElevatorState;
+                lastElevatorState;
         }
-        Handler.updateHandlerIr(state, elevatorState);
 
+        Handler.updateHandlerIr(state, elevatorState);
         
         switch (state) {
             case TRAVEL:
@@ -194,15 +192,16 @@ public class SubsystemManager {
         waitForElevatorInAuto(onAuto);
 
 
-        // ---------- debuging in game
+        // In-game debugging
         if (psController_HID.getOptionsButton() && state != RobotState.CLIMB) {
-            isMooveCoral = true;
+            isMoveCoral = true;
         } else {
-            isMooveCoral = false;
+            isMoveCoral = false;
         }
 
         if (Dashboard.getAcceptChanges()){
             handlerState = Dashboard.getSelectedHandlerState();
+            elevatorState = Dashboard.getSelectedElevatorState();
         }
 
         DeliveryManager.operate(elevatorState, state);
@@ -215,7 +214,6 @@ public class SubsystemManager {
         lastState = state;
         lastElevatorState = elevatorState;
     }
-    
     
     private static void operateAuto(RobotState chosenState, ElevatorState choosenElevatorState) {
         state = chosenState == null ? state : chosenState;
@@ -281,8 +279,8 @@ public class SubsystemManager {
         return isResetWrist;
     }
 
-    public static boolean getIsMooveCoral() {
-        return isMooveCoral;
+    public static boolean getIsMoveCoral() {
+        return isMoveCoral;
     }
 
     public static void setState(RobotState sState){

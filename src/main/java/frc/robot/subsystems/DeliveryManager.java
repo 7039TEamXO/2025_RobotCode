@@ -94,7 +94,6 @@ public class DeliveryManager {
         wristState = Handler.isAlgaeIn() ? WristState.INTAKE_ALGAE : wristState;
         
         if (Dashboard.getAcceptChanges()) {
-            elevatorState = Dashboard.getSelectedElevatorState();
             wristState = Dashboard.getSelectedWristState();
         }
 
@@ -106,7 +105,7 @@ public class DeliveryManager {
         return wristState;
     }
 
-    public static void resetWrist(){
+    public static void resetWrist() {
         Wrist.resetEncoder();
     }
 }

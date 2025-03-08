@@ -70,55 +70,50 @@ public class Handler {
                 break;
 
             case INTAKE_CORAL:
-            if(SubsystemManager.getDriveBase().isAuto){
-                power = HandlerConstants.HANDLER_POWER_INTAKE_CORAL_AUTO;
-            }else{
-                power = HandlerConstants.HANDLER_POWER_INTAKE_CORAL_TELEOP;
-            }
+                if(SubsystemManager.getDriveBase().isAuto) {
+                    power = HandlerConstants.HANDLER_POWER_INTAKE_CORAL_AUTO;
+                } else{
+                    power = HandlerConstants.HANDLER_POWER_INTAKE_CORAL_TELEOP;
+                }
                 break;
 
             case DEPLETE_CORAL_LEVEL0:
                 power = HandlerConstants.HANDLER_POWER_DEPLETE_CORAL_LEVEL0;
                 break;
-
         }
 
         if((SubsystemManager.getElevatorState() == ElevatorState.INTAKE_CORAL ||
                 SubsystemManager.getElevatorState() == ElevatorState.LEVEL0 ||
                     SubsystemManager.getElevatorState() == ElevatorState.LEVEL1 || 
                         SubsystemManager.getElevatorState() == ElevatorState.LEVEL2 || 
-                            SubsystemManager.getElevatorState() == ElevatorState.BASE) && SubsystemManager.getIsMooveCoral()) {
-                                master.setControl(new DutyCycleOut(HandlerConstants.HANDLER_POWER_PUSH_BACK_CORAL));
-                            } else if (SubsystemManager.getElevatorState() == ElevatorState.LEVEL3 && SubsystemManager.getIsMooveCoral()){
-                            master.setControl(new DutyCycleOut(-HandlerConstants.HANDLER_POWER_PUSH_BACK_CORAL));
-                            }
-                            else if (state != HandlerState.DEPLETE_ALGAE && SubsystemManager.getElevatorState() == ElevatorState.LEVEL3 && 
-                            Math.abs(getHandlerMotorDistance() - CurrenthandlerEncoderPosition) <= HandlerConstants.LEVEL4_CORAL_PUSH_DISTANCE){
-                                System.out.println(state);
-                                master.setControl(new DutyCycleOut(-HandlerConstants.HANDLER_POWER_PUSH_BACK_CORAL));
-                            } 
-                            else {
-                                master.setControl(new DutyCycleOut(power)); //set percent output
-                            }
-        
-        
+                            SubsystemManager.getElevatorState() == ElevatorState.BASE) && SubsystemManager.getIsMoveCoral()) {
+            master.setControl(new DutyCycleOut(HandlerConstants.HANDLER_POWER_PUSH_BACK_CORAL));
+        } else if (SubsystemManager.getElevatorState() == ElevatorState.LEVEL3 && SubsystemManager.getIsMoveCoral()) {
+            master.setControl(new DutyCycleOut(-HandlerConstants.HANDLER_POWER_PUSH_BACK_CORAL));
+        }
+        else if (state != HandlerState.DEPLETE_ALGAE && SubsystemManager.getElevatorState() == ElevatorState.LEVEL3 && 
+            Math.abs(getHandlerMotorDistance() - CurrenthandlerEncoderPosition) <= HandlerConstants.LEVEL4_CORAL_PUSH_DISTANCE) {
+            System.out.println(state);
+            master.setControl(new DutyCycleOut(-HandlerConstants.HANDLER_POWER_PUSH_BACK_CORAL));
+        } 
+        else {
+            master.setControl(new DutyCycleOut(power)); //set percent output
+        }
     }   
-
 
     public static void updateHandlerIr(RobotState state, ElevatorState elevatorState) { // boolean isReset
         algaeIrValue = algaeIrInput.getValue();
         coralIrVal = getCoralIr();
         
-        if (coralIrVal){
+        if (coralIrVal) {
             coralIntakeCounter++;
             isCoralIn = false;
         }
-        else if(!lastCoralIrVal){
+        else if(!lastCoralIrVal) {
             coralIntakeCounter = 0;
         }
 
-        
-        if (!coralIrVal && state != RobotState.DEPLETE && coralIntakeCounter > HandlerConstants.CORAL_IN_DEBOUCE_COUNTER){ //16
+        if (!coralIrVal && state != RobotState.DEPLETE && coralIntakeCounter > HandlerConstants.CORAL_IN_DEBOUNCE_COUNTER) { //16
             isCoralIn = true;
             CurrenthandlerEncoderPosition = getHandlerMotorDistance();
         }
@@ -138,16 +133,22 @@ public class Handler {
         else algaeDepleteCounter = 0;
 
         if (!isCoralIn && (elevatorState == ElevatorState.ALGAE_HIGH || elevatorState == ElevatorState.ALGAE_LOW
-        || elevatorState == ElevatorState.ALGAE_HIGH_IN || elevatorState == ElevatorState.ALGAE_LOW_IN 
-        || elevatorState == ElevatorState.BASE)){
+            || elevatorState == ElevatorState.ALGAE_HIGH_IN || elevatorState == ElevatorState.ALGAE_LOW_IN 
+            || elevatorState == ElevatorState.BASE)) {
             isAlgaeIn = (algaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE || (lastIsAlgaeIn && algaeDepleteCounter < 20)) && elevatorState != ElevatorState.BASE
-            ? true : elevatorState == ElevatorState.BASE && (lastIsAlgaeIn && algaeDepleteCounter < 20) ? isAlgaeIn : false; // if algae is detected isAlgaeIn will be true until deplete
-        }else{ isAlgaeIn = false;}
+                ? true : elevatorState == ElevatorState.BASE && (lastIsAlgaeIn && algaeDepleteCounter < 20) ? isAlgaeIn : false; // if algae is detected isAlgaeIn will be true until deplete
+        } else { 
+            isAlgaeIn = false;
+        }
 
         isFinishedDepletingAlgae = !isAlgaeIn && lastIsAlgaeIn;
 
-        if(Dashboard.getAcceptChangesCoral()) {
-            isCoralIn = Dashboard.getSimCoralIn();
+        if(Dashboard.getAcceptCoralChanges()) {
+            isCoralIn = Dashboard.getChosenIsCoralIn();
+        }
+
+        if(Dashboard.getAcceptAlgaeChanges()) {
+            isAlgaeIn = Dashboard.getChosenIsAlgaeIn();
         }
 
         lastCoralIrVal = coralIrVal;
@@ -164,8 +165,7 @@ public class Handler {
     }
 
     public static boolean isAlgaeIn() {
-        return isAlgaeIn;
-        
+        return isAlgaeIn;   
     }
 
     public static boolean isCoralIn() {
@@ -180,17 +180,16 @@ public class Handler {
         return coralIrInput.get();
     }
 
-    public static int getAlgaeIrValue(){
+    public static int getAlgaeIrValue() {
         return algaeIrInput.getValue();
         // return algaeIrValue;
-
     }
 
-    public static double getHandlerMotorDistance(){
+    public static double getHandlerMotorDistance() {
         return master.getPosition().getValueAsDouble();
     }
 
-    public static boolean isFinishedDepletingAlgae(){
+    public static boolean isFinishedDepletingAlgae() {
         return isFinishedDepletingAlgae;
     }
 }

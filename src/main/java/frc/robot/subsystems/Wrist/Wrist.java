@@ -48,15 +48,14 @@ public class Wrist {
             case DEPLETE_CORAL_LEVEL0:
                 wristPosition = WristConstants.WRIST_POS_DEPLETE_CORAL_LEVEL0;
                 break;
-                case HOLD_ALGAE_HIGH:
+
+            case HOLD_ALGAE_HIGH:
                 wristPosition = WristConstants.WRIST_POS_HOLD_ALGAE_HIGH;
                 break;
         }
         // wristPosition = wristPosition + Dashboard.add_value_to_Wrist();
 
-        //
-            // if(state == WristState.BASE &&  master.getStatorCurrent().getValueAsDouble() > 20)
-        //
+        // if(state == WristState.BASE &&  master.getStatorCurrent().getValueAsDouble() > 20)
 
         if (SubsystemManager.getResetWrist()) {
             if (resetWristCounter <=40) {
@@ -67,10 +66,9 @@ public class Wrist {
                 isResetWrist = false;
                 resetWristCounter = 0;
                 stopWrist();
-                
             }
         } else {
-        master.setControl(motorRequest.withPosition(wristPosition));
+            master.setControl(motorRequest.withPosition(wristPosition));
         }
     }
 
@@ -84,8 +82,7 @@ public class Wrist {
 
     public static void resetWrist() {
         master.setControl(new DutyCycleOut(-0.1));
-        resetWristCounter ++;
-
+        resetWristCounter++;
     }
 
     public static void stopWrist(){
