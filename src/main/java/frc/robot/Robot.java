@@ -245,7 +245,7 @@ public class Robot extends TimedRobot {
   public void cameraSetup() {
     // USB CAMERA //
     try {
-      CameraServer.startAutomaticCapture(0);
+      CameraServer.startAutomaticCapture("Climb Camera", 0);
     } catch (Exception e) {
       System.out.println("--------------- CameraSetup ERROR ---------------");
     }

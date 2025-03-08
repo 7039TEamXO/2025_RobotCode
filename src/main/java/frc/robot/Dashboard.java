@@ -1,25 +1,15 @@
 package frc.robot;
 
-import java.util.Map;
-
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.CvSource;
-
-import edu.wpi.first.networktables.NetworkTableInstance;
-
-
 
 import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.cscore.MjpegServer;
 import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.PixelFormat;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SendableCameraWrapper;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.DeliveryManager;
@@ -31,8 +21,6 @@ import frc.robot.subsystems.Wrist.Wrist;
 import frc.robot.subsystems.Wrist.WristState;
 import frc.robot.subsystems.Handler.*;
 import frc.robot.subsystems.Tray.Tray;
-
-
 
 public class Dashboard {
     private final static SendableChooser<String> autoChooser = new SendableChooser<>();
@@ -71,9 +59,7 @@ public class Dashboard {
         // -----------------------
           
         SmartDashboard.putData("Autos", autoChooser);
-        // driver.add("Limelight Camera", limelightCamera);
-
-        update();
+        SmartDashboard.putData("Limelight", SendableCameraWrapper.wrap(limelightCamera));
 
         SmartDashboard.putBoolean("Accept State Changes", false);
         acceptStateChanges = SmartDashboard.getEntry("Accept State Changes");
@@ -97,6 +83,8 @@ public class Dashboard {
 
         // debugging.addString("ElevatorState",() -> SubsystemManager.getElevatorState().name());
         // debugging.addString("LastElevatorState",() -> SubsystemManager.getLastElevatorState().name());        
+
+        update();
 
         // --------
         setElevatorState();
@@ -216,16 +204,16 @@ public class Dashboard {
     //     return add_value_to_Handler.getDouble(0);
     // }
 
-    public static void cameraInit() {
-        UsbCamera usbCamera = new UsbCamera("USB Camera", 0); // USB Camera 0
-        MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera", 1181);
-        mjpegServer1.setSource(usbCamera);
-        // Creates the CvSink and connects it to the UsbCamera
-        CvSink cvSink = new CvSink("opencv_USB Camera");
-        cvSink.setSource(usbCamera);
-        // Creates the CvSource and MjpegServer [2] and connects them
-        CvSource outputStream = new CvSource("Blur", PixelFormat.kMJPEG, 640, 480, 30);
-        MjpegServer mjpegServer2 = new MjpegServer("serve_Blur", 1182);
-        mjpegServer2.setSource(outputStream);
-    }
+    // public static void cameraInit() {
+    //     UsbCamera usbCamera = new UsbCamera("USB Camera 0",0);
+    //     MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
+    //     mjpegServer1.setSource(usbCamera);
+    //     // Creates the CvSink and connects it to the UsbCamera
+    //     CvSink cvSink = new CvSink("opencv_USB Camera 0");
+    //     cvSink.setSource(usbCamera);
+    //     // Creates the CvSource and MjpegServer [2] and connects them
+    //     CvSource outputStream = new CvSource("Blur", PixelFormat.kMJPEG, 640, 480, 30);
+    //     MjpegServer mjpegServer2 = new MjpegServer("serve_Blur", 1182);
+    //     mjpegServer2.setSource(outputStream);
+    // }
 }

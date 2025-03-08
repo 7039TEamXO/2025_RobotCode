@@ -58,7 +58,7 @@ public class Wrist {
         // if(state == WristState.BASE &&  master.getStatorCurrent().getValueAsDouble() > 20)
 
         if (SubsystemManager.getResetWrist()) {
-            if (resetWristCounter <=40) {
+            if (resetWristCounter <= 40) {
                 resetWrist();
                 master.setPosition(0);
                 // System.out.println("i exist");
