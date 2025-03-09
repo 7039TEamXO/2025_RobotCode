@@ -93,7 +93,7 @@ public class Handler {
                             }
                             else if (state != HandlerState.DEPLETE_ALGAE && SubsystemManager.getElevatorState() == ElevatorState.LEVEL3 && 
                             Math.abs(getHandlerMotorDistance() - CurrenthandlerEncoderPosition) <= HandlerConstants.LEVEL4_CORAL_PUSH_DISTANCE){
-                                System.out.println(state);
+                                // System.out.println(state);
                                 master.setControl(new DutyCycleOut(-HandlerConstants.HANDLER_POWER_PUSH_BACK_CORAL));
                             } 
                             else {

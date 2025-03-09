@@ -64,8 +64,9 @@ public class Wrist {
         }
 
         if (state == WristState.BASE && master.getStatorCurrent().getValueAsDouble() < 20 && isMoovehWrist){
-            master.setControl(new DutyCycleOut(-0.2));
+            master.setControl(new DutyCycleOut(-0.1));
             master.setPosition(0);
+            System.out.println(master.getStatorCurrent().getValueAsDouble());
         } else{
             isMoovehWrist = false;
             master.setControl(motorRequest.withPosition(wristPosition));
@@ -73,11 +74,10 @@ public class Wrist {
 
 
         lastState = state;
-        // if (SubsystemManager.getResetWrist()) {
-        //     if (resetWristCounter <=40) {
-        //         resetWrist();
-        //         master.setPosition(0);
-        //         // System.out.println("i exist");
+        if (SubsystemManager.getResetWrist()) {
+            resetWrist();
+            master.setPosition(0);
+                // System.out.println("i exist");
         //     } else {
         //         isResetWrist = false;
         //         resetWristCounter = 0;
@@ -88,6 +88,7 @@ public class Wrist {
         // master.setControl(motorRequest.withPosition(wristPosition));
         // }
     }
+}
 
     public static double getCurrentPosition() {
         return master.getPosition().getValueAsDouble();
