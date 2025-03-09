@@ -99,6 +99,8 @@ public class Handler {
                             else {
                                 master.setControl(new DutyCycleOut(power)); //set percent output
                             }
+
+        // System.out.println("stator " + master.getStatorCurrent().getValueAsDouble());
         
         
     }   
@@ -126,22 +128,21 @@ public class Handler {
             isCoralIn = false;
             coralIntakeCounter = 0;
         }
-        // System.out.println(coralIntakeCounter);
-
-        isAlgaeDepleteCounting = (state == RobotState.DEPLETE) ? true : isAlgaeDepleteCounting;
-
-        if(!isAlgaeIn) isAlgaeDepleteCounting = false;
-
-        if (isAlgaeDepleteCounting) 
-            algaeDepleteCounter++;
-        else algaeDepleteCounter = 0;
 
         if (!isCoralIn && (elevatorState == ElevatorState.ALGAE_HIGH || elevatorState == ElevatorState.ALGAE_LOW
-        || elevatorState == ElevatorState.ALGAE_HIGH_IN || elevatorState == ElevatorState.ALGAE_LOW_IN 
-        || elevatorState == ElevatorState.BASE)){
-            isAlgaeIn = (algaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE || (lastIsAlgaeIn && algaeDepleteCounter < 20)) && elevatorState != ElevatorState.BASE
-            ? true : elevatorState == ElevatorState.BASE && (lastIsAlgaeIn && algaeDepleteCounter < 20) ? isAlgaeIn : false; // if algae is detected isAlgaeIn will be true until deplete
-        }else{ isAlgaeIn = false;}
+           || elevatorState == ElevatorState.ALGAE_HIGH_IN || elevatorState == ElevatorState.ALGAE_LOW_IN 
+           || elevatorState == ElevatorState.BASE)) {
+            isAlgaeIn = master.getStatorCurrent().getValueAsDouble() > 70;
+        }
+            // System.out.println(coralIntakeCounter);
+
+
+        // if (!isCoralIn && (elevatorState == ElevatorState.ALGAE_HIGH || elevatorState == ElevatorState.ALGAE_LOW
+        // || elevatorState == ElevatorState.ALGAE_HIGH_IN || elevatorState == ElevatorState.ALGAE_LOW_IN 
+        // || elevatorState == ElevatorState.BASE)){
+        //     isAlgaeIn = (algaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE || (lastIsAlgaeIn && algaeDepleteCounter < 20)) && elevatorState != ElevatorState.BASE
+        //     ? true : elevatorState == ElevatorState.BASE && (lastIsAlgaeIn && algaeDepleteCounter < 20) ? isAlgaeIn : false; // if algae is detected isAlgaeIn will be true until deplete
+        // }else{ isAlgaeIn = false;}
 
         isFinishedDepletingAlgae = !isAlgaeIn && lastIsAlgaeIn;
 

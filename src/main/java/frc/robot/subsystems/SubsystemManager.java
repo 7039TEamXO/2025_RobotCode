@@ -144,7 +144,7 @@ public class SubsystemManager {
                     psController_HID.getL3Button() ? ClimbState.DESCEND : 
                     psController_HID.getSquareButton() ? ClimbState.STOP :
                         climbState;
-
+                
                 trayState = TrayState.UP;
                 break;
 
@@ -287,5 +287,9 @@ public class SubsystemManager {
 
     public static void setState(RobotState sState){
         state = sState;
+    }
+
+    public static void setElevatorState(ElevatorState sState){
+        elevatorState = sState;
     }
 }
