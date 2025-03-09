@@ -60,6 +60,8 @@ public class SubsystemManager {
 
     private static boolean isMooveCoral = false;
 
+    private static boolean isPushClimb = false;
+
 
     public static Command travelCommand = Commands.run(() -> operateAuto(RobotState.TRAVEL, null));
     public static Command intakeCoralCommand = Commands.run(() -> operateAuto(RobotState.INTAKE, ElevatorState.BASE));
@@ -115,16 +117,19 @@ public class SubsystemManager {
             lastElevatorState;
         }
         Handler.updateHandlerIr(state, elevatorState);
-
+        isPushClimb = false;
         
         switch (state) {
             case TRAVEL:
                 if(Handler.isAlgaeIn() && (elevatorState == ElevatorState.ALGAE_LOW || 
                                             elevatorState == ElevatorState.ALGAE_HIGH ||
+                                            elevatorState == ElevatorState.ALGAE_HIGH_IN||
+                                            elevatorState == ElevatorState.ALGAE_LOW_IN ||
                                               elevatorState == ElevatorState.BASE))
                     handlerState = HandlerState.HOLD_ALGAE;
-                else
+                else{
                     handlerState = HandlerState.STOP;
+                }
                 
                 if ((lastElevatorState == ElevatorState.INTAKE_CORAL && Handler.isCoralIn()) && elevatorState != ElevatorState.LEVEL0)
                     elevatorState = ElevatorState.BASE;
@@ -146,12 +151,16 @@ public class SubsystemManager {
                         climbState;
                 
                 trayState = TrayState.UP;
+                
+                if (psController_HID.getOptionsButton()) {
+                    isPushClimb = true;
+                }
                 break;
 
         /************/
 
             case DEPLETE:
-                if (elevatorState == ElevatorState.LEVEL3 || Handler.isAlgaeIn())
+                if (elevatorState == ElevatorState.LEVEL3 || Handler.isAlgaeIn() || elevatorState == ElevatorState.ALGAE_HIGH || elevatorState == ElevatorState.ALGAE_LOW)
                     handlerState = HandlerState.DEPLETE_ALGAE;
                 else if (elevatorState == ElevatorState.LEVEL0)
                     handlerState =  HandlerState.DEPLETE_CORAL_LEVEL0;
@@ -291,5 +300,9 @@ public class SubsystemManager {
 
     public static void setElevatorState(ElevatorState sState){
         elevatorState = sState;
+    }
+
+    public static boolean getIsPushClimb() {
+        return isPushClimb;
     }
 }

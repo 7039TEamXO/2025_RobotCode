@@ -11,7 +11,7 @@ public class HandlerConstants {
     public static final double HANDLER_POWER_DEPLETE_CORAL = 0.65;
     public static final double HANDLER_POWER_STOP = 0;
     public static final double HANDLER_POWER_DEPLETE_ALGAE = -0.6;// -0.6
-    public static final double HANDLER_POWER_HOLD_ALGAE = 0.2;// 0.3
+    public static final double HANDLER_POWER_HOLD_ALGAE = 0.3;// 0.3
     public static final double HANDLER_POWER_INTAKE_CORAL_TELEOP = 0.2;
     
     public static final double HANDLER_POWER_INTAKE_CORAL_AUTO = 0.35;//0.3

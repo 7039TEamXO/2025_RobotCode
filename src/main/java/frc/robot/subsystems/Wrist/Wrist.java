@@ -63,11 +63,12 @@ public class Wrist {
             isMoovehWrist = true;
         }
 
-        if (state == WristState.BASE && master.getStatorCurrent().getValueAsDouble() < 30 && isMoovehWrist){
+        // System.out.println(master.getStatorCurrent().getValueAsDouble());
+
+        if (state == WristState.BASE && master.getStatorCurrent().getValueAsDouble() < 25 && isMoovehWrist){
             master.setControl(new DutyCycleOut(-0.2));
             master.setPosition(0);
             System.out.println("i exist");
-            // System.out.println(master.getStatorCurrent().getValueAsDouble());
         } else{
             isMoovehWrist = false;
             master.setControl(motorRequest.withPosition(wristPosition));

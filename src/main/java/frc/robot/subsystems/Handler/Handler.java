@@ -4,6 +4,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.servohub.ServoHub.Bank;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -132,8 +133,15 @@ public class Handler {
         if (!isCoralIn && (elevatorState == ElevatorState.ALGAE_HIGH || elevatorState == ElevatorState.ALGAE_LOW
            || elevatorState == ElevatorState.ALGAE_HIGH_IN || elevatorState == ElevatorState.ALGAE_LOW_IN 
            || elevatorState == ElevatorState.BASE)) {
-            isAlgaeIn = master.getStatorCurrent().getValueAsDouble() > 70;
+            isAlgaeIn = ((Math.abs(master.getStatorCurrent().getValueAsDouble()) > 30) || algaeDepleteCounter < 50) && elevatorState != ElevatorState.BASE ? true
+             :((Math.abs(master.getStatorCurrent().getValueAsDouble()) > 30) || algaeDepleteCounter < 50) && isAlgaeIn;
+            algaeDepleteCounter = (Math.abs(master.getStatorCurrent().getValueAsDouble()) > 30) ? 0 : algaeDepleteCounter;
+            if ((Math.abs(master.getStatorCurrent().getValueAsDouble()) <= 30)) {
+                algaeDepleteCounter++;
+            }
         }
+        // System.out.println(isAlgaeIn);
+        // System.out.println(master.getStatorCurrent().getValueAsDouble());
             // System.out.println(coralIntakeCounter);
 
 
