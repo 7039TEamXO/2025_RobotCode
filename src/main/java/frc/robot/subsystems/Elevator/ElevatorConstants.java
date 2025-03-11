@@ -23,7 +23,7 @@ public class ElevatorConstants {
 
     public static final double ELEVATOR_POSE_BASE = 0; //0
     public static final double ELEVATOR_POSE_INTAKE_CORAL = 0; //0.7
-    public static final double ELEVATOR_POSE_LEVEL0 = 1;
+    public static final double ELEVATOR_POSE_LEVEL0 = 0.7; 
     public static final double ELEVATOR_POSE_LEVEL1 = 4.84;
     public static final double ELEVATOR_POSE_LEVEL2 = 10.57;
     public static final double ELEVATOR_POSE_LEVEL3 = 18.4;

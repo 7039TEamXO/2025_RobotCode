@@ -9,6 +9,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import frc.robot.Dashboard;
 import frc.robot.subsystems.SubsystemManager;
+import frc.robot.subsystems.Handler.Handler;
 
 public class Wrist {
     private static TalonFX master = new TalonFX(WristConstants.WristMotorID);
@@ -65,10 +66,10 @@ public class Wrist {
 
         // System.out.println(master.getStatorCurrent().getValueAsDouble());
 
-        if (state == WristState.BASE && master.getStatorCurrent().getValueAsDouble() < 25 && isMoovehWrist){
+        if (((state == WristState.BASE && master.getStatorCurrent().getValueAsDouble() < 25 && isMoovehWrist) || SubsystemManager.getpsJoystick().getHID().getCrossButton()) && !Handler.isAlgaeIn()){
             master.setControl(new DutyCycleOut(-0.2));
             master.setPosition(0);
-            System.out.println("i exist");
+
         } else{
             isMoovehWrist = false;
             master.setControl(motorRequest.withPosition(wristPosition));
@@ -76,9 +77,10 @@ public class Wrist {
 
 
         lastState = state;
-        // if (SubsystemManager.getResetWrist()) {
-        //     resetWrist();
-        //     master.setPosition(0);
+        if (SubsystemManager.getResetWrist()) {
+            resetWrist();
+            master.setPosition(0);
+        }
         //         // System.out.println("i exist");
         //     } else {
         //         isResetWrist = false;

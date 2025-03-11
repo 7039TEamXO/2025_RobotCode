@@ -28,6 +28,7 @@ import frc.robot.subsystems.Tray.Tray;
 import frc.robot.subsystems.Tray.TrayState;
 import frc.robot.subsystems.Handler.Handler;
 import frc.robot.subsystems.Wrist.Wrist;
+import frc.robot.subsystems.Wrist.WristConstants;
 import frc.robot.subsystems.Wrist.WristState;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
@@ -57,6 +58,8 @@ public class SubsystemManager {
     private static boolean isTxSeen = false;
 
     private static boolean isResetWrist = false;
+
+
 
     private static boolean isMooveCoral = false;
 
@@ -160,7 +163,7 @@ public class SubsystemManager {
         /************/
 
             case DEPLETE:
-                if (elevatorState == ElevatorState.LEVEL3 || Handler.isAlgaeIn() || elevatorState == ElevatorState.ALGAE_HIGH || elevatorState == ElevatorState.ALGAE_LOW)
+                if (elevatorState == ElevatorState.LEVEL3 || Handler.isAlgaeIn() || elevatorState == ElevatorState.ALGAE_HIGH || elevatorState == ElevatorState.ALGAE_LOW || Wrist.getCurrentPosition() > WristConstants.WRIST_POS_DEPLETE_CORAL_LEVEL0 + 0.5)
                     handlerState = HandlerState.DEPLETE_ALGAE;
                 else if (elevatorState == ElevatorState.LEVEL0)
                     handlerState =  HandlerState.DEPLETE_CORAL_LEVEL0;
