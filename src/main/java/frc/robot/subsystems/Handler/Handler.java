@@ -178,8 +178,13 @@ public class Handler {
         || elevatorState == ElevatorState.ALGAE_HIGH_IN || elevatorState == ElevatorState.ALGAE_LOW_IN 
         || elevatorState == ElevatorState.BASE)){
             isAlgaeIn = (algaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE || (lastIsAlgaeIn && algaeDepleteCounter < 50)) && elevatorState != ElevatorState.BASE
-            ? true : elevatorState == ElevatorState.BASE && (lastIsAlgaeIn && algaeDepleteCounter < 50) ? isAlgaeIn : false; // if algae is detected isAlgaeIn will be true until deplete
+            ? true : isAlgaeIn; // if algae is detected isAlgaeIn will be true until deplete
         }else{ isAlgaeIn = false;}
+
+        if (state== RobotState.DEPLETE) {
+            isAlgaeIn = false;
+            
+        }
 
         isFinishedDepletingAlgae = !isAlgaeIn && lastIsAlgaeIn;
 

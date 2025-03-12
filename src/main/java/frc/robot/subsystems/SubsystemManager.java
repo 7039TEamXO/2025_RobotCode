@@ -284,6 +284,9 @@ public class SubsystemManager {
     public static ClimbState getClimbState() {
         return climbState;
     }
+    public static TrayState getTrayState() {
+        return trayState;
+    }
 
     public static boolean getTxSeen() {
         return isTxSeen;

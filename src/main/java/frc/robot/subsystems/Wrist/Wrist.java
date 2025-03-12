@@ -97,6 +97,10 @@ public class Wrist {
         return master.getPosition().getValueAsDouble();
     }
 
+    public static double getWristState() {
+        return master.getPosition().getValueAsDouble();
+    }
+
     public static void resetEncoder(){
         master.setPosition(0);
     }

@@ -259,17 +259,4 @@ public class Dashboard {
     public static double add_value_to_Handler() {
         return add_value_to_Handler.getDouble(0);
     }
-
-    public static void cameraInit(){
-        UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
-        MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
-        mjpegServer1.setSource(usbCamera);
-        // Creates the CvSink and connects it to the UsbCamera
-        CvSink cvSink = new CvSink("opencv_USB Camera 0");
-        cvSink.setSource(usbCamera);
-        // Creates the CvSource and MjpegServer [2] and connects them
-        CvSource outputStream = new CvSource("Blur", PixelFormat.kMJPEG, 320, 240, 30);
-        MjpegServer mjpegServer2 = new MjpegServer("serve_Blur", 1182);
-        mjpegServer2.setSource(outputStream);
-    }
 }

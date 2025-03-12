@@ -31,6 +31,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -39,8 +40,10 @@ import frc.robot.Constants;
 import frc.robot.Limelight;
 import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.SubsystemManager;
+import frc.robot.subsystems.Climb.ClimbState;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorConstants;
+import frc.robot.subsystems.Tray.*;
 
 //import frc.robot.subsystems.swervedrive.Vision.Cameras;
 import java.io.File;
@@ -148,9 +151,13 @@ public class SwerveSubsystem extends SubsystemBase
     @Override
     public void periodic()
     {
+      if (SubsystemManager.getTrayState() == TrayState.UP) {
+      swerveDrive.setMaximumAllowableSpeeds(Constants.CLIMB_SWERVE_SPEED, Constants.CLIMB_SWERVE_ROTATION_SPEED);}
+      
+      else{
       swerveDrive.setMaximumAllowableSpeeds(calculateSpeedAccordingToElevator(Constants.MAX_SPEED, Constants.MIN_SPEED),
        calculateSpeedAccordingToElevator(Constants.MAX_ROTATION_V, Constants.MIN_ROTATION_V));
-
+      }
        if (isAuto) {
         counter++;
        }
