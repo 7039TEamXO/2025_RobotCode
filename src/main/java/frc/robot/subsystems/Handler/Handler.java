@@ -127,31 +127,59 @@ public class Handler {
 
         if (state == RobotState.DEPLETE) {
             isCoralIn = false;
+            isAlgaeIn = false;
             coralIntakeCounter = 0;
         }
-        if (!isCoralIn && (elevatorState == ElevatorState.ALGAE_HIGH || elevatorState == ElevatorState.ALGAE_LOW
-           || elevatorState == ElevatorState.ALGAE_HIGH_IN || elevatorState == ElevatorState.ALGAE_LOW_IN 
-           || elevatorState == ElevatorState.BASE)) {
-            isAlgaeIn = (((Math.abs(master.getStatorCurrent().getValueAsDouble()) > 50) || algaeDepleteCounter < 50) && elevatorState != ElevatorState.BASE) || algaeIrValue > 225 ? true
-             :((Math.abs(master.getStatorCurrent().getValueAsDouble()) > 50) || algaeDepleteCounter < 50) && isAlgaeIn;
 
-            algaeDepleteCounter = (Math.abs(master.getStatorCurrent().getValueAsDouble()) > 50) ? 0 : algaeDepleteCounter;
+        // if (!isCoralIn && (elevatorState == ElevatorState.ALGAE_HIGH || elevatorState == ElevatorState.ALGAE_LOW
+        //    || elevatorState == ElevatorState.ALGAE_HIGH_IN || elevatorState == ElevatorState.ALGAE_LOW_IN 
+        //    || elevatorState == ElevatorState.BASE)) {
 
-            if ((Math.abs(master.getStatorCurrent().getValueAsDouble()) <= 50)) {
-                algaeDepleteCounter++;
-            }
-        }
+        //     isAlgaeIn = (((Math.abs(master.getStatorCurrent().getValueAsDouble()) > HandlerConstants.ALGAE_IN_CURRENT) || algaeDepleteCounter < 50) && elevatorState != ElevatorState.BASE) || algaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE ? true
+        //     : ((Math.abs(master.getStatorCurrent().getValueAsDouble()) > HandlerConstants.ALGAE_IN_CURRENT) || algaeDepleteCounter < 50) && isAlgaeIn;
+
+        //     // SIMPLIFIED
+        //     // isAlgaeIn = (((Math.abs(master.getStatorCurrent().getValueAsDouble()) > 30) || algaeDepleteCounter < 50) && (elevatorState != ElevatorState.BASE || isAlgaeIn)) || algaeIrValue > 225;
+
+        //     algaeDepleteCounter = (Math.abs(master.getStatorCurrent().getValueAsDouble()) > HandlerConstants.ALGAE_IN_CURRENT) ? 0 : algaeDepleteCounter;
+
+        //     EDITED
+        //     algaeDepleteCounter = (Math.abs(master.getStatorCurrent().getValueAsDouble()) > 30 || algaeIrValue > 225) ? 0 : algaeDepleteCounter;
+
+        //     if ((Math.abs(master.getStatorCurrent().getValueAsDouble()) <= 50)) {
+        //         algaeDepleteCounter++;
+        //     }
+        // }
+
+        // OLD VERSION
+        // if (!isCoralIn && (elevatorState == ElevatorState.ALGAE_HIGH || elevatorState == ElevatorState.ALGAE_LOW
+        //    || elevatorState == ElevatorState.ALGAE_HIGH_IN || elevatorState == ElevatorState.ALGAE_LOW_IN 
+        //    || elevatorState == ElevatorState.BASE)) {
+        //     isAlgaeIn = (((Math.abs(master.getStatorCurrent().getValueAsDouble()) > 50) || algaeDepleteCounter < 50) && elevatorState != ElevatorState.BASE) ? true
+        //      : ((Math.abs(master.getStatorCurrent().getValueAsDouble()) > 50) || algaeDepleteCounter < 50) && isAlgaeIn;
+
+        //     algaeDepleteCounter = (Math.abs(master.getStatorCurrent().getValueAsDouble()) > 50) ? 0 : algaeDepleteCounter;
+
+        //     if ((Math.abs(master.getStatorCurrent().getValueAsDouble()) <= 50)) {
+        //         algaeDepleteCounter++;
+        //     }
+        // }
+
+        ///// DEBUG
+        //System.out.println(master.getStatorCurrent().getValueAsDouble()); 
+        ///// DEBUG
+
         // System.out.println(isAlgaeIn);
         // System.out.println(master.getStatorCurrent().getValueAsDouble());
             // System.out.println(coralIntakeCounter);
 
 
-        // if (!isCoralIn && (elevatorState == ElevatorState.ALGAE_HIGH || elevatorState == ElevatorState.ALGAE_LOW
-        // || elevatorState == ElevatorState.ALGAE_HIGH_IN || elevatorState == ElevatorState.ALGAE_LOW_IN 
-        // || elevatorState == ElevatorState.BASE)){
-        //     isAlgaeIn = (algaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE || (lastIsAlgaeIn && algaeDepleteCounter < 20)) && elevatorState != ElevatorState.BASE
-        //     ? true : elevatorState == ElevatorState.BASE && (lastIsAlgaeIn && algaeDepleteCounter < 20) ? isAlgaeIn : false; // if algae is detected isAlgaeIn will be true until deplete
-        // }else{ isAlgaeIn = false;}
+        if (!isCoralIn && (elevatorState == ElevatorState.ALGAE_HIGH || elevatorState == ElevatorState.ALGAE_LOW
+        || elevatorState == ElevatorState.ALGAE_HIGH_IN || elevatorState == ElevatorState.ALGAE_LOW_IN 
+        || elevatorState == ElevatorState.BASE)){
+            isAlgaeIn = (algaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE || (lastIsAlgaeIn && algaeDepleteCounter < 50)) && elevatorState != ElevatorState.BASE
+            ? true : elevatorState == ElevatorState.BASE && (lastIsAlgaeIn && algaeDepleteCounter < 50) ? isAlgaeIn : false; // if algae is detected isAlgaeIn will be true until deplete
+        }else{ isAlgaeIn = false;}
 
         isFinishedDepletingAlgae = !isAlgaeIn && lastIsAlgaeIn;
 
