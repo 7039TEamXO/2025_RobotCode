@@ -21,14 +21,16 @@ public class Handler {
     private static TalonFX master = new TalonFX(HandlerConstants.HandlerMotorID);
     private static AnalogInput algaeIrInput = new AnalogInput(HandlerConstants.HandlerAnalogInputSensorID);
     private static int algaeIrValue = algaeIrInput.getValue();
-    private static boolean lastIsAlgaeIn = false;
+    private static boolean lastIsAlgaeInProcessor = false;
+    private static boolean lastIsAlgaeInNet = false;
     private static double power = HandlerConstants.HANDLER_POWER_STOP;
 
     private static DigitalInput coralIrInput = new DigitalInput(HandlerConstants.HandlerDigitalInputSensorID);
     private static DigitalOutput coralIrOutput = new DigitalOutput(HandlerConstants.HandlerDigitalOutPutSensorID);
     private static boolean coralIrVal = coralIrInput.get();
     private static boolean isCoralIn = false;
-    private static boolean isAlgaeIn = false;
+    private static boolean isAlgaeInProcessor = false;
+    private static boolean isAlgaeInNet = false;
     private static boolean lastCoralIn = false;
     private static boolean feedCoral = false;
     private static int coralIntakeCounter = 0;
@@ -81,6 +83,15 @@ public class Handler {
                 power = HandlerConstants.HANDLER_POWER_DEPLETE_CORAL_LEVEL0;
                 break;
 
+            case DEPLETE_NET:
+                power = HandlerConstants.HANDLER_POWER_DEPLETE_NET;
+                break;
+
+            case HOLD_NET:
+                power = HandlerConstants.HANDLER_POWER_HOLD_NET;
+                break;
+
+
         }
 
         if((SubsystemManager.getElevatorState() == ElevatorState.INTAKE_CORAL ||
@@ -107,9 +118,11 @@ public class Handler {
     }   
 
 
-    public static void updateHandlerIr(RobotState state, ElevatorState elevatorState) { // boolean isReset
+    public static void updateHandlerIr(RobotState state, ElevatorState elevatorState, RobotState lastState) { // boolean isReset
         algaeIrValue = algaeIrInput.getValue();
         coralIrVal = getCoralIr();
+
+        // CORAL
         
         if (coralIrVal){
             coralIntakeCounter++;
@@ -125,80 +138,45 @@ public class Handler {
             CurrenthandlerEncoderPosition = getHandlerMotorDistance();
         }
 
-        if (state == RobotState.DEPLETE) {
-            isCoralIn = false;
-            isAlgaeIn = false;
-            coralIntakeCounter = 0;
-        }
+        //ALGAE PROCESSOR
 
-        // if (!isCoralIn && (elevatorState == ElevatorState.ALGAE_HIGH || elevatorState == ElevatorState.ALGAE_LOW
-        //    || elevatorState == ElevatorState.ALGAE_HIGH_IN || elevatorState == ElevatorState.ALGAE_LOW_IN 
-        //    || elevatorState == ElevatorState.BASE)) {
+        isAlgaeInProcessor = ((algaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE && state == RobotState.INTAKE &&
+         (elevatorState == ElevatorState.ALGAE_LOW || elevatorState == ElevatorState.ALGAE_HIGH ))
+         || lastIsAlgaeInProcessor) 
+        && state != RobotState.DEPLETE && !isCoralIn;
 
-        //     isAlgaeIn = (((Math.abs(master.getStatorCurrent().getValueAsDouble()) > HandlerConstants.ALGAE_IN_CURRENT) || algaeDepleteCounter < 50) && elevatorState != ElevatorState.BASE) || algaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE ? true
-        //     : ((Math.abs(master.getStatorCurrent().getValueAsDouble()) > HandlerConstants.ALGAE_IN_CURRENT) || algaeDepleteCounter < 50) && isAlgaeIn;
+        //ALGAE NET
 
-        //     // SIMPLIFIED
-        //     // isAlgaeIn = (((Math.abs(master.getStatorCurrent().getValueAsDouble()) > 30) || algaeDepleteCounter < 50) && (elevatorState != ElevatorState.BASE || isAlgaeIn)) || algaeIrValue > 225;
+        System.out.println(master.getStatorCurrent().getValueAsDouble());
 
-        //     algaeDepleteCounter = (Math.abs(master.getStatorCurrent().getValueAsDouble()) > HandlerConstants.ALGAE_IN_CURRENT) ? 0 : algaeDepleteCounter;
-
-        //     EDITED
-        //     algaeDepleteCounter = (Math.abs(master.getStatorCurrent().getValueAsDouble()) > 30 || algaeIrValue > 225) ? 0 : algaeDepleteCounter;
-
-        //     if ((Math.abs(master.getStatorCurrent().getValueAsDouble()) <= 50)) {
-        //         algaeDepleteCounter++;
-        //     }
-        // }
-
-        // OLD VERSION
-        // if (!isCoralIn && (elevatorState == ElevatorState.ALGAE_HIGH || elevatorState == ElevatorState.ALGAE_LOW
-        //    || elevatorState == ElevatorState.ALGAE_HIGH_IN || elevatorState == ElevatorState.ALGAE_LOW_IN 
-        //    || elevatorState == ElevatorState.BASE)) {
-        //     isAlgaeIn = (((Math.abs(master.getStatorCurrent().getValueAsDouble()) > 50) || algaeDepleteCounter < 50) && elevatorState != ElevatorState.BASE) ? true
-        //      : ((Math.abs(master.getStatorCurrent().getValueAsDouble()) > 50) || algaeDepleteCounter < 50) && isAlgaeIn;
-
-        //     algaeDepleteCounter = (Math.abs(master.getStatorCurrent().getValueAsDouble()) > 50) ? 0 : algaeDepleteCounter;
-
-        //     if ((Math.abs(master.getStatorCurrent().getValueAsDouble()) <= 50)) {
-        //         algaeDepleteCounter++;
-        //     }
-        // }
-
-        ///// DEBUG
-        //System.out.println(master.getStatorCurrent().getValueAsDouble()); 
-        ///// DEBUG
-
-        // System.out.println(isAlgaeIn);
-        // System.out.println(master.getStatorCurrent().getValueAsDouble());
-            // System.out.println(coralIntakeCounter);
+        isAlgaeInNet = ((master.getStatorCurrent().getValueAsDouble() > 60 && state == RobotState.INTAKE &&
+        (elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET ))
+        || lastIsAlgaeInNet) 
+       && !SubsystemManager.getpsJoystick().getHID().getTouchpadButton() && !isCoralIn;
 
 
-        if (!isCoralIn && (elevatorState == ElevatorState.ALGAE_HIGH || elevatorState == ElevatorState.ALGAE_LOW
-        || elevatorState == ElevatorState.ALGAE_HIGH_IN || elevatorState == ElevatorState.ALGAE_LOW_IN 
-        || elevatorState == ElevatorState.BASE)){
-            isAlgaeIn = (algaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE || (lastIsAlgaeIn && algaeDepleteCounter < 50)) && elevatorState != ElevatorState.BASE
-            ? true : elevatorState == ElevatorState.BASE && (lastIsAlgaeIn && algaeDepleteCounter < 50) ? isAlgaeIn : false; // if algae is detected isAlgaeIn will be true until deplete
-        }else{ isAlgaeIn = false;}
 
-        isFinishedDepletingAlgae = !isAlgaeIn && lastIsAlgaeIn;
+
+
+
+        isFinishedDepletingAlgae = !isAlgaeInProcessor && lastIsAlgaeInProcessor;
 
         lastCoralIrVal = coralIrVal;
         lastCoralIn = isCoralIn;
-        lastIsAlgaeIn = isAlgaeIn;
+        lastIsAlgaeInProcessor = isAlgaeInProcessor;
+        lastIsAlgaeInNet = isAlgaeInNet;
     }
 
     public static int getCoralIntakeCounter() {
         return coralIntakeCounter;
     }
 
-    public static boolean getReset() {
-        return isReset;
+    public static boolean isAlgaeInProcessor() {
+        return isAlgaeInProcessor;
     }
 
-    public static boolean isAlgaeIn() {
-        return isAlgaeIn;
-        
+    public static boolean isAlgaeInNet() {
+        return isAlgaeInNet;
     }
 
     public static boolean isCoralIn() {

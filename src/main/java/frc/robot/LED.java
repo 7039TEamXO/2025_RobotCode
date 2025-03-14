@@ -29,7 +29,7 @@ public class LED {
 
     public static void setLedData() {
         color = Color.kOrangeRed;
-        if (Handler.isCoralIn() || Handler.isAlgaeIn()) {
+        if (Handler.isCoralIn() || Handler.isAlgaeInProcessor()) {
             color = Color.kDeepPink;
         }
         if (SubsystemManager.getTxSeen()) {

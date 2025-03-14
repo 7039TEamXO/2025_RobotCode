@@ -40,7 +40,7 @@ public class Wrist {
                 wristPosition = WristConstants.WRIST_POS_HIGH;
                 break;
 
-            case INTAKE_ALGAE:
+            case HOLD_ALGAE_PROCESSOR:
                 wristPosition = WristConstants.WRIST_POS_INTAKE_ALGAE;
                 break;
                 
@@ -51,8 +51,8 @@ public class Wrist {
             case DEPLETE_CORAL_LEVEL0:
                 wristPosition = WristConstants.WRIST_POS_DEPLETE_CORAL_LEVEL0;
                 break;
-                case HOLD_ALGAE_HIGH:
-                wristPosition = WristConstants.WRIST_POS_HOLD_ALGAE_HIGH;
+                case HOLD_ALGAE_NET:
+                wristPosition = WristConstants.WRIST_POS_HOLD_ALGAE_NET;
                 break;
         }
         // wristPosition = wristPosition + Dashboard.add_value_to_Wrist();
@@ -66,7 +66,7 @@ public class Wrist {
 
         // System.out.println(master.getStatorCurrent().getValueAsDouble());
 
-        if (((state == WristState.BASE && master.getStatorCurrent().getValueAsDouble() < 25 && isMoovehWrist) || SubsystemManager.getpsJoystick().getHID().getCrossButton()) && !Handler.isAlgaeIn()){
+        if (((state == WristState.BASE && master.getStatorCurrent().getValueAsDouble() < 25 && isMoovehWrist) && !Handler.isAlgaeInProcessor())){
             master.setControl(new DutyCycleOut(-0.2));
             master.setPosition(0);
 

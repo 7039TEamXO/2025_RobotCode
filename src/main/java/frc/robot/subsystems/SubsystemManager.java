@@ -22,6 +22,8 @@ import frc.robot.RobotState;
 import frc.robot.subsystems.Climb.Climb;
 import frc.robot.subsystems.Climb.ClimbConstants;
 import frc.robot.subsystems.Climb.ClimbState;
+import frc.robot.subsystems.Elevator.Elevator;
+import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.Handler.HandlerState;
 import frc.robot.subsystems.Tray.Tray;
@@ -106,7 +108,7 @@ public class SubsystemManager {
             psController_HID.getShareButton() ? RobotState.CLIMB :
             psController_HID.getPOV(0) == 90 ? RobotState.INTAKE :
             psController_HID.getPOV(0) == 270 ? RobotState.INTAKE :
-            psController_HID.getCrossButton() && !Handler.isAlgaeIn() ? 
+            psController_HID.getCrossButton() && !Handler.isAlgaeInProcessor() && !Handler.isAlgaeInNet() ? 
                 RobotState.INTAKE : lastState;
 
             elevatorState = state == RobotState.CLIMB ? ElevatorState.BASE :
@@ -114,22 +116,28 @@ public class SubsystemManager {
             psController_HID.getSquareButton() ? ElevatorState.LEVEL1 :
             psController_HID.getTriangleButton() ? ElevatorState.LEVEL3 :
             psController_HID.getCircleButton() ? ElevatorState.LEVEL2 :
-            psController_HID.getPOV(0) == 90 ? ElevatorState.ALGAE_HIGH : // right
+            psController_HID.getPOV(0) == 90 ? ElevatorState.ALGAE_HIGH_NET : // right
             psController_HID.getPOV(0) == 180 ? ElevatorState.LEVEL0 : // down
-            psController_HID.getPOV(0) == 270 ? ElevatorState.ALGAE_LOW : // left
+            psController_HID.getPOV(0) == 270 ? ElevatorState.ALGAE_LOW_NET : // left
             lastElevatorState;
         }
-        Handler.updateHandlerIr(state, elevatorState);
+        Handler.updateHandlerIr(state, elevatorState, lastState);
         isPushClimb = false;
         
         switch (state) {
             case TRAVEL:
-                if(Handler.isAlgaeIn() && (elevatorState == ElevatorState.ALGAE_LOW || 
+                if(Handler.isAlgaeInProcessor() && (elevatorState == ElevatorState.ALGAE_LOW || 
                                             elevatorState == ElevatorState.ALGAE_HIGH ||
                                             elevatorState == ElevatorState.ALGAE_HIGH_IN||
                                             elevatorState == ElevatorState.ALGAE_LOW_IN ||
                                               elevatorState == ElevatorState.BASE))
                     handlerState = HandlerState.HOLD_ALGAE;
+                else if(Handler.isAlgaeInNet()  && (elevatorState == ElevatorState.ALGAE_LOW_NET || 
+                elevatorState == ElevatorState.ALGAE_HIGH_NET ||
+                elevatorState == ElevatorState.ALGAE_HOLD_NET ||
+                  elevatorState == ElevatorState.BASE)){
+                    handlerState = HandlerState.HOLD_NET;
+                  }
                 else{
                     handlerState = HandlerState.STOP;
                 }
@@ -163,18 +171,32 @@ public class SubsystemManager {
         /************/
 
             case DEPLETE:
-                if (elevatorState == ElevatorState.LEVEL3 || Handler.isAlgaeIn() || elevatorState == ElevatorState.ALGAE_HIGH || elevatorState == ElevatorState.ALGAE_LOW || Wrist.getCurrentPosition() > WristConstants.WRIST_POS_DEPLETE_CORAL_LEVEL0 + 0.5)
+                if (Handler.isAlgaeInNet()) {
+                    if (Elevator.getCurrentPosition() > ElevatorConstants.ELEVATOR_POSE_ALGAE_THROW_POS) {
+                        handlerState = HandlerState.DEPLETE_NET;
+                        elevatorState = ElevatorState.ALGAE_THROW_NET;
+                    }else{
+                        handlerState = HandlerState.HOLD_NET;
+                        elevatorState = ElevatorState.ALGAE_HOLD_NET;
+                    }
+                }
+                else if (elevatorState == ElevatorState.LEVEL3 || Handler.isAlgaeInProcessor() || elevatorState == ElevatorState.ALGAE_HIGH || elevatorState == ElevatorState.ALGAE_LOW){
+
                     handlerState = HandlerState.DEPLETE_ALGAE;
-                else if (elevatorState == ElevatorState.LEVEL0)
+                }
+                else if (elevatorState == ElevatorState.LEVEL0){
                     handlerState =  HandlerState.DEPLETE_CORAL_LEVEL0;
-                else
+                }
+                else{
                     handlerState = HandlerState.DEPLETE_CORAL;
+                }
                   
-                if(Handler.isFinishedDepletingAlgae()) {
-                    state = RobotState.INTAKE;
-                    elevatorState = ElevatorState.INTAKE_CORAL;
-                } else
-                    state = RobotState.DEPLETE;
+                // if(Handler.isFinishedDepletingAlgae()) {
+                //     state = RobotState.INTAKE;
+                //     elevatorState = ElevatorState.INTAKE_CORAL;
+                // } else{
+                //     state = RobotState.DEPLETE;
+                // }
 
                 climbState = ClimbState.STOP;
                 trayState = TrayState.BASE;
@@ -183,14 +205,17 @@ public class SubsystemManager {
         /************/
         
             case INTAKE: 
-                if ((elevatorState != ElevatorState.ALGAE_HIGH && elevatorState != ElevatorState.ALGAE_LOW) && !Handler.isCoralIn()) {
+                if ((elevatorState != ElevatorState.ALGAE_HIGH && elevatorState != ElevatorState.ALGAE_LOW && elevatorState != ElevatorState.ALGAE_HIGH_NET && elevatorState != ElevatorState.ALGAE_LOW_NET) && !Handler.isCoralIn()) {
                     handlerState = HandlerState.INTAKE_CORAL;
                     elevatorState = ElevatorState.BASE;
                 }
-                else if (elevatorState == ElevatorState.ALGAE_HIGH || elevatorState == ElevatorState.ALGAE_LOW)
+                else if (elevatorState == ElevatorState.ALGAE_HIGH || elevatorState == ElevatorState.ALGAE_LOW){
                     handlerState = HandlerState.INTAKE_ALGAE;
+                }else if(elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET){
+                    handlerState= HandlerState.HOLD_NET;
+                }
                 
-                state = Handler.isAlgaeIn() || Handler.isCoralIn() ? RobotState.TRAVEL : RobotState.INTAKE;
+                state = Handler.isAlgaeInProcessor() || Handler.isCoralIn() || Handler.isAlgaeInNet() ? RobotState.TRAVEL : RobotState.INTAKE;
 
                 climbState = ClimbState.STOP;
                 trayState = TrayState.BASE;
@@ -216,6 +241,8 @@ public class SubsystemManager {
         if (Dashboard.getAcceptChanges()){
             handlerState = Dashboard.getSelectedHandlerState();
         }
+
+        System.out.println(Handler.isAlgaeInNet());
 
         DeliveryManager.operate(elevatorState, state);
         Handler.operate(handlerState);

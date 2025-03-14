@@ -142,7 +142,7 @@ public class Dashboard {
         subsystemsInformation.addString("ClimbState", () -> SubsystemManager.getClimbState().name()).withPosition(23, 3).withSize(3, 3);
 
         subsystemsInformation.addBoolean("isCoralIn", () -> Handler.isCoralIn()).withPosition(6, 3).withSize(3, 3);
-        subsystemsInformation.addBoolean("isAlgaelIn", () -> Handler.isAlgaeIn()).withPosition(9, 3).withSize(3, 3);
+        subsystemsInformation.addBoolean("isAlgaelIn", () -> Handler.isAlgaeInProcessor()).withPosition(9, 3).withSize(3, 3);
 
 
         acceptCoralChanges = subsystemsInformation.add("acceptCoralChanges", false).withWidget(BuiltInWidgets.kToggleButton).withPosition(15, 8).withSize(3, 3).getEntry();
@@ -150,7 +150,6 @@ public class Dashboard {
         // subsystemsInformation.addNumber("HandlerEncoder", () -> Handler.getHandlerMotorDistance());
         
         debugging.addNumber("HandlerCounter", () -> Handler.getCoralIntakeCounter()).withPosition(0, 0).withSize(3,3);
-        debugging.addBoolean("HandlerReset", () -> Handler.getReset()).withPosition(3, 0).withSize(3,3);
 
         debugging.addString("ElevatorState",() -> SubsystemManager.getElevatorState().name()).withPosition(17, 0).withSize(5, 3);
         debugging.addString("LastElevatorState",() -> SubsystemManager.getLastElevatorState().name()).withPosition(22, 0).withSize(5, 3);

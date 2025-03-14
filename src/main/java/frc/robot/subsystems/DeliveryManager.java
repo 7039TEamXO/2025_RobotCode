@@ -37,10 +37,10 @@ public class DeliveryManager {
 
             case ALGAE_HIGH:
                 if (Elevator.getCurrentPosition() >= ElevatorConstants.ELEVATOR_POSE_SAFE_TO_ROTATE) {
-                    if (Handler.isAlgaeIn()) {
+                    if (Handler.isAlgaeInProcessor()) {
                      elevatorState = ElevatorState.ALGAE_HIGH_IN;
                     }else{
-                        wristState = WristState.INTAKE_ALGAE;
+                        wristState = WristState.HOLD_ALGAE_PROCESSOR;
                     }
                 }
                 break;
@@ -49,9 +49,9 @@ public class DeliveryManager {
             
             case ALGAE_LOW:
                 if (Elevator.getCurrentPosition() >= ElevatorConstants.ELEVATOR_POSE_SAFE_TO_ROTATE) {
-                    if (Handler.isAlgaeIn())
+                    if (Handler.isAlgaeInProcessor())
                         elevatorState = ElevatorState.ALGAE_LOW_IN;
-                    wristState = WristState.INTAKE_ALGAE;
+                    wristState = WristState.HOLD_ALGAE_PROCESSOR;
                 }
                 break;
                 
@@ -89,9 +89,26 @@ public class DeliveryManager {
             case INTAKE_CORAL:
                 wristState = WristState.BASE;
                 break;
+
+            case ALGAE_HIGH_NET:
+                wristState = WristState.HOLD_ALGAE_NET;
+                break;
+
+            case ALGAE_LOW_NET:
+            wristState = WristState.HOLD_ALGAE_NET;
+                break;
+            case ALGAE_HOLD_NET:
+            elevatorState = ElevatorState.LEVEL3;
+            wristState = WristState.HOLD_ALGAE_NET;
+                break;
+            case ALGAE_THROW_NET:
+            elevatorState = ElevatorState.LEVEL3;
+            wristState = WristState.THROW_ALGAE_NET;
+                break;
         }
             
-        wristState = Handler.isAlgaeIn() ? WristState.INTAKE_ALGAE : wristState;
+        wristState = Handler.isAlgaeInProcessor() ? WristState.HOLD_ALGAE_PROCESSOR : wristState;
+        wristState = Handler.isAlgaeInNet() ? WristState.HOLD_ALGAE_NET : wristState;
         
         if (Dashboard.getAcceptChanges()) {
             elevatorState = Dashboard.getSelectedElevatorState();
