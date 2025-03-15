@@ -162,6 +162,11 @@ public class Handler {
 
         //ALGAE NET
 
+<<<<<<< HEAD
+=======
+        // System.out.println(master.getStatorCurrent().getValueAsDouble());
+
+>>>>>>> 3e3c150 (added auto drive for net)
         isAlgaeInNet = ((master.getStatorCurrent().getValueAsDouble() > 60 && state == RobotState.INTAKE &&
         (elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET ))
         || lastIsAlgaeInNet) 

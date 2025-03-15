@@ -105,7 +105,7 @@ public class SubsystemManager {
             state = psController_HID.getPOV(0) == 0 ? RobotState.TRAVEL : 
             state == RobotState.CLIMB ? RobotState.CLIMB :
             psController_HID.getL2Button() ? RobotState.DEPLETE :
-            psController_HID.getR2Button() ? RobotState.INTAKE :
+            // psController_HID.getR2Button() ? RobotState.INTAKE :
             psController_HID.getShareButton() ? RobotState.CLIMB :
             psController_HID.getPOV(0) == 90 ? RobotState.INTAKE :
             psController_HID.getPOV(0) == 270 ? RobotState.INTAKE :
@@ -272,7 +272,12 @@ public class SubsystemManager {
             handlerState = Dashboard.getSelectedHandlerState();
         }
 
+<<<<<<< HEAD
         
+=======
+        // System.out.println(Handler.isAlgaeInNet());
+
+>>>>>>> 3e3c150 (added auto drive for net)
         DeliveryManager.operate(elevatorState, state);
         Handler.operate(handlerState);
         Climb.operate(climbState);

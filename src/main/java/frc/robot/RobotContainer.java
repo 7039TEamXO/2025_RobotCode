@@ -141,6 +141,8 @@ public class RobotContainer
     SubsystemManager.getpsJoystick().L1().onTrue(Commands.runOnce( () -> Limelight.setPriorityTagId(Limelight.getMainAprilTagId())));
     SubsystemManager.getpsJoystick().L1().onFalse(Commands.runOnce( () -> Limelight.resetPriorityTagId()));
 
+    SubsystemManager.getpsJoystick().R2().whileTrue(SubsystemManager.getDriveBase().driveToNetScorePos(() -> modifyAxis(SubsystemManager.getpsJoystick().getLeftX())));
+
     //======================//
 
     // Align only by TX and not reef angle 
