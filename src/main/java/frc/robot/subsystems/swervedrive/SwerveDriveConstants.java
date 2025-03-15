@@ -51,7 +51,7 @@ public class SwerveDriveConstants {
     public static final double Kp_NET_AUTO_DRIVE_X = -2;
     public static final double Kp_NET_AUTO_DRIVE_ROTATION = -0.04;
 
-    public static final double WANTED_X_NET_ALGAE_POS_BLUE = 6.8;
+    public static final double WANTED_X_NET_ALGAE_POS_BLUE = 7.2;
     public static final double WANTED_ROTATION_ANGLE_NET_ALGAE_POS_BLUE = 0;
 
     public static final double WANTED_X_NET_ALGAE_POS_RED = 10.4;

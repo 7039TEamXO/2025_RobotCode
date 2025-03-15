@@ -877,7 +877,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public double getAngleFromCurrentTag() {
     try {
-      int tagId = Limelight.getMainAprilTagId();
+      // int tagId = Limelight.getMainAprilTagId();
+      int tagId = getClosestReefTag();
       double tagRot = fieldLayout.getTagPose(tagId).get().toPose2d().getRotation().getDegrees();
 
       double flippedDeg = (tagRot + 180) % 360;

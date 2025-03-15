@@ -67,7 +67,7 @@ public class Wrist {
             isMoovehWrist = true;
         }
 
-        System.out.println(master.getStatorCurrent().getValueAsDouble());
+        // System.out.println(master.getStatorCurrent().getValueAsDouble());
 
         if (master.getStatorCurrent().getValueAsDouble() > 28 && state == WristState.BASE) {
             master.setPosition(0);

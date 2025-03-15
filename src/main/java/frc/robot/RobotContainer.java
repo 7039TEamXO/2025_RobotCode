@@ -136,11 +136,12 @@ public class RobotContainer
     SubsystemManager.getpsJoystick().button(12).onTrue(Commands.runOnce( () -> Limelight.setPipeline(2)));
 
     // Set priority tag when we press align, reset on release    
-    SubsystemManager.getpsJoystick().button(12).onTrue(Commands.runOnce( () -> Limelight.setPriorityTagId(Limelight.getMainAprilTagId())));
+    SubsystemManager.getpsJoystick().button(12).onTrue(Commands.runOnce( () -> Limelight.setPriorityTagId(SubsystemManager.getDriveBase().getClosestReefTag())));
+    // SubsystemManager.getpsJoystick().button(12).onTrue(Commands.runOnce( () -> Limelight.setPriorityTagId(Limelight.getMainAprilTagId())));
     SubsystemManager.getpsJoystick().button(12).onFalse(Commands.runOnce( () -> Limelight.resetPriorityTagId()));
-    SubsystemManager.getpsJoystick().R1().onTrue(Commands.runOnce( () -> Limelight.setPriorityTagId(Limelight.getMainAprilTagId())));
+    SubsystemManager.getpsJoystick().R1().onTrue(Commands.runOnce( () -> Limelight.setPriorityTagId(SubsystemManager.getDriveBase().getClosestReefTag())));
     SubsystemManager.getpsJoystick().R1().onFalse(Commands.runOnce( () -> Limelight.resetPriorityTagId()));
-    SubsystemManager.getpsJoystick().L1().onTrue(Commands.runOnce( () -> Limelight.setPriorityTagId(Limelight.getMainAprilTagId())));
+    SubsystemManager.getpsJoystick().L1().onTrue(Commands.runOnce( () -> Limelight.setPriorityTagId(SubsystemManager.getDriveBase().getClosestReefTag())));
     SubsystemManager.getpsJoystick().L1().onFalse(Commands.runOnce( () -> Limelight.resetPriorityTagId()));
 
     SubsystemManager.getpsJoystick().R2().whileTrue(SubsystemManager.getDriveBase().driveToNetScorePos(() -> modifyAxis(SubsystemManager.getpsJoystick().getLeftX())));
