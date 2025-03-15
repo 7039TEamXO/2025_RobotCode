@@ -92,8 +92,9 @@ public class Handler {
             case HOLD_NET:
                 power = HandlerConstants.HANDLER_POWER_HOLD_NET;
                 break;
-
-
+            case INTAKE_NET:
+            power = HandlerConstants.HANDLER_POWER_INTAKE_NET;
+                break;
         }
 
         if((SubsystemManager.getElevatorState() == ElevatorState.INTAKE_CORAL ||
@@ -162,15 +163,12 @@ public class Handler {
 
         //ALGAE NET
 
-<<<<<<< HEAD
-=======
         // System.out.println(master.getStatorCurrent().getValueAsDouble());
 
->>>>>>> 3e3c150 (added auto drive for net)
-        isAlgaeInNet = ((master.getStatorCurrent().getValueAsDouble() > 60 && state == RobotState.INTAKE &&
+        isAlgaeInNet = ((master.getStatorCurrent().getValueAsDouble() > 40 && state == RobotState.INTAKE &&
         (elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET ))
         || lastIsAlgaeInNet) 
-       && algaeDepleteCounter < 35 && !isCoralIn;
+       && algaeDepleteCounter < 35 && !isCoralIn && !SubsystemManager.getpsJoystick().getHID().getCrossButton();
 
         
 

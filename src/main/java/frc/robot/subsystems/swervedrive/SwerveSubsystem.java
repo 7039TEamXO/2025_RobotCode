@@ -153,8 +153,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    System.out.println(swerveDrive.getPose().getX());
-
     swerveDrive.setMaximumAllowableSpeeds(calculateSpeedAccordingToElevator(Constants.MAX_SPEED, Constants.MIN_SPEED),
         calculateSpeedAccordingToElevator(Constants.MAX_ROTATION_V, Constants.MIN_ROTATION_V));
 
@@ -352,7 +350,7 @@ public class SwerveSubsystem extends SubsystemBase {
               joystickX.getAsDouble() * swerveDrive.getMaximumChassisVelocity()),
           0.8), // y right/left
           ((getAngleToNet(SwerveDriveConstants.WANTED_ROTATION_ANGLE_NET_ALGAE_POS_RED)) *
-              SwerveDriveConstants.ALIGN_LIMELIGHT_ROTATION_KP), // rotation
+              SwerveDriveConstants.Kp_NET_AUTO_DRIVE_ROTATION), // rotation
           true,
           false));
     }
@@ -365,7 +363,7 @@ public class SwerveSubsystem extends SubsystemBase {
               joystickX.getAsDouble() * swerveDrive.getMaximumChassisVelocity()),
           0.8), // y right/left
           ((getAngleToNet(SwerveDriveConstants.WANTED_ROTATION_ANGLE_NET_ALGAE_POS_BLUE)) *
-              SwerveDriveConstants.ALIGN_LIMELIGHT_ROTATION_KP), // rotation
+              SwerveDriveConstants.Kp_NET_AUTO_DRIVE_ROTATION), // rotation
           true,
           false));
     }

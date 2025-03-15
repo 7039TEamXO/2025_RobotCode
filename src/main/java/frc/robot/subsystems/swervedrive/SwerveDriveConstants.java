@@ -48,8 +48,8 @@ public class SwerveDriveConstants {
     public static final double ALIGN_LIMELIGHT_ROTATION_KP = -0.02; //align to tx 
     public static final double ALIGN_BY_TAG_ANGLE_ROTATION_KP = -0.043; //align to reef angle
 
-    public static final double Kp_NET_AUTO_DRIVE_X = -1.7;
-    public static final double Kp_NET_AUTO_DRIVE_ROTATION = -0.03;
+    public static final double Kp_NET_AUTO_DRIVE_X = -2;
+    public static final double Kp_NET_AUTO_DRIVE_ROTATION = -0.04;
 
     public static final double WANTED_X_NET_ALGAE_POS_BLUE = 6.8;
     public static final double WANTED_ROTATION_ANGLE_NET_ALGAE_POS_BLUE = 0;

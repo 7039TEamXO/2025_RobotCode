@@ -127,6 +127,8 @@ public class RobotContainer
   {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     SubsystemManager.getpsJoystick().PS().onTrue((Commands.runOnce(SubsystemManager.getDriveBase()::zeroGyroWithAlliance)));// if we will use it, in case if driver push this buttom, our rotation will be messed up
+    // SubsystemManager.getpsJoystick().touchpad().onTrue(SubsystemManager.getDriveBase().driveToPose(new Pose2d(12.573, 2.879, Rotation2d.fromDegrees(60))))
+    ;
 
     // chnage pipeling when we press align
     SubsystemManager.getpsJoystick().R1().onTrue(Commands.runOnce( () -> Limelight.setPipeline(0)));

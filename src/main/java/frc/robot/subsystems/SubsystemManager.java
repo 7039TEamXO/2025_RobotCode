@@ -113,7 +113,7 @@ public class SubsystemManager {
                 RobotState.INTAKE : lastState;
 
             elevatorState = state == RobotState.CLIMB ? ElevatorState.BASE :
-            psController_HID.getCrossButton() ? ElevatorState.BASE : // BASE
+            psController_HID.getCrossButton() || psController_HID.getR2Button() ? ElevatorState.BASE : // BASE
             psController_HID.getSquareButton() ? ElevatorState.LEVEL1 :
             psController_HID.getTriangleButton() ? ElevatorState.LEVEL3 :
             psController_HID.getCircleButton() ? ElevatorState.LEVEL2 :
@@ -121,9 +121,6 @@ public class SubsystemManager {
             psController_HID.getPOV(0) == 180 ? ElevatorState.LEVEL0 : // down
             psController_HID.getPOV(0) == 270 ? ElevatorState.ALGAE_LOW_PROCESSOR : // left
             lastElevatorState;
-
-
-            System.out.println(Limelight.getMainAprilTagId());
 
             
             if ((elevatorState == ElevatorState.ALGAE_LOW_NET || elevatorState == ElevatorState.ALGAE_HIGH_NET) && !Handler.isAlgaeInNet() && Limelight.hasTarget()) {
@@ -242,7 +239,7 @@ public class SubsystemManager {
                 else if (elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR || elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR){
                     handlerState = HandlerState.INTAKE_ALGAE;
                 }else if(elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET){
-                    handlerState= HandlerState.HOLD_NET;
+                    handlerState= HandlerState.INTAKE_NET;
                 }
                 
                 state = Handler.isAlgaeInProcessor() || Handler.isCoralIn() || Handler.isAlgaeInNet() ? RobotState.TRAVEL : RobotState.INTAKE;
@@ -272,12 +269,9 @@ public class SubsystemManager {
             handlerState = Dashboard.getSelectedHandlerState();
         }
 
-<<<<<<< HEAD
         
-=======
         // System.out.println(Handler.isAlgaeInNet());
 
->>>>>>> 3e3c150 (added auto drive for net)
         DeliveryManager.operate(elevatorState, state);
         Handler.operate(handlerState);
         Climb.operate(climbState);

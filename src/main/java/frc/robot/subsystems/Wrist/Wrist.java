@@ -67,12 +67,14 @@ public class Wrist {
             isMoovehWrist = true;
         }
 
-        // System.out.println(master.getStatorCurrent().getValueAsDouble());
+        System.out.println(master.getStatorCurrent().getValueAsDouble());
 
-        if (((state == WristState.BASE && master.getStatorCurrent().getValueAsDouble() < 25 && isMoovehWrist) && !Handler.isAlgaeInProcessor())){
-            master.setControl(new DutyCycleOut(-0.2));
+        if (master.getStatorCurrent().getValueAsDouble() > 28 && state == WristState.BASE) {
             master.setPosition(0);
+        }
 
+        if ((state == WristState.BASE && master.getStatorCurrent().getValueAsDouble() < 27 && isMoovehWrist) && (!Handler.isAlgaeInProcessor() && !Handler.isAlgaeInNet())){
+            master.setControl(new DutyCycleOut(-0.2));
         } else{
             isMoovehWrist = false;
             master.setControl(motorRequest.withPosition(wristPosition));
