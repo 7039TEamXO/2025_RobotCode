@@ -54,6 +54,9 @@ public class Wrist {
                 case HOLD_ALGAE_NET:
                 wristPosition = WristConstants.WRIST_POS_HOLD_ALGAE_NET;
                 break;
+            case THROW_ALGAE_NET:
+            wristPosition = WristConstants.THROW_ALGAE_NET;
+                break;
         }
         // wristPosition = wristPosition + Dashboard.add_value_to_Wrist();
 

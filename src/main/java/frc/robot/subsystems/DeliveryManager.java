@@ -35,7 +35,7 @@ public class DeliveryManager {
 
             /*===========================*/
 
-            case ALGAE_HIGH:
+            case ALGAE_HIGH_PROCESSOR:
                 if (Elevator.getCurrentPosition() >= ElevatorConstants.ELEVATOR_POSE_SAFE_TO_ROTATE) {
                     if (Handler.isAlgaeInProcessor()) {
                      elevatorState = ElevatorState.ALGAE_HIGH_IN;
@@ -47,7 +47,7 @@ public class DeliveryManager {
             
             /*===========================*/
             
-            case ALGAE_LOW:
+            case ALGAE_LOW_PROCESSOR:
                 if (Elevator.getCurrentPosition() >= ElevatorConstants.ELEVATOR_POSE_SAFE_TO_ROTATE) {
                     if (Handler.isAlgaeInProcessor())
                         elevatorState = ElevatorState.ALGAE_LOW_IN;
@@ -101,14 +101,10 @@ public class DeliveryManager {
             elevatorState = ElevatorState.LEVEL3;
             wristState = WristState.HOLD_ALGAE_NET;
                 break;
-            case ALGAE_THROW_NET:
-            elevatorState = ElevatorState.LEVEL3;
-            wristState = WristState.THROW_ALGAE_NET;
-                break;
         }
             
         wristState = Handler.isAlgaeInProcessor() ? WristState.HOLD_ALGAE_PROCESSOR : wristState;
-        wristState = Handler.isAlgaeInNet() ? WristState.HOLD_ALGAE_NET : wristState;
+        wristState = Handler.isAlgaeInNet() && wristState != WristState.THROW_ALGAE_NET ? WristState.HOLD_ALGAE_NET : wristState;
         
         if (Dashboard.getAcceptChanges()) {
             elevatorState = Dashboard.getSelectedElevatorState();

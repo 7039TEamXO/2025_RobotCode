@@ -163,6 +163,7 @@ public class SwerveSubsystem extends SubsystemBase
         
       }
       swerveDrive.updateOdometry();
+      updateClosestReefFace(getPose());
     }
 
     
@@ -693,11 +694,13 @@ public class SwerveSubsystem extends SubsystemBase
     public void print() {
       // System.out.println(swerveDrive.getPose().getX());
     }
-  
-    private static Pose2d getClosestReefFace(Pose2d currentRobotPose2d){
-      Pose2d closestReefFace = null;
+
+    private static int selected_face = -1;
+    private static Pose2d closestReefFace = null;
+
+
+    private static void updateClosestReefFace(Pose2d currentRobotPose2d){
       double minDist = Double.MAX_VALUE;
-      var selected_face = -1;
       try {
         var currentAllianceOptional = DriverStation.getAlliance();
 
@@ -710,7 +713,7 @@ public class SwerveSubsystem extends SubsystemBase
     
           if (currentAlliance == DriverStation.Alliance.Blue) {
             for (int i = 0; i < SwerveDriveConstants.BLUE_RIFF_TAGS_ARRAY.length; i++) {
-              var reefFace = SwerveDriveConstants.BLUE_RIFF_TAGS_ARRAY[i];
+              int reefFace = SwerveDriveConstants.BLUE_RIFF_TAGS_ARRAY[i];
               
               var reefFacePose = fieldLayout.getTagPose(reefFace).get().toPose2d();
               double reefFaceX = reefFacePose.getTranslation().getX();
@@ -747,11 +750,19 @@ public class SwerveSubsystem extends SubsystemBase
           }
           }
       } catch (Exception e){
-        return new Pose2d(0, 0, new Rotation2d(0));
       }
       // System.out.println(selected_face);
       // System.out.println("TAG: " + selected_face);
+    }
+
+  
+    private static Pose2d getClosestReefFace(Pose2d currentRobotPose2d){
       return closestReefFace;
+    }
+
+
+    public static int getClosestReefTag() {
+      return selected_face;
     }
   
     public static double convertDegToRag(double deg){

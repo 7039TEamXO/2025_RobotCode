@@ -28,11 +28,11 @@ public class Elevator {
                 elevatorPosition = ElevatorConstants.ELEVATOR_POSE_BASE;
                 break;
 
-            case ALGAE_HIGH:
+            case ALGAE_HIGH_PROCESSOR:
                 elevatorPosition = ElevatorConstants.ELEVATOR_POSE_ALGAE_HIGH;
                 break;
 
-            case ALGAE_LOW:
+            case ALGAE_LOW_PROCESSOR:
                 elevatorPosition = ElevatorConstants.ELEVATOR_POSE_ALGAE_LOW;
                 break;
 

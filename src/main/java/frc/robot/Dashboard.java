@@ -142,7 +142,8 @@ public class Dashboard {
         subsystemsInformation.addString("ClimbState", () -> SubsystemManager.getClimbState().name()).withPosition(23, 3).withSize(3, 3);
 
         subsystemsInformation.addBoolean("isCoralIn", () -> Handler.isCoralIn()).withPosition(6, 3).withSize(3, 3);
-        subsystemsInformation.addBoolean("isAlgaelIn", () -> Handler.isAlgaeInProcessor()).withPosition(9, 3).withSize(3, 3);
+        subsystemsInformation.addBoolean("isAlgaelInProcessor", () -> Handler.isAlgaeInProcessor()).withPosition(9, 3).withSize(3, 3);
+        subsystemsInformation.addBoolean("isAlgaelInNet", () -> Handler.isAlgaeInNet()).withPosition(12, 3).withSize(3, 3);
 
 
         acceptCoralChanges = subsystemsInformation.add("acceptCoralChanges", false).withWidget(BuiltInWidgets.kToggleButton).withPosition(15, 8).withSize(3, 3).getEntry();

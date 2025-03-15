@@ -30,8 +30,8 @@ public class ElevatorConstants {
     public static final double ELEVATOR_POSE_ALGAE_LOW = 5.3;
     public static final double ELEVATOR_POSE_ALGAE_HIGH = 11; //11
     public static final double ELEVATOR_POSE_ALGAE_IN_OFFSET = 2.7;
-    public static final double ELEVATOR_POSE_ALGAE_LOW_NET = 0.7;
-    public static final double ELEVATOR_POSE_ALGAE_HIGH_NET = 7; 
+    public static final double ELEVATOR_POSE_ALGAE_LOW_NET = 1.4;
+    public static final double ELEVATOR_POSE_ALGAE_HIGH_NET = 7.4; 
     public static final double ELEVATOR_POSE_ALGAE_THROW_POS = 13; 
 
     public static final double ELEVATOR_POSE_SAFE_TO_ROTATE = 1;

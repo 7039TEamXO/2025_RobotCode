@@ -27,6 +27,8 @@ public class Handler {
 
     private static DigitalInput coralIrInput = new DigitalInput(HandlerConstants.HandlerDigitalInputSensorID);
     private static DigitalOutput coralIrOutput = new DigitalOutput(HandlerConstants.HandlerDigitalOutPutSensorID);
+
+    
     private static boolean coralIrVal = coralIrInput.get();
     private static boolean isCoralIn = false;
     private static boolean isAlgaeInProcessor = false;
@@ -63,7 +65,7 @@ public class Handler {
                 power = HandlerConstants.HANDLER_POWER_STOP;
                 break;
 
-            case DEPLETE_ALGAE:
+            case DEPLETE_PROCESSOR:
                 power = HandlerConstants.HANDLER_POWER_DEPLETE_ALGAE;
                 break;
 
@@ -103,7 +105,7 @@ public class Handler {
                             } else if (SubsystemManager.getElevatorState() == ElevatorState.LEVEL3 && SubsystemManager.getIsMooveCoral()){
                             master.setControl(new DutyCycleOut(-HandlerConstants.HANDLER_POWER_PUSH_BACK_CORAL));
                             }
-                            else if (state != HandlerState.DEPLETE_ALGAE && SubsystemManager.getElevatorState() == ElevatorState.LEVEL3 && 
+                            else if (state != HandlerState.DEPLETE_PROCESSOR && SubsystemManager.getElevatorState() == ElevatorState.LEVEL3 && 
                             Math.abs(getHandlerMotorDistance() - CurrenthandlerEncoderPosition) <= HandlerConstants.LEVEL4_CORAL_PUSH_DISTANCE){
                                 // System.out.println(state);
                                 master.setControl(new DutyCycleOut(-HandlerConstants.HANDLER_POWER_PUSH_BACK_CORAL));
@@ -118,7 +120,7 @@ public class Handler {
     }   
 
 
-    public static void updateHandlerIr(RobotState state, ElevatorState elevatorState, RobotState lastState) { // boolean isReset
+    public static void updateHandlerIr(RobotState state, ElevatorState elevatorState, HandlerState handlerState) { // boolean isReset
         algaeIrValue = algaeIrInput.getValue();
         coralIrVal = getCoralIr();
 
@@ -138,28 +140,38 @@ public class Handler {
             CurrenthandlerEncoderPosition = getHandlerMotorDistance();
         }
 
+        if (state == RobotState.DEPLETE) {
+            isCoralIn = false;
+            coralIntakeCounter = 0;
+        }
+
+        //ALGAE
+
+        if(handlerState == HandlerState.DEPLETE_PROCESSOR || handlerState == HandlerState.DEPLETE_NET) {
+            algaeDepleteCounter ++;
+        } else {
+            algaeDepleteCounter = 0;
+        }
+
         //ALGAE PROCESSOR
 
         isAlgaeInProcessor = ((algaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE && state == RobotState.INTAKE &&
-         (elevatorState == ElevatorState.ALGAE_LOW || elevatorState == ElevatorState.ALGAE_HIGH ))
+         (elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR || elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR ))
          || lastIsAlgaeInProcessor) 
-        && state != RobotState.DEPLETE && !isCoralIn;
+        && algaeDepleteCounter < 35 && !isCoralIn;
 
         //ALGAE NET
-
-        System.out.println(master.getStatorCurrent().getValueAsDouble());
 
         isAlgaeInNet = ((master.getStatorCurrent().getValueAsDouble() > 60 && state == RobotState.INTAKE &&
         (elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET ))
         || lastIsAlgaeInNet) 
-       && !SubsystemManager.getpsJoystick().getHID().getTouchpadButton() && !isCoralIn;
+       && algaeDepleteCounter < 35 && !isCoralIn;
+
+        
 
 
 
-
-
-
-        isFinishedDepletingAlgae = !isAlgaeInProcessor && lastIsAlgaeInProcessor;
+        isFinishedDepletingAlgae = (!isAlgaeInProcessor && lastIsAlgaeInProcessor) || (!isAlgaeInNet && lastIsAlgaeInNet);
 
         lastCoralIrVal = coralIrVal;
         lastCoralIn = isCoralIn;
