@@ -47,7 +47,8 @@ public class Dashboard {
     private static ShuffleboardTab telemetry = Shuffleboard.getTab("Telemetry");
     private static ShuffleboardTab subsystemsInformation = Shuffleboard.getTab("SubsystemsInformation");
     private static ShuffleboardTab debugging = Shuffleboard.getTab("Debugging");
-    private static HttpCamera limelightcamera = new HttpCamera("limelight", "http://10.70.39.11:5801");
+    private static HttpCamera limelightcamera = new HttpCamera("limelight", "http://10.70.39.203:5801");
+    private static HttpCamera limelightcameraclimb = new HttpCamera("limelight-camera", "http://10.70.39.200:5801/");
     // private static HttpCamera usbCamera = new HttpCamera("USB Camera 0", "");
 
     private static boolean isAcceptChanges[] = {false, true};
@@ -118,7 +119,7 @@ public class Dashboard {
 
         driver.add("Autos", m_chooser).withPosition(17, 7).withSize(5, 3);
         driver.add("Limelight Camera", limelightcamera).withPosition(17, 0).withSize(9, 6);
-        
+        driver.add("LimeCam", limelightcameraclimb).withPosition(0, 0).withSize(17, 12);
 
         telemetry.addNumber("X", () -> SubsystemManager.getDriveBase().getPose().getX()).withPosition(0, 0).withSize(8, 3);
         telemetry.addNumber("Y", () -> SubsystemManager.getDriveBase().getPose().getY()).withPosition(0, 3).withSize(8, 3);

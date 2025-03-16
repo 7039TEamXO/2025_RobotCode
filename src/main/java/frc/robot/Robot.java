@@ -256,8 +256,4 @@ public class Robot extends TimedRobot {
       System.out.println("--------------- CameraSetup ERROR ---------------");
     }
   }
-
-  public static CvSink getVideo() {
-    return CameraServer.getVideo();
-  }
 }
