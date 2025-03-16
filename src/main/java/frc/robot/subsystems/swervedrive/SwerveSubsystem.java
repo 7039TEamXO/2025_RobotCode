@@ -50,6 +50,7 @@ import java.rmi.server.ServerCloneException;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 
+
 import org.opencv.core.Mat.Tuple2;
 import org.photonvision.PhotonCamera;
 //import org.photonvision.targeting.PhotonPipelineResult;
@@ -63,6 +64,7 @@ import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import frc.robot.Limelight;
+import frc.robot.subsystems.Handler.Handler;;
 
 public class SwerveSubsystem extends SubsystemBase {
 
@@ -158,18 +160,28 @@ public class SwerveSubsystem extends SubsystemBase {
 
     if (isAuto) {
       counter++;
-    }
-    else { //TODO: Remove for comp
-      counter = 30;
-    }
-
-    Tuple2<Pose2d> tuple = Limelight.update();
-    if (tuple != null && !Limelight.getTyGreaterThan7() && isRobotVBelowOne() && counter > 20) {
+      Tuple2<Pose2d> tuple = Limelight.update();
+    if (tuple != null && !Limelight.getTyGreaterThan7(true) && isRobotVBelowOne(true) && counter > 20) {
+      // System.out.println("----------");
       Pose2d pos = new Pose2d(tuple.get_0().getX(), tuple.get_0().getY(), SubsystemManager.getDriveBase().getHeading());
       double timestampSeconds = tuple.get_1().getX();
       swerveDrive.addVisionMeasurement(pos, timestampSeconds);
 
     }
+    }
+    else {
+      counter = 0;
+      Tuple2<Pose2d> tuple = Limelight.update();
+    if (tuple != null && !Limelight.getTyGreaterThan7(false) && isRobotVBelowOne(false)) {
+      // System.out.println("----------");
+      Pose2d pos = new Pose2d(tuple.get_0().getX(), tuple.get_0().getY(), SubsystemManager.getDriveBase().getHeading());
+      double timestampSeconds = tuple.get_1().getX();
+      swerveDrive.addVisionMeasurement(pos, timestampSeconds);
+
+    }
+    }
+
+    
     swerveDrive.updateOdometry();
       updateClosestReefFace(getPose());
   }
@@ -317,20 +329,25 @@ public class SwerveSubsystem extends SubsystemBase {
     });
   }
 
-  // DEPRECATED
-  public Command alignByLimelight(DoubleSupplier joystickY) {
-    return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(
-        new Translation2d((joystickY.getAsDouble() * (swerveDrive.getMaximumChassisVelocity())),
-            Limelight.getTx() * SwerveDriveConstants.ALIGN_LIMELIGHT_X_KP),
-        0.8),
-        (Limelight.getTx() * SwerveDriveConstants.ALIGN_LIMELIGHT_ROTATION_KP), // ?
-        false,
-        false));
-  }
+  // public Command advancedAlignByLimelight(DoubleSupplier joystickY, int tagId) {
+  //   return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(
+  //       new Translation2d((joystickY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()),
+
+  //           Limelight.getTx() * SwerveDriveConstants.ALIGN_LIMELIGHT_X_KP),
+  //       0.8),
+
+  //       (getAngleFromCurrentTag() * SwerveDriveConstants.ALIGN_BY_TAG_ANGLE_ROTATION_KP),
+
+  //       false,
+
+  //       false));
+  // }
 
   public Command advancedAlignByLimelight(DoubleSupplier joystickY, int tagId) {
-    return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(
-        new Translation2d((joystickY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()),
+      return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(
+        new Translation2d((Math.abs(joystickY.getAsDouble()) < 0.05 ?
+        (Limelight.getTy() < 0 ? -Limelight.getTy() * SwerveDriveConstants.ALIGN_LIMELIGHT_Y_KP + 0.2: SwerveDriveConstants.ALIGN_LIMELIGHT_MIN_SPEED):
+          joystickY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()),
 
             Limelight.getTx() * SwerveDriveConstants.ALIGN_LIMELIGHT_X_KP),
         0.8),
@@ -340,6 +357,7 @@ public class SwerveSubsystem extends SubsystemBase {
         false,
 
         false));
+      
   }
 
   public Command driveToNetScorePos(DoubleSupplier joystickX) {
@@ -368,6 +386,49 @@ public class SwerveSubsystem extends SubsystemBase {
           false));
     }
   }
+
+  private static double wantedX;
+  private static double wantedY;
+  private static double wantedAngle;
+
+  public Command setDriveToFeeder(){
+    return driveToFeeder();
+  }
+
+  private Command driveToFeeder() {
+
+    if(isRedAlliance()){
+      if(swerveDrive.getPose().getTranslation().getY() < 4){
+        wantedX = SwerveDriveConstants.WANTED_X_FEEDER_LEFT_RED;
+        wantedY = SwerveDriveConstants.WANTED_Y_FEEDER_LEFT_RED;
+        wantedAngle = SwerveDriveConstants.WANTED_ROTATION_ANGLE_FEEDER_LEFT_RED;
+      }else{
+        wantedX = SwerveDriveConstants.WANTED_X_FEEDER_RIGHT_RED;
+        wantedY = SwerveDriveConstants.WANTED_Y_FEEDER_RIGHT_RED;
+        wantedAngle = SwerveDriveConstants.WANTED_ROTATION_ANGLE_FEEDER_RIGHT_RED;
+      }
+    } else {
+      if(swerveDrive.getPose().getTranslation().getY() < 4){
+        wantedX = SwerveDriveConstants.WANTED_X_FEEDER_RIGHT_BLUE;
+        wantedY = SwerveDriveConstants.WANTED_Y_FEEDER_RIGHT_BLUE;
+        wantedAngle = SwerveDriveConstants.WANTED_ROTATION_ANGLE_FEEDER_RIGHT_BLUE;
+      }else{
+        wantedX = SwerveDriveConstants.WANTED_X_FEEDER_LEFT_BLUE;
+        wantedY = SwerveDriveConstants.WANTED_Y_FEEDER_LEFT_BLUE;
+        wantedAngle = SwerveDriveConstants.WANTED_ROTATION_ANGLE_FEEDER_LEFT_BLUE;
+      }
+    }
+    return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(
+          new Translation2d((swerveDrive.getPose().getTranslation().getX() - wantedX) *
+              (SwerveDriveConstants.Kp_FEEDER_AUTO_DRIVE_TRANSLATION), // x - forward
+              (swerveDrive.getPose().getTranslation().getY() - wantedY) *
+              (SwerveDriveConstants.Kp_FEEDER_AUTO_DRIVE_TRANSLATION)),// y
+          0.8), // y right/left
+          ((getAngleToNet(wantedAngle)) *
+              SwerveDriveConstants.Kp_FEEDR_AUTO_DRIVE_ROTATION), // rotation
+          true,
+          false));
+    }
 
   /**
    * Command to drive the robot using translative values and heading as a
@@ -869,10 +930,16 @@ public class SwerveSubsystem extends SubsystemBase {
 
   }
 
-  public static boolean isRobotVBelowOne() {
-    return (Math.abs(swerveDrive.getRobotVelocity().vxMetersPerSecond) < 2) &&
+  public static boolean isRobotVBelowOne(boolean inAuto) {
+    if (inAuto) {
+      return (Math.abs(swerveDrive.getRobotVelocity().vxMetersPerSecond) < 2) &&
         (Math.abs(swerveDrive.getRobotVelocity().vyMetersPerSecond) < 2) &&
         ((Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) < 1.5));
+    }else{
+      return (Math.abs(swerveDrive.getRobotVelocity().vxMetersPerSecond) < 3) &&
+        (Math.abs(swerveDrive.getRobotVelocity().vyMetersPerSecond) < 3) &&
+        ((Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) < 2.5));
+    }
   }
 
   public double getAngleFromCurrentTag() {

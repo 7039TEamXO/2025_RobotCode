@@ -32,12 +32,14 @@ public class LED {
         if (Handler.isCoralIn()) {
             color = Color.kRed;
         }
-        if (Handler.isAlgaeInProcessor() || Handler.isAlgaeInNet()) {
-            color = Color.kPurple;
-        }
         if (SubsystemManager.getTxSeen()) {
             color = Color.kGreen;
         }
+        
+        if (Handler.isAlgaeInProcessor() || Handler.isAlgaeInNet()) {
+            color = Color.kPurple;
+        }
+        
 
         for (int i = 0; i < buffer.getLength(); i++) {
             buffer.setLED(i, color);

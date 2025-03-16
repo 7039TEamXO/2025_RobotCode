@@ -140,6 +140,9 @@ public class Limelight {
     public static double getTx() {
         return limelightTable.getEntry("tx").getNumber(0).doubleValue();
     }
+    public static double getTy() {
+        return limelightTable.getEntry("ty").getNumber(0).doubleValue();
+    }
 
     public static void setPointOfInterest(double offsetX){
         double[] array = {0, offsetX, 0};
@@ -162,7 +165,11 @@ public class Limelight {
         LimelightHelpers.setPriorityTagID("limelight", -1);    
     }
 
-    public static boolean getTyGreaterThan7(){
-        return Math.abs(LimelightHelpers.getTY("limelight")) <= 7;
+    public static boolean getTyGreaterThan7(boolean inAuto){
+        if (inAuto) {
+            return Math.abs(Limelight.getTy()) >= 17;
+        }else{
+            return Math.abs(Limelight.getTy()) >= 17;
+        }
     }
 }

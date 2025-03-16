@@ -69,7 +69,7 @@ public class Wrist {
 
         // System.out.println(master.getStatorCurrent().getValueAsDouble());
 
-        if (master.getStatorCurrent().getValueAsDouble() > 28 && state == WristState.BASE) {
+        if (master.getStatorCurrent().getValueAsDouble() > 28 && state == WristState.BASE && !Handler.isAlgaeInNet() && !Handler.isAlgaeInProcessor()) {
             master.setPosition(0);
         }
 
