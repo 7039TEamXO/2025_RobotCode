@@ -1,26 +1,18 @@
 package frc.robot;
 
-import java.util.Map;
-
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.CvSource;
-
-import edu.wpi.first.networktables.NetworkTableInstance;
-
-
 
 import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.cscore.MjpegServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.PixelFormat;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SendableCameraWrapper;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.DeliveryManager;
 import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.Climb.Climb;
@@ -31,57 +23,26 @@ import frc.robot.subsystems.Wrist.WristState;
 import frc.robot.subsystems.Handler.*;
 import frc.robot.subsystems.Tray.Tray;
 
-
-
 public class Dashboard {
-    private final static SendableChooser<String> m_chooser = new SendableChooser<>();
+    private final static SendableChooser<String> autoChooser = new SendableChooser<>();
 
-    private final static SendableChooser<String> choosen_elevatorStates = new SendableChooser<>();
-    private final static SendableChooser<String> choosen_WristStates = new SendableChooser<>();
-    private final static SendableChooser<String> choosen_HandlerStates = new SendableChooser<>();
+    private final static SendableChooser<String> chosenElevatorStates = new SendableChooser<>();
+    private final static SendableChooser<String> chosenWristStates = new SendableChooser<>();
+    private final static SendableChooser<String> chosenHandlerStates = new SendableChooser<>();
 
-    private final static SendableChooser<String> choosen_acceptChanges = new SendableChooser<>();
+    private static HttpCamera limelightCamera = new HttpCamera("limelight", "http://10.70.39.203:5801");
+    private static HttpCamera limelightClimbCamera = new HttpCamera("limelight-camera", "http://10.70.39.200:5801/");
 
-    private static String m_autoSelected;
-    private static ShuffleboardTab driver = Shuffleboard.getTab("Driver");
-    private static ShuffleboardTab telemetry = Shuffleboard.getTab("Telemetry");
-    private static ShuffleboardTab subsystemsInformation = Shuffleboard.getTab("SubsystemsInformation");
-    private static ShuffleboardTab debugging = Shuffleboard.getTab("Debugging");
-    private static HttpCamera limelightcamera = new HttpCamera("limelight", "http://10.70.39.203:5801");
-    private static HttpCamera limelightcameraclimb = new HttpCamera("limelight-camera", "http://10.70.39.200:5801/");
-    // private static HttpCamera usbCamera = new HttpCamera("USB Camera 0", "");
+    private static NetworkTableEntry acceptStateChanges;
+    private static NetworkTableEntry acceptCoralChanges;
+    private static NetworkTableEntry chosenIsCoralIn;
+    private static NetworkTableEntry acceptAlgaeChanges;
+    private static NetworkTableEntry chosenIsAlgaeInProcessor;
+    private static NetworkTableEntry chosenIsAlgaeInNet;
 
-    private static boolean isAcceptChanges[] = {false, true};
-
-    private static GenericEntry add_value_to_Wrist = subsystemsInformation.add("SetWristValue", 0).withPosition(3, 8).withSize(3, 3)
-            .getEntry();
-    private static GenericEntry add_value_to_Elevator = subsystemsInformation.add("SetElevatorValue", 0).withPosition(8, 8).withSize(3, 3)
-            .getEntry();
-    private static GenericEntry add_value_to_Handler = subsystemsInformation.add("SetHandlerValue", 0).withPosition(12, 8).withSize(3, 3)
-            .getEntry();
-
-
-    private static GenericEntry acceptCoralChanges;
-    private static GenericEntry simIsCoralIn;
-
-//  private static GenericEntry myBoolean = Shuffleboard.getTab("Example Tab")
-//         .add("My Boolean", false)
-//         .withWidget("Boolean Box")
-//         .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "maroon"))
-//         .getEntry();
-
-    // private static GenericEntry is = subsystemsInformation.add("SetElevatorValue", 0).withPosition(8, 8).withSize(3, 3)
-    //         .getEntry();
-    // private static GenericEntry restart_wrist = subsystemsInformation.add("restart_wrist", 0).withPosition(12, 8).withSize(3, 3)
-    //         .getEntry().getBoolean(false);
-    
-
-
-    // started changes ---------------
-    // private static NetworkTableEntry stateEntry;
-    // private static ElevatorState currentState = ElevatorState.BASE;
-
-    
+    private static NetworkTableEntry addValueToWrist;
+    private static NetworkTableEntry addValueToElevator;
+    private static NetworkTableEntry addValueToHandler;
 
     public static void init() {
         Autos[] states = Autos.values();
@@ -89,188 +50,185 @@ public class Dashboard {
             Autos state = states[i];
             String name_state = state.getAutoName();
             if (i == 0) {
-                m_chooser.setDefaultOption(name_state, name_state);
+                autoChooser.setDefaultOption(name_state, name_state);
             }
-            m_chooser.addOption(name_state, name_state);
+            autoChooser.addOption(name_state, name_state);
         }
-            
-        // elevator chooser
-        
-
-        // wrist chooser
-        // WristState[] wristStates = WristState.values();
-        // for (int h = 0; h < elevatorStates.length; h++) {
-        //     WristState wristState = wristStates[k];
-        //     String name_wristStates = wristState.name();
-        //         if (h == 0) {
-        //             choosen_WristStates.setDefaultOption(name_elevatorStates, name_elevatorStates);
-        //         }
-        //         choosen_WristStates.addOption(name_elevatorStates, name_elevatorStates);
-
-        
-
-        // // -----------------------
-        // NetworkTable table = NetworkTableInstance.getDefault().getTable("RobotState");
-        // stateEntry = table.getEntry("CurrentState");
-        
-        // // Настройка начального значения
-        // stateEntry.setString(currentState.name());
+    
+        // -----------------------
           
-
-        driver.add("Autos", m_chooser).withPosition(17, 7).withSize(5, 3);
-        driver.add("Limelight Camera", limelightcamera).withPosition(17, 0).withSize(9, 6);
-        driver.add("LimeCam", limelightcameraclimb).withPosition(0, 0).withSize(17, 12);
-
-        telemetry.addNumber("X", () -> SubsystemManager.getDriveBase().getPose().getX()).withPosition(0, 0).withSize(8, 3);
-        telemetry.addNumber("Y", () -> SubsystemManager.getDriveBase().getPose().getY()).withPosition(0, 3).withSize(8, 3);
-        telemetry.addNumber("Rot", () -> SubsystemManager.getDriveBase().getPose().getRotation().getDegrees()).withPosition(0, 6).withSize(8, 3);
-        telemetry.addNumber("Front Left Rot", () -> SubsystemManager.getDriveBase().getSwerveDriveConfiguration().modules[0].getPosition().angle.getDegrees()).withPosition(9, 0).withSize(8, 3);
-        telemetry.addNumber("Front Right Rot", () -> SubsystemManager.getDriveBase().getSwerveDriveConfiguration().modules[1].getPosition().angle.getDegrees()).withPosition(17, 0).withSize(8, 3);
-        telemetry.addNumber("Back Left Rot", () -> SubsystemManager.getDriveBase().getSwerveDriveConfiguration().modules[2].getPosition().angle.getDegrees()).withPosition(9, 3).withSize(8, 3);
-        telemetry.addNumber("Back Right Rot", () -> SubsystemManager.getDriveBase().getSwerveDriveConfiguration().modules[3].getPosition().angle.getDegrees()).withPosition(17, 3).withSize(8, 3);
+        SmartDashboard.putData("Autos", autoChooser);
         
-        subsystemsInformation.addNumber("Elevator_raw", () -> Elevator.getCurrentPosition()).withPosition(0, 0).withSize(3, 3);
-        subsystemsInformation.addNumber("Wrist_raw", () -> Wrist.getCurrentPosition()).withPosition(3, 0).withSize(3, 3);
-        subsystemsInformation.addNumber("Tray_raw", () -> Tray.getTrayPosition()).withPosition(0, 3).withSize(3, 3);
-        subsystemsInformation.addNumber("Climb_raw", () -> Climb.getClimbPose()).withPosition(3, 3).withSize(3, 3);
-        subsystemsInformation.addBoolean("CoralIR ", ()-> Handler.getCoralIr()).withPosition(6, 0).withSize(3, 3);
-        subsystemsInformation.addNumber("AlgaeIR ", ()-> Handler.getAlgaeIrValue()).withPosition(9, 0).withSize(3, 3);
+        SmartDashboard.putBoolean("Accept State Changes", false);
+        acceptStateChanges = SmartDashboard.getEntry("Accept State Changes");
 
-        subsystemsInformation.addString("ElevatorState",() -> SubsystemManager.getElevatorState().name()).withPosition(17, 0).withSize(5, 3);
-        subsystemsInformation.addString("RobotState",() -> SubsystemManager.getRobotState().name()).withPosition(22, 0).withSize(3, 3);
-        subsystemsInformation.addString("HandlerState",() -> SubsystemManager.getHandlerState().name()).withPosition(17, 3).withSize(3, 3);
-        subsystemsInformation.addString("WristState", () -> DeliveryManager.getWristState().name()).withPosition(20, 3).withSize(3, 3);
-        subsystemsInformation.addString("ClimbState", () -> SubsystemManager.getClimbState().name()).withPosition(23, 3).withSize(3, 3);
+        SmartDashboard.putBoolean("Accept Coral Changes", false);
+        acceptCoralChanges = SmartDashboard.getEntry("Accept Coral Changes");
 
-        subsystemsInformation.addBoolean("isCoralIn", () -> Handler.isCoralIn()).withPosition(6, 3).withSize(3, 3);
-        subsystemsInformation.addBoolean("isAlgaelInProcessor", () -> Handler.isAlgaeInProcessor()).withPosition(9, 3).withSize(3, 3);
-        subsystemsInformation.addBoolean("isAlgaelInNet", () -> Handler.isAlgaeInNet()).withPosition(12, 3).withSize(3, 3);
+        SmartDashboard.putBoolean("Choose isCoralIn", false);
+        chosenIsCoralIn = SmartDashboard.getEntry("Choose isCoralIn");
 
+        SmartDashboard.putBoolean("Accept Algae Changes", false);
+        acceptAlgaeChanges = SmartDashboard.getEntry("Accept Algae Changes");
 
-        acceptCoralChanges = subsystemsInformation.add("acceptCoralChanges", false).withWidget(BuiltInWidgets.kToggleButton).withPosition(15, 8).withSize(3, 3).getEntry();
-        simIsCoralIn = subsystemsInformation.add("isCoralInToggle", false).withWidget(BuiltInWidgets.kToggleButton).withPosition(18, 8).withSize(3, 3).getEntry();
-        // subsystemsInformation.addNumber("HandlerEncoder", () -> Handler.getHandlerMotorDistance());
+        SmartDashboard.putBoolean("Choose isAlgaeIn (Processor)", false);
+        chosenIsAlgaeInProcessor = SmartDashboard.getEntry("Choose isAlgaeIn (Processor)");
+
+        SmartDashboard.putBoolean("Choose isAlgaeIn (Net)", false);
+        chosenIsAlgaeInNet = SmartDashboard.getEntry("Choose isAlgaeIn (Net)");
+
+        SmartDashboard.putNumber("Add Elevator Value", 0);
+        addValueToElevator = SmartDashboard.getEntry("Add Elevator Value");
+
+        SmartDashboard.putNumber("Add Wrist Value", 0);
+        addValueToWrist = SmartDashboard.getEntry("Add Wrist Value");
+
+        SmartDashboard.putNumber("Add Handler Value", 0);
+        addValueToHandler = SmartDashboard.getEntry("Add Handler Value");
+
+        // SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("HandlerEncoder", () -> Handler.getHandlerMotorDistance());
         
-        debugging.addNumber("HandlerCounter", () -> Handler.getCoralIntakeCounter()).withPosition(0, 0).withSize(3,3);
+        // debugging.addNumber("HandlerCounter", () -> Handler.getCoralIntakeCounter());
+        // debugging.addBoolean("HandlerReset", () -> Handler.getReset());
 
-        debugging.addString("ElevatorState",() -> SubsystemManager.getElevatorState().name()).withPosition(17, 0).withSize(5, 3);
-        debugging.addString("LastElevatorState",() -> SubsystemManager.getLastElevatorState().name()).withPosition(22, 0).withSize(5, 3);
+        // debugging.addString("ElevatorState",() -> SubsystemManager.getElevatorState().name());
+        // debugging.addString("LastElevatorState",() -> SubsystemManager.getLastElevatorState().name());        
 
-
-        
+        update();
 
         // --------
         setElevatorState();
         setWristState();
         setHandlerState();
-        acceptChanges();
     }
 
+    public static void update() {
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("X", SubsystemManager.getDriveBase().getPose().getX()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Y", SubsystemManager.getDriveBase().getPose().getY()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Rotation", SubsystemManager.getDriveBase().getPose().getRotation().getDegrees()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Front Left", SubsystemManager.getDriveBase().getSwerveDriveConfiguration().modules[0].getPosition().angle.getDegrees()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Front Right", SubsystemManager.getDriveBase().getSwerveDriveConfiguration().modules[1].getPosition().angle.getDegrees()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Back Left", SubsystemManager.getDriveBase().getSwerveDriveConfiguration().modules[2].getPosition().angle.getDegrees()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Back Right", SubsystemManager.getDriveBase().getSwerveDriveConfiguration().modules[3].getPosition().angle.getDegrees()));
 
-    public static boolean getAcceptChangesCoral() {
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Elevator Raw", Elevator.getCurrentPosition()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Wrist Raw", Wrist.getCurrentPosition()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Tray Raw", Tray.getTrayPosition()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Climb Raw", Climb.getClimbPose()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putBoolean("Coral IR", Handler.getCoralIr()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Algae IR", Handler.getAlgaeIrValue()));
+
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putString("Elevator State", SubsystemManager.getElevatorState().name()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putString("Robot State", SubsystemManager.getRobotState().name()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putString("Handler State", SubsystemManager.getHandlerState().name()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putString("Wrist State", DeliveryManager.getWristState().name()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putString("Climb State", SubsystemManager.getClimbState().name()));
+
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putBoolean("Is Coral In", Handler.isCoralIn()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putBoolean("Is Algae In (Processor)", Handler.isAlgaeInProcessor()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putBoolean("Is Algae In (Net)", Handler.isAlgaeInNet()));
+
+        SmartDashboard.updateValues();
+    }
+
+    public static boolean getAcceptCoralChanges() {
         return acceptCoralChanges.getBoolean(false);
     }
-    public static boolean getSimCoralIn() {
-        return simIsCoralIn.getBoolean(false);
+
+    public static boolean getChosenIsCoralIn() {
+        return chosenIsCoralIn.getBoolean(false);
     }
 
-    public static void acceptChanges() {
-        for (int i = 0; i < isAcceptChanges.length; i++) {
-            boolean isAcceptChange = isAcceptChanges[i];
-            if (i == 0) {
-                choosen_acceptChanges.setDefaultOption(String.valueOf(isAcceptChange), String.valueOf(isAcceptChange)); // convert to string
-            }
-            choosen_acceptChanges.addOption(String.valueOf(isAcceptChange), String.valueOf(isAcceptChange));
-        }
-        
-        debugging.add("accept to chages ", choosen_acceptChanges).withSize(4, 5).withPosition(15, 3);
+    public static boolean getAcceptAlgaeChanges() {
+        return acceptAlgaeChanges.getBoolean(false);
+    }
+
+    public static boolean getChosenIsAlgaeInProcessor() {
+        return chosenIsAlgaeInProcessor.getBoolean(false);
+    }
+
+    public static boolean getChosenIsAlgaeInNet() {
+        return chosenIsAlgaeInNet.getBoolean(false);
     }
 
     public static boolean getAcceptChanges() {
-        return Boolean.parseBoolean(choosen_acceptChanges.getSelected());
+        return acceptStateChanges.getBoolean(false);
     }
 
     public static void setElevatorState() {
         ElevatorState[] elevatorStates = ElevatorState.values();
         for (int k = 0; k < elevatorStates.length; k++) {
             ElevatorState elevatorState = elevatorStates[k];
-                if (k == 0) {
-                    choosen_elevatorStates.setDefaultOption(elevatorState.name(), elevatorState.name());
-                }
-                choosen_elevatorStates.addOption(elevatorState.name(), elevatorState.name());
+            if (k == 0) {
+                chosenElevatorStates.setDefaultOption(elevatorState.name(), elevatorState.name());
             }
-        debugging.add("choose Elevator state ", choosen_elevatorStates).withSize(4, 5).withPosition(0, 3);
+            chosenElevatorStates.addOption(elevatorState.name(), elevatorState.name());
+        }
+        SmartDashboard.putData("Choose Elevator State", chosenElevatorStates);
     }
 
     public static ElevatorState getSelectedElevatorState() {
-        return ElevatorState.valueOf(choosen_elevatorStates.getSelected());
+        return ElevatorState.valueOf(chosenElevatorStates.getSelected());
     }
 
     public static void setWristState() {
         WristState[] wristStates = WristState.values();
         for (int i = 0; i < wristStates.length; i++) {
             WristState wristState = wristStates[i];
-                if (i == 0) {
-                    choosen_WristStates.setDefaultOption(wristState.name(), wristState.name());
-                }
-                choosen_WristStates.addOption(wristState.name(), wristState.name());
+            if (i == 0) {
+                chosenWristStates.setDefaultOption(wristState.name(), wristState.name());
             }
-            
-        debugging.add("choose Wrist state", choosen_WristStates).withSize(4, 5).withPosition(5, 3);
+            chosenWristStates.addOption(wristState.name(), wristState.name());
+        }
+        SmartDashboard.putData("Choose Wrist State", chosenWristStates);
     }
     
     public static WristState getSelectedWristState() {
-        return WristState.valueOf(choosen_WristStates.getSelected()); 
+        return WristState.valueOf(chosenWristStates.getSelected()); 
     }
 
     public static void setHandlerState() {
         HandlerState[] handlerStates = HandlerState.values();
         for (int i = 0; i < handlerStates.length; i++) {
             HandlerState handlerStaste = handlerStates[i];
-                if (i == 0) {
-                    choosen_HandlerStates.setDefaultOption(handlerStaste.name(), handlerStaste.name());
-                }
-                choosen_HandlerStates.addOption(handlerStaste.name(), handlerStaste.name());
+            if (i == 0) {
+                chosenHandlerStates.setDefaultOption(handlerStaste.name(), handlerStaste.name());
             }
-        debugging.add("choose Handler state", choosen_HandlerStates).withSize(4, 5).withPosition(10, 3);
+            chosenHandlerStates.addOption(handlerStaste.name(), handlerStaste.name());
+        }
+        SmartDashboard.putData("Choose Handler State", chosenHandlerStates);
     }
     
     public static HandlerState getSelectedHandlerState() {
-        return HandlerState.valueOf(choosen_HandlerStates.getSelected()); 
+        return HandlerState.valueOf(chosenHandlerStates.getSelected()); 
     }
-    
-    
-    
-    
+        
     public static String getSelectedAutonomy() {
-        return m_chooser.getSelected(); // m_autoSelected = m_chooser.getSelected();
+        return autoChooser.getSelected();
     }
 
-
-
-
-    public static double add_value_to_Elevator() {
-        return add_value_to_Elevator.getDouble(0);
+    public static double addValueToElevator() {
+        return addValueToElevator.getDouble(0);
     }
 
-    public static double add_value_to_Wrist() {
-        return add_value_to_Wrist.getDouble(0);
+    public static double addValueToWrist() {
+        return addValueToWrist.getDouble(0);
     }
 
-    public static double add_value_to_Handler() {
-        return add_value_to_Handler.getDouble(0);
+    public static double addValueToHandler() {
+        return addValueToHandler.getDouble(0);
     }
 
-    public static void cameraInit(){
-        UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
-        MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
-        mjpegServer1.setSource(usbCamera);
-        // Creates the CvSink and connects it to the UsbCamera
-        CvSink cvSink = new CvSink("opencv_USB Camera 0");
-        cvSink.setSource(usbCamera);
-        // Creates the CvSource and MjpegServer [2] and connects them
-        CvSource outputStream = new CvSource("Blur", PixelFormat.kMJPEG, 320, 240, 30);
-        MjpegServer mjpegServer2 = new MjpegServer("serve_Blur", 1182);
-        mjpegServer2.setSource(outputStream);
-    }
+    // public static void cameraInit() {
+    //     UsbCamera usbCamera = new UsbCamera("USB Camera 0",0);
+    //     MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
+    //     mjpegServer1.setSource(usbCamera);
+    //     // Creates the CvSink and connects it to the UsbCamera
+    //     CvSink cvSink = new CvSink("opencv_USB Camera 0");
+    //     cvSink.setSource(usbCamera);
+    //     // Creates the CvSource and MjpegServer [2] and connects them
+    //     CvSource outputStream = new CvSource("Blur", PixelFormat.kMJPEG, 640, 480, 30);
+    //     MjpegServer mjpegServer2 = new MjpegServer("serve_Blur", 1182);
+    //     mjpegServer2.setSource(outputStream);
+    // }
 }

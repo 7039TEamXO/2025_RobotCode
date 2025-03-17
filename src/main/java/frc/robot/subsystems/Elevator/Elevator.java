@@ -70,8 +70,8 @@ public class Elevator {
                 elevatorPosition = ElevatorConstants.ELEVATOR_POSE_ALGAE_LOW_NET;
                 break;
         }
-        elevatorPosition = elevatorPosition + Dashboard.add_value_to_Elevator();
-        elevatorMasterMotor.setControl(motorRequest.withPosition(elevatorPosition)); //set position for elevator
+        elevatorPosition = elevatorPosition + Dashboard.addValueToElevator();
+        elevatorMasterMotor.setControl(motorRequest.withPosition(elevatorPosition)); // set position for elevator
     }
 
     public static double getCurrentPosition() {

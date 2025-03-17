@@ -15,10 +15,7 @@ public class Wrist {
     private static TalonFX master = new TalonFX(WristConstants.WristMotorID);
     private static double wristPosition;
 
-    private static boolean isResetWrist = false;
-    private static double resetWristCounter = 0;
-
-    private static boolean isMoovehWrist = false;
+    private static boolean isMoveWrist = false;
 
     private static WristState lastState = WristState.BASE;
 
@@ -51,11 +48,11 @@ public class Wrist {
             case DEPLETE_CORAL_LEVEL0:
                 wristPosition = WristConstants.WRIST_POS_DEPLETE_CORAL_LEVEL0;
                 break;
-                case HOLD_ALGAE_NET:
+            case HOLD_ALGAE_NET:
                 wristPosition = WristConstants.WRIST_POS_HOLD_ALGAE_NET;
                 break;
             case THROW_ALGAE_NET:
-            wristPosition = WristConstants.THROW_ALGAE_NET;
+                wristPosition = WristConstants.THROW_ALGAE_NET;
                 break;
         }
         // wristPosition = wristPosition + Dashboard.add_value_to_Wrist();
@@ -64,7 +61,7 @@ public class Wrist {
             // if(state == WristState.BASE &&  master.getStatorCurrent().getValueAsDouble() > 20)
         //
         if(lastState != state) {
-            isMoovehWrist = true;
+            isMoveWrist = true;
         }
 
         // System.out.println(master.getStatorCurrent().getValueAsDouble());
@@ -73,19 +70,18 @@ public class Wrist {
             master.setPosition(0);
         }
 
-        if ((state == WristState.BASE && master.getStatorCurrent().getValueAsDouble() < 27 && isMoovehWrist) && (!Handler.isAlgaeInProcessor() && !Handler.isAlgaeInNet())){
+        if ((state == WristState.BASE && master.getStatorCurrent().getValueAsDouble() < 27 && isMoveWrist) && (!Handler.isAlgaeInProcessor() && !Handler.isAlgaeInNet())){
             master.setControl(new DutyCycleOut(-0.2));
         } else{
-            isMoovehWrist = false;
-            master.setControl(motorRequest.withPosition(wristPosition));
+            isMoveWrist = false;
+            master.setControl(motorRequest.withPosition(wristPosition + Dashboard.addValueToWrist()));
         }
-
 
         lastState = state;
-        if (SubsystemManager.getResetWrist()) {
-            resetWrist();
-            master.setPosition(0);
-        }
+        // if (SubsystemManager.getResetWrist()) {
+        //     resetWrist();
+        //     master.setPosition(0);
+        // }
         //         // System.out.println("i exist");
         //     } else {
         //         isResetWrist = false;
@@ -94,10 +90,8 @@ public class Wrist {
                 
         //     }
         // master.setControl(motorRequest.withPosition(wristPosition));
-        }
+    }
     
-
-
     public static double getCurrentPosition() {
         return master.getPosition().getValueAsDouble();
     }
@@ -106,15 +100,13 @@ public class Wrist {
         master.setPosition(0);
     }
 
-    public static void resetWrist() {
-        master.setControl(new DutyCycleOut(-0.1));
-        resetWristCounter ++;
+    // public static void resetWrist() {
+    //     master.setControl(new DutyCycleOut(-0.1));
+    // }
 
-    }
-
-    public static void stopWrist(){
-        master.setControl(new DutyCycleOut(0));
-    }
+    // public static void stopWrist() {
+    //     master.setControl(new DutyCycleOut(0));
+    // }
 
     private static void setMotorConfigs() {
         var talonFXConfigs = new TalonFXConfiguration();

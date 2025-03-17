@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.Handler.Handler;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import edu.wpi.first.net.WebServer;
 
 import java.io.File;
 import java.io.IOException;
@@ -80,6 +81,9 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     m_robotContainer = new RobotContainer();
 
+    // Activate Elastic layout
+    WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
+
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
     // immediately when disabled, but then also let it be pushed more 
     disabledTimer = new Timer();
@@ -98,6 +102,7 @@ public class Robot extends TimedRobot {
     // System.out.println(RobotContainer.teamColorIsBlue());
     LED.setLedData();
     Limelight.update();
+    Dashboard.update();
 
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,

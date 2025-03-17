@@ -59,11 +59,9 @@ public class SubsystemManager {
 
     private static boolean isTxSeen = false;
 
-    private static boolean isResetWrist = false;
+    // private static boolean isResetWrist = false;
 
-
-
-    private static boolean isMooveCoral = false;
+    private static boolean isMoveCoral = false;
 
     private static boolean isPushClimb = false;
 
@@ -155,18 +153,18 @@ public class SubsystemManager {
         switch (state) {
             case TRAVEL:
                 if(Handler.isAlgaeInProcessor() && (elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR || 
-                                            elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR ||
-                                            elevatorState == ElevatorState.ALGAE_HIGH_IN||
-                                            elevatorState == ElevatorState.ALGAE_LOW_IN ||
-                                              elevatorState == ElevatorState.BASE))
+                                                    elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR ||
+                                                    elevatorState == ElevatorState.ALGAE_HIGH_IN ||
+                                                    elevatorState == ElevatorState.ALGAE_LOW_IN ||
+                                                    elevatorState == ElevatorState.BASE))
                     handlerState = HandlerState.HOLD_ALGAE;
                 else if(Handler.isAlgaeInNet()  && (elevatorState == ElevatorState.ALGAE_LOW_NET || 
-                elevatorState == ElevatorState.ALGAE_HIGH_NET ||
-                elevatorState == ElevatorState.ALGAE_HOLD_NET ||
-                  elevatorState == ElevatorState.BASE)){
+                                                    elevatorState == ElevatorState.ALGAE_HIGH_NET ||
+                                                    elevatorState == ElevatorState.ALGAE_HOLD_NET ||
+                                                    elevatorState == ElevatorState.BASE)) {
                     handlerState = HandlerState.HOLD_NET;
-                  }
-                else{
+                }
+                else {
                     handlerState = HandlerState.STOP;
                 }
                 
@@ -260,9 +258,9 @@ public class SubsystemManager {
 
         // ---------- debuging in game
         if (psController_HID.getOptionsButton() && state != RobotState.CLIMB) {
-            isMooveCoral = true;
+            isMoveCoral = true;
         } else {
-            isMooveCoral = false;
+            isMoveCoral = false;
         }
 
         if (Dashboard.getAcceptChanges()){
@@ -344,12 +342,12 @@ public class SubsystemManager {
         return isTxSeen;
     }
 
-    public static boolean getResetWrist() {
-        return isResetWrist;
-    }
+    // public static boolean getResetWrist() {
+    //     return isResetWrist;
+    // }
 
-    public static boolean getIsMooveCoral() {
-        return isMooveCoral;
+    public static boolean getIsMoveCoral() {
+        return isMoveCoral;
     }
 
     public static void setState(RobotState sState){
