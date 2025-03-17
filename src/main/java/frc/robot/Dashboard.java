@@ -116,7 +116,8 @@ public class Dashboard {
         SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Tray Raw", Tray.getTrayPosition()));
         SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Climb Raw", Climb.getClimbPose()));
         SmartDashboard.postListenerTask(() -> SmartDashboard.putBoolean("Coral IR", Handler.getCoralIr()));
-        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Algae IR", Handler.getAlgaeIrValue()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Algae IR (Processor)", Handler.getAlgaeProcIrValue()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Algae IR (Net)", Handler.getAlgaeNetIrValue()));
 
         SmartDashboard.postListenerTask(() -> SmartDashboard.putString("Elevator State", SubsystemManager.getElevatorState().name()));
         SmartDashboard.postListenerTask(() -> SmartDashboard.putString("Robot State", SubsystemManager.getRobotState().name()));

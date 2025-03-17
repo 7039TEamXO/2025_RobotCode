@@ -20,22 +20,26 @@ import frc.robot.RobotState;
 
 public class Handler {
     private static TalonFX master = new TalonFX(HandlerConstants.HandlerMotorID);
-    private static AnalogInput algaeIrInput = new AnalogInput(HandlerConstants.HandlerAnalogInputSensorID);
-    private static int algaeIrValue = algaeIrInput.getValue();
+    
+    private static AnalogInput algaeProcIrInput = new AnalogInput(HandlerConstants.HandlerAnalogProcInputSensorID);
+    private static int algaeProcIrValue = algaeProcIrInput.getValue();
     private static boolean lastIsAlgaeInProcessor = false;
+
+    private static AnalogInput algaeNetIrInput = new AnalogInput(HandlerConstants.HandlerAnalogNetInputSensorID);
+    private static int algaeNetIrValue = algaeNetIrInput.getValue();
     private static boolean lastIsAlgaeInNet = false;
+    
     private static double power = HandlerConstants.HANDLER_POWER_STOP;
 
     private static DigitalInput coralIrInput = new DigitalInput(HandlerConstants.HandlerDigitalInputSensorID);
     private static DigitalOutput coralIrOutput = new DigitalOutput(HandlerConstants.HandlerDigitalOutPutSensorID);
 
-    
     private static boolean coralIrVal = coralIrInput.get();
     private static boolean isCoralIn = false;
     private static boolean isAlgaeInProcessor = false;
     private static boolean isAlgaeInNet = false;
     // private static boolean lastCoralIn = false;
-    private static boolean feedCoral = false;
+    // private static boolean feedCoral = false;
     private static int coralIntakeCounter = 0;
     private static int algaeDepleteCounter = 0;
     private static double CurrenthandlerEncoderPosition = 0;
@@ -121,7 +125,8 @@ public class Handler {
 
 
     public static void updateHandlerIr(RobotState state, ElevatorState elevatorState, HandlerState handlerState) { // boolean isReset
-        algaeIrValue = algaeIrInput.getValue();
+        algaeProcIrValue = algaeProcIrInput.getValue();
+        algaeNetIrValue = algaeNetIrInput.getValue();
         coralIrVal = getCoralIr();
 
         // CORAL
@@ -134,8 +139,7 @@ public class Handler {
             coralIntakeCounter = 0;
         }
 
-        
-        if (!coralIrVal && state != RobotState.DEPLETE && coralIntakeCounter > HandlerConstants.CORAL_IN_DEBOUCE_COUNTER){ //16
+        if (!coralIrVal && state != RobotState.DEPLETE && coralIntakeCounter > HandlerConstants.CORAL_IN_DEBOUNCE_COUNTER){ //16
             isCoralIn = true;
             CurrenthandlerEncoderPosition = getHandlerMotorDistance();
         }
@@ -155,18 +159,25 @@ public class Handler {
 
         //ALGAE PROCESSOR
 
-        isAlgaeInProcessor = ((algaeIrValue > HandlerConstants.ALGAE_IR_IN_VALUE && state == RobotState.INTAKE &&
+        isAlgaeInProcessor = ((algaeProcIrValue > HandlerConstants.ALGAE_PROC_IR_IN_VALUE && state == RobotState.INTAKE &&
          (elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR || elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR ))
-         || lastIsAlgaeInProcessor) 
-        && algaeDepleteCounter < 35 && !isCoralIn;
+         || lastIsAlgaeInProcessor) && algaeDepleteCounter < 35 && !isCoralIn;
 
         //ALGAE NET
 
         // System.out.println(master.getStatorCurrent().getValueAsDouble());
 
+        // CURRENT IMPLEMENTATION (TEMPORARY)
+
         isAlgaeInNet = ((master.getStatorCurrent().getValueAsDouble() > 40 && state == RobotState.INTAKE &&
         (elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET)) || lastIsAlgaeInNet) 
         && algaeDepleteCounter < 35 && !isCoralIn && !SubsystemManager.getpsJoystick().getHID().getCrossButton();
+
+        // SENSOR IMPLEMENTATION
+
+        // isAlgaeInNet = ((algaeNetIrValue > HandlerConstants.ALGAE_NET_IR_IN_VALUE && state == RobotState.INTAKE &&
+        // (elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET)) || lastIsAlgaeInNet) 
+        // && algaeDepleteCounter < 35 && !isCoralIn && !SubsystemManager.getpsJoystick().getHID().getCrossButton();
 
         isFinishedDepletingAlgae = (!isAlgaeInProcessor && lastIsAlgaeInProcessor) || (!isAlgaeInNet && lastIsAlgaeInNet);
 
@@ -192,16 +203,20 @@ public class Handler {
         return isCoralIn;
     }
     
-    public static boolean getFeedCoral() {
-        return feedCoral;
-    }
+    // public static boolean getFeedCoral() {
+    //     return feedCoral;
+    // }
 
     public static boolean getCoralIr() {
         return coralIrInput.get();
     }
 
-    public static int getAlgaeIrValue() {
-        return algaeIrInput.getValue();
+    public static int getAlgaeProcIrValue() {
+        return algaeProcIrInput.getValue();
+    }
+
+    public static int getAlgaeNetIrValue() {
+        return algaeNetIrInput.getValue();
     }
 
     public static double getHandlerMotorDistance() {
