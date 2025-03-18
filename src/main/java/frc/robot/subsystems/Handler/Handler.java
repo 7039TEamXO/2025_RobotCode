@@ -32,7 +32,7 @@ public class Handler {
     private static double power = HandlerConstants.HANDLER_POWER_STOP;
 
     private static DigitalInput coralIrInput = new DigitalInput(HandlerConstants.HandlerDigitalInputSensorID);
-    private static DigitalOutput coralIrOutput = new DigitalOutput(HandlerConstants.HandlerDigitalOutPutSensorID);
+    private static DigitalOutput coralIrOutput = new DigitalOutput(HandlerConstants.HandlerDigitalOutputSensorID);
 
     private static boolean coralIrVal = coralIrInput.get();
     private static boolean isCoralIn = false;

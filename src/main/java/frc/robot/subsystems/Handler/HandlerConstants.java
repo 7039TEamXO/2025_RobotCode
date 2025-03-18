@@ -4,9 +4,9 @@ public class HandlerConstants {
     public static final int HandlerMotorID = 1;
 
     public static final int HandlerAnalogProcInputSensorID = 3;
-    public static final int HandlerAnalogNetInputSensorID = -1; // CHANGE [!]
+    public static final int HandlerAnalogNetInputSensorID = 1;
     public static final int HandlerDigitalInputSensorID = 1;
-    public static final int HandlerDigitalOutPutSensorID = 0;
+    public static final int HandlerDigitalOutputSensorID = 0;
 
     public static final double HANDLER_POWER_INTAKE_ALGAE = 0.55; // 0.55
     public static final double HANDLER_POWER_DEPLETE_CORAL = 0.55;

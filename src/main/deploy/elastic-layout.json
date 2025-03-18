@@ -1,6 +1,6 @@
 {
   "version": 1.0,
-  "grid_size": 32,
+  "grid_size": 64,
   "tabs": [
     {
       "name": "Driver",
@@ -339,7 +339,7 @@
             "x": 64.0,
             "y": 256.0,
             "width": 192.0,
-            "height": 192.0,
+            "height": 128.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/SmartDashboard/Is Algae In (Processor)",
@@ -356,7 +356,7 @@
             "x": 256.0,
             "y": 256.0,
             "width": 192.0,
-            "height": 192.0,
+            "height": 128.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/SmartDashboard/Is Algae In (Net)",
@@ -366,6 +366,34 @@
               "false_color": 4294198070,
               "true_icon": "None",
               "false_icon": "None"
+            }
+          },
+          {
+            "title": "Algae IR (Net)",
+            "x": 256.0,
+            "y": 384.0,
+            "width": 192.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Algae IR (Net)",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Algae IR (Processor)",
+            "x": 64.0,
+            "y": 384.0,
+            "width": 192.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Algae IR (Processor)",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
             }
           }
         ]
