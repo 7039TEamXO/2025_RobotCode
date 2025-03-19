@@ -133,12 +133,12 @@ public class RobotContainer
     // chnage pipeling when we press align
     SubsystemManager.getpsJoystick().R1().onTrue(Commands.runOnce( () -> Limelight.setPipeline(0)));
     SubsystemManager.getpsJoystick().L1().onTrue(Commands.runOnce( () -> Limelight.setPipeline(1)));
-    SubsystemManager.getpsJoystick().button(12).onTrue(Commands.runOnce( () -> Limelight.setPipeline(2)));
+    SubsystemManager.getpsJoystick().R3().onTrue(Commands.runOnce( () -> Limelight.setPipeline(2))); // button 12
 
     // Set priority tag when we press align, reset on release    
-    SubsystemManager.getpsJoystick().button(12).onTrue(Commands.runOnce( () -> Limelight.setPriorityTagId(SubsystemManager.getDriveBase().getClosestReefTag())));
+    SubsystemManager.getpsJoystick().R3().onTrue(Commands.runOnce( () -> Limelight.setPriorityTagId(SubsystemManager.getDriveBase().getClosestReefTag())));
     // SubsystemManager.getpsJoystick().button(12).onTrue(Commands.runOnce( () -> Limelight.setPriorityTagId(Limelight.getMainAprilTagId())));
-    SubsystemManager.getpsJoystick().button(12).onFalse(Commands.runOnce( () -> Limelight.resetPriorityTagId()));
+    SubsystemManager.getpsJoystick().R3().onFalse(Commands.runOnce( () -> Limelight.resetPriorityTagId()));
     SubsystemManager.getpsJoystick().R1().onTrue(Commands.runOnce( () -> Limelight.setPriorityTagId(SubsystemManager.getDriveBase().getClosestReefTag())));
     SubsystemManager.getpsJoystick().R1().onFalse(Commands.runOnce( () -> Limelight.resetPriorityTagId()));
     SubsystemManager.getpsJoystick().L1().onTrue(Commands.runOnce( () -> Limelight.setPriorityTagId(SubsystemManager.getDriveBase().getClosestReefTag())));
@@ -154,7 +154,7 @@ public class RobotContainer
     // SubsystemManager.getpsJoystick().L1().whileTrue(SubsystemManager.getDriveBase().alignByLimelight( () -> modifyAxis(-SubsystemManager.getpsJoystick().getLeftY())));
     // SubsystemManager.getpsJoystick().button(12).whileTrue(SubsystemManager.getDriveBase().alignByLimelight( () -> modifyAxis(-SubsystemManager.getpsJoystick().getLeftY())));
     
-    SubsystemManager.getpsJoystick().button(12).whileTrue(SubsystemManager.getDriveBase().advancedAlignByLimelight( () -> modifyAxis(-SubsystemManager.getpsJoystick().getLeftY()), Limelight.getMainAprilTagId()));
+    SubsystemManager.getpsJoystick().R3().whileTrue(SubsystemManager.getDriveBase().advancedAlignByLimelight( () -> modifyAxis(-SubsystemManager.getpsJoystick().getLeftY()), Limelight.getMainAprilTagId()));
     SubsystemManager.getpsJoystick().R1().whileTrue(SubsystemManager.getDriveBase().advancedAlignByLimelight( () -> modifyAxis(-SubsystemManager.getpsJoystick().getLeftY()), Limelight.getMainAprilTagId()));
     SubsystemManager.getpsJoystick().L1().whileTrue(SubsystemManager.getDriveBase().advancedAlignByLimelight( () -> modifyAxis(-SubsystemManager.getpsJoystick().getLeftY()), Limelight.getMainAprilTagId()));
 

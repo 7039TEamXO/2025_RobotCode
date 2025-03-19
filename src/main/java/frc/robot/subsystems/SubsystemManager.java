@@ -183,7 +183,7 @@ public class SubsystemManager {
                 elevatorState = ElevatorState.BASE;
                 
                 climbState = psController_HID.getOptionsButton() ? ClimbState.CLIMB :
-                    psController_HID.getL3Button() ? ClimbState.DESCEND : 
+                    psController_HID.getTouchpadButton() ? ClimbState.DESCEND : 
                     psController_HID.getSquareButton() ? ClimbState.STOP :
                         climbState;
                 
@@ -255,6 +255,7 @@ public class SubsystemManager {
         /****** Auto Counter ******/
         waitForElevatorInAuto(onAuto);
 
+        
 
         // ---------- debuging in game
         if (psController_HID.getOptionsButton() && state != RobotState.CLIMB) {

@@ -58,7 +58,7 @@ public class SwerveDriveConstants {
     public static final double WANTED_X_NET_ALGAE_POS_BLUE = 7.2;
     public static final double WANTED_ROTATION_ANGLE_NET_ALGAE_POS_BLUE = 0;
 
-    public static final double WANTED_X_NET_ALGAE_POS_RED = 10.4;
+    public static final double WANTED_X_NET_ALGAE_POS_RED = 10.45;//10.4
     public static final double WANTED_ROTATION_ANGLE_NET_ALGAE_POS_RED = 180;
 
     

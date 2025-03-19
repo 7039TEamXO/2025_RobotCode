@@ -42,6 +42,9 @@ public class Handler {
     // private static boolean feedCoral = false;
     private static int coralIntakeCounter = 0;
     private static int algaeDepleteCounter = 0;
+
+    private static int algaeNetCounter = 0;
+
     private static double CurrenthandlerEncoderPosition = 0;
     // private static boolean isReset = false;
     private static boolean lastCoralIrVal = coralIrInput.get();
@@ -169,15 +172,20 @@ public class Handler {
 
         // CURRENT IMPLEMENTATION (TEMPORARY)
 
-        isAlgaeInNet = ((master.getStatorCurrent().getValueAsDouble() > 40 && state == RobotState.INTAKE &&
-        (elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET)) || lastIsAlgaeInNet) 
-        && algaeDepleteCounter < 35 && !isCoralIn && !SubsystemManager.getpsJoystick().getHID().getCrossButton();
-
-        // SENSOR IMPLEMENTATION
-
-        // isAlgaeInNet = ((algaeNetIrValue > HandlerConstants.ALGAE_NET_IR_IN_VALUE && state == RobotState.INTAKE &&
+        // isAlgaeInNet = ((master.getStatorCurrent().getValueAsDouble() > 40 && state == RobotState.INTAKE &&
         // (elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET)) || lastIsAlgaeInNet) 
         // && algaeDepleteCounter < 35 && !isCoralIn && !SubsystemManager.getpsJoystick().getHID().getCrossButton();
+
+        // SENSOR IMPLEMENTATION
+        if(algaeNetIrValue > HandlerConstants.ALGAE_NET_IR_IN_VALUE){
+            algaeNetCounter ++;
+        }else{
+            algaeNetCounter = 0;
+        }
+
+        isAlgaeInNet = (((algaeNetIrValue > HandlerConstants.ALGAE_NET_IR_IN_VALUE && algaeNetCounter > 30) && state == RobotState.INTAKE &&
+        (elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET)) || lastIsAlgaeInNet) 
+        && algaeDepleteCounter < 35 && !isCoralIn && !SubsystemManager.getpsJoystick().getHID().getCrossButton();
 
         isFinishedDepletingAlgae = (!isAlgaeInProcessor && lastIsAlgaeInProcessor) || (!isAlgaeInNet && lastIsAlgaeInNet);
 
