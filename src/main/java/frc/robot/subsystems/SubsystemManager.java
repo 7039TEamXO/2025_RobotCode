@@ -339,6 +339,10 @@ public class SubsystemManager {
         return climbState;
     }
 
+    public static TrayState getTrayState(){
+        return TrayState;
+    }
+
     public static boolean getTxSeen() {
         return isTxSeen;
     }

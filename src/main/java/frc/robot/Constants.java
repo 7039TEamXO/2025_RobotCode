@@ -28,6 +28,8 @@ public final class Constants
   public static final double MAX_SPEED  = Units.feetToMeters(14); //v14.5
   public static final double MIN_SPEED  = Units.feetToMeters(4);
 
+  public static final double CLIMB_SPEED = Units.feetToMeters(7);
+
   public static final double MAX_ROTATION_V = 5;
   public static final double MIN_ROTATION_V = 2;
   public static final double DEG_TO_RAD = Math.PI / 180;

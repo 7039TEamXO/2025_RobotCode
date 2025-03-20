@@ -64,7 +64,8 @@ import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import frc.robot.Limelight;
-import frc.robot.subsystems.Handler.Handler;;
+import frc.robot.subsystems.Handler.Handler;
+import frc.robot.subsystems.Tray.TrayState;
 
 public class SwerveSubsystem extends SubsystemBase {
 
@@ -155,8 +156,16 @@ public class SwerveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    
+    if (SubsystemManager.getTrayState() == TrayState.UP) {
+      swerveDrive.setMaximumAllowableSpeeds(Constants.CLIMB_SPEED, Constants.MIN_ROTATION_V);
+    }
+
+    else {
     swerveDrive.setMaximumAllowableSpeeds(calculateSpeedAccordingToElevator(Constants.MAX_SPEED, Constants.MIN_SPEED),
         calculateSpeedAccordingToElevator(Constants.MAX_ROTATION_V, Constants.MIN_ROTATION_V));
+
+    }
 
     if (isAuto) {
       counter++;
