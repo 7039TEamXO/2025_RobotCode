@@ -42,7 +42,7 @@ public class Climb {
                 wantedAngle = ClimbConstants.CLIMB_SERVO_OPEN;
                 break;
         }
-        if (climbMotor.getPosition().getValueAsDouble() >= 220 && wantedPower == ClimbConstants.CLIMB_WANTED_POWER_CLIMB) {  //climbMotor.getPosition().getValueAsDouble() <= -220 && wantedPower == ClimbConstants.CLIMB_WANTED_POWER_DESCEND
+        if (climbMotor.getPosition().getValueAsDouble() >= ClimbConstants.CLIMB_WANTED_POSE_CLIMB && wantedPower == ClimbConstants.CLIMB_WANTED_POWER_CLIMB) {  //climbMotor.getPosition().getValueAsDouble() <= -220 && wantedPower == ClimbConstants.CLIMB_WANTED_POWER_DESCEND
             wantedPower = ClimbConstants.CLIMB_WANTED_POWER_STOP;
         } 
         

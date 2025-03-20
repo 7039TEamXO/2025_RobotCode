@@ -31,7 +31,7 @@ public class Dashboard {
     private final static SendableChooser<String> chosenHandlerStates = new SendableChooser<>();
 
     private static HttpCamera limelightCamera = new HttpCamera("limelight", "http://10.70.39.203:5801");
-    private static HttpCamera limelightClimbCamera = new HttpCamera("limelight-camera", "http://10.70.39.200:5801/");
+    private static HttpCamera limelightClimbCamera = new HttpCamera("limelight-camera", "http://10.70.39.200:5801");
 
     private static NetworkTableEntry acceptStateChanges;
     private static NetworkTableEntry acceptCoralChanges;
@@ -42,6 +42,7 @@ public class Dashboard {
 
     private static NetworkTableEntry addValueToWrist;
     private static NetworkTableEntry addValueToElevator;
+    
     private static NetworkTableEntry addValueToHandler;
 
     public static void init() {

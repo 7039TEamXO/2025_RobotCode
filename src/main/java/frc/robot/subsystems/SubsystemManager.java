@@ -59,7 +59,7 @@ public class SubsystemManager {
 
     private static boolean isTxSeen = false;
 
-    // private static boolean isResetWrist = false;
+    private static boolean isResetWrist = false;
 
     private static boolean isMoveCoral = false;
 
@@ -92,12 +92,8 @@ public class SubsystemManager {
     }
 
     public static void operate(boolean onAuto) { 
-        // isResetWrist = psController_HID.getTouchpadButton();
-        // System.out.println();
-        // if (psController_HID.getTouchpadButton()) {
-        //     DeliveryManager.resetWrist();
-
-        // }
+        
+        
         
         if (!onAuto) {
             state = psController_HID.getPOV(0) == 0 ? RobotState.TRAVEL : 
@@ -149,7 +145,10 @@ public class SubsystemManager {
         }
         Handler.updateHandlerIr(state, elevatorState, handlerState);
         isPushClimb = false;
-        
+
+        isResetWrist = state != RobotState.CLIMB && psController_HID.getTouchpadButton();
+
+
         switch (state) {
             case TRAVEL:
                 if(Handler.isAlgaeInProcessor() && (elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR || 
@@ -343,9 +342,9 @@ public class SubsystemManager {
         return isTxSeen;
     }
 
-    // public static boolean getResetWrist() {
-    //     return isResetWrist;
-    // }
+    public static boolean getResetWrist() {
+        return isResetWrist;
+    }
 
     public static boolean getIsMoveCoral() {
         return isMoveCoral;

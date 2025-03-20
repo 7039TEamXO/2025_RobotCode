@@ -25,10 +25,10 @@ public final class Constants
   public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
   public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
         // Maximum speed of the robot in meters per second, used to limit acceleration.
-  public static final double MAX_SPEED  = Units.feetToMeters(14); //v14.5
+  public static final double MAX_SPEED  = Units.feetToMeters(16); //v14.5
   public static final double MIN_SPEED  = Units.feetToMeters(4);
 
-  public static final double MAX_ROTATION_V = 5;
+  public static final double MAX_ROTATION_V = 4;
   public static final double MIN_ROTATION_V = 2;
   public static final double DEG_TO_RAD = Math.PI / 180;
 

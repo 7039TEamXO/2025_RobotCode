@@ -8,6 +8,8 @@ public class ClimbConstants {
     public static final double CLIMB_WANTED_POWER_STOP = 0;
     public static final double CLIMB_WANTED_POWER_DESCEND = -0.8;
 
+    public static final double CLIMB_WANTED_POSE_CLIMB = 235;
+
     public static final double CLIMB_SERVO_CLOSE = 0;
     public static final double CLIMB_SERVO_OPEN = 0;
 

@@ -74,14 +74,15 @@ public class Wrist {
             master.setControl(new DutyCycleOut(-0.2));
         } else{
             isMoveWrist = false;
+            master.setControl(new DutyCycleOut(0));
             master.setControl(motorRequest.withPosition(wristPosition + Dashboard.addValueToWrist()));
         }
 
         lastState = state;
-        // if (SubsystemManager.getResetWrist()) {
-        //     resetWrist();
-        //     master.setPosition(0);
-        // }
+        if (SubsystemManager.getResetWrist()) {
+            master.setControl(new DutyCycleOut(-0.2));
+            master.setPosition(0);
+        }
         //         // System.out.println("i exist");
         //     } else {
         //         isResetWrist = false;
