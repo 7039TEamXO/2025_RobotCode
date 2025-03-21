@@ -15,8 +15,8 @@ public class ElevatorConstants {
     public static final double kD = 0.1;    //A velocity error of 1 rps results in 0.1 V output
     ///
     public static final double MotionMagicCruiseVelocity = 180; // Target cruise velocity of 80 rps
-    public static final double MotionMagicAcceleration = 110;    // Target acceleration of 160 rps/s (0.5 seconds)
-    public static final double MotionMagicJerk = 1200;           // Target jerk of 1600 rps/s/s (0.1 seconds)
+    public static final double MotionMagicAcceleration = 95;    // Target acceleration of 160 rps/s (0.5 seconds)
+    public static final double MotionMagicJerk = 1000;           // Target jerk of 1600 rps/s/s (0.1 seconds)
 
     public static final double StatorCurrentLimit = 80;
     public static final double SupplyCurrentLimit = 60;
@@ -31,7 +31,7 @@ public class ElevatorConstants {
     public static final double ELEVATOR_POSE_ALGAE_HIGH = 11; //11
     public static final double ELEVATOR_POSE_ALGAE_IN_OFFSET = 2.7;
     public static final double ELEVATOR_POSE_ALGAE_LOW_NET = 0.3;
-    public static final double ELEVATOR_POSE_ALGAE_HIGH_NET = 6.2; 
+    public static final double ELEVATOR_POSE_ALGAE_HIGH_NET = 6.1; 
     public static final double ELEVATOR_POSE_ALGAE_THROW_POS = 13; 
 
     public static final double ELEVATOR_POSE_SAFE_TO_ROTATE = 1;

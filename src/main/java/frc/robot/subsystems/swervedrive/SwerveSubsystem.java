@@ -374,7 +374,9 @@ public class SwerveSubsystem extends SubsystemBase {
   public Command driveToNetScorePos(DoubleSupplier joystickX) {
     if (isRedAlliance()) {
       return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(
-          new Translation2d((swerveDrive.getPose().getTranslation().getX() - SwerveDriveConstants.WANTED_X_NET_ALGAE_POS_RED) *
+          new Translation2d(
+          Math.abs(getAngleToNet(SwerveDriveConstants.WANTED_ROTATION_ANGLE_NET_ALGAE_POS_RED)) > 45 ? 0 :
+          (swerveDrive.getPose().getTranslation().getX() - SwerveDriveConstants.WANTED_X_NET_ALGAE_POS_RED) *
               (SwerveDriveConstants.Kp_NET_AUTO_DRIVE_X), // x - forward
               joystickX.getAsDouble() * swerveDrive.getMaximumChassisVelocity()),
           0.8), // y right/left
@@ -387,7 +389,9 @@ public class SwerveSubsystem extends SubsystemBase {
     else {
 
       return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(
-          new Translation2d((swerveDrive.getPose().getTranslation().getX() - SwerveDriveConstants.WANTED_X_NET_ALGAE_POS_BLUE) *
+          new Translation2d((
+            Math.abs(getAngleToNet(SwerveDriveConstants.WANTED_ROTATION_ANGLE_NET_ALGAE_POS_BLUE)) > 45 ? 0 :  
+          swerveDrive.getPose().getTranslation().getX() - SwerveDriveConstants.WANTED_X_NET_ALGAE_POS_BLUE) *
               (SwerveDriveConstants.Kp_NET_AUTO_DRIVE_X), // x - forward
               joystickX.getAsDouble() * swerveDrive.getMaximumChassisVelocity()),
           0.8), // y right/left

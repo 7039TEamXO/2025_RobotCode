@@ -55,36 +55,35 @@ public class SwerveDriveConstants {
     public static final double Kp_NET_AUTO_DRIVE_X = -2;
     public static final double Kp_NET_AUTO_DRIVE_ROTATION = -0.06;
 
-    public static final double WANTED_X_NET_ALGAE_POS_BLUE = 7.2;
+    public static final double WANTED_X_NET_ALGAE_POS_BLUE = 7;
     public static final double WANTED_ROTATION_ANGLE_NET_ALGAE_POS_BLUE = 0;
 
-    public static final double WANTED_X_NET_ALGAE_POS_RED = 10.45;//10.4
+    public static final double WANTED_X_NET_ALGAE_POS_RED = 10.6;//10.4
     public static final double WANTED_ROTATION_ANGLE_NET_ALGAE_POS_RED = 180;
 
     
     // left red
-    public static final double WANTED_X_FEEDER_LEFT_RED = 16.722;
-    public static final double WANTED_Y_FEEDER_LEFT_RED = 0.557;
+    public static final double WANTED_X_FEEDER_LEFT_RED = 16.730;
+    public static final double WANTED_Y_FEEDER_LEFT_RED = 0.867;
     public static final double WANTED_ROTATION_ANGLE_FEEDER_LEFT_RED = 125;
 
-
     // right red
-    public static final double WANTED_X_FEEDER_RIGHT_RED = 16.608;
-    public static final double WANTED_Y_FEEDER_RIGHT_RED = 7.451;
+    public static final double WANTED_X_FEEDER_RIGHT_RED = 16.794;
+    public static final double WANTED_Y_FEEDER_RIGHT_RED = 7.049;
     public static final double WANTED_ROTATION_ANGLE_FEEDER_RIGHT_RED = -125;
 
 
     // left blue
-    public static final double WANTED_X_FEEDER_LEFT_BLUE = 1.158;
-    public static final double WANTED_Y_FEEDER_LEFT_BLUE = 7.451;
+    public static final double WANTED_X_FEEDER_LEFT_BLUE = 0.787;
+    public static final double WANTED_Y_FEEDER_LEFT_BLUE = 7.049;
     public static final double WANTED_ROTATION_ANGLE_FEEDER_LEFT_BLUE = -55;
 
     // right blue
-    public static final double WANTED_X_FEEDER_RIGHT_BLUE = 1;
-    public static final double WANTED_Y_FEEDER_RIGHT_BLUE = 0.69;
+    public static final double WANTED_X_FEEDER_RIGHT_BLUE = 0.663;
+    public static final double WANTED_Y_FEEDER_RIGHT_BLUE = 0.99;
     public static final double WANTED_ROTATION_ANGLE_FEEDER_RIGHT_BLUE = 55;
 
-    public static final double Kp_FEEDER_AUTO_DRIVE_TRANSLATION = -1.85;
+    public static final double Kp_FEEDER_AUTO_DRIVE_TRANSLATION = -1.65;
     public static final double Kp_FEEDR_AUTO_DRIVE_ROTATION = -0.06;
 
 }

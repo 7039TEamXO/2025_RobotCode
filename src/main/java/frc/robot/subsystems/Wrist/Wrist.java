@@ -74,7 +74,7 @@ public class Wrist {
             baseCounter = 0;
         }
 
-        if (master.getStatorCurrent().getValueAsDouble() > 27 && baseCounter > 10 && !Handler.isAlgaeInNet() && !Handler.isAlgaeInProcessor()) {
+        if (master.getStatorCurrent().getValueAsDouble() > 27 && baseCounter > 10 && !Handler.isAlgaeInNet() && !Handler.isAlgaeInProcessor() && getWwristVelocity() < 1) {
             master.setPosition(0);
         }
 
@@ -91,8 +91,10 @@ public class Wrist {
             master.setControl(new DutyCycleOut(-0.2));
             master.setPosition(0);
         }
+
         //         // System.out.println("i exist");
         //     } else {
+
         //         isResetWrist = false;
         //         resetWristCounter = 0;
         //         stopWrist();
@@ -107,6 +109,14 @@ public class Wrist {
 
     public static void resetEncoder(){
         master.setPosition(0);
+    }
+
+    public static boolean isWristAtSetPoint(){
+        return Math.abs(wristPosition - master.getPosition().getValueAsDouble()) < 0.25;
+    }
+
+    public static double getWwristVelocity(){
+        return master.getVelocity().getValueAsDouble();
     }
 
     // public static void resetWrist() {

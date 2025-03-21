@@ -162,7 +162,7 @@ public class Handler {
 
         //ALGAE PROCESSOR
 
-        isAlgaeInProcessor = ((algaeProcIrValue > HandlerConstants.ALGAE_PROC_IR_IN_VALUE && state == RobotState.INTAKE &&
+        isAlgaeInProcessor = ((algaeProcIrValue > HandlerConstants.ALGAE_PROC_IR_IN_VALUE && state == RobotState.INTAKE && Wrist.isWristAtSetPoint() &&
          (elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR || elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR ))
          || lastIsAlgaeInProcessor) && algaeDepleteCounter < 35 && !isCoralIn;
 
@@ -183,7 +183,7 @@ public class Handler {
         //     algaeNetCounter = 0;
         // }
 
-        isAlgaeInNet = (((algaeNetIrValue > HandlerConstants.ALGAE_NET_IR_IN_VALUE ) && state == RobotState.INTAKE &&
+        isAlgaeInNet = (((algaeNetIrValue > HandlerConstants.ALGAE_NET_IR_IN_VALUE && Wrist.isWristAtSetPoint()) && state == RobotState.INTAKE && 
         (elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET)) || lastIsAlgaeInNet) 
         && algaeDepleteCounter < 35 && !isCoralIn && !SubsystemManager.getpsJoystick().getHID().getCrossButton();
 
