@@ -64,14 +64,14 @@ public class SwerveDriveConstants {
     
     // left red
     public static final double WANTED_X_FEEDER_LEFT_RED = 16.309;
-    public static final double WANTED_Y_FEEDER_LEFT_RED = 0.764;
-    public static final double WANTED_ROTATION_ANGLE_FEEDER_LEFT_RED = 126;
+    public static final double WANTED_Y_FEEDER_LEFT_RED = 0.464;
+    public static final double WANTED_ROTATION_ANGLE_FEEDER_LEFT_RED = 125;
 
 
     // right red
     public static final double WANTED_X_FEEDER_RIGHT_RED = 16.309;
-    public static final double WANTED_Y_FEEDER_RIGHT_RED = 7.224;
-    public static final double WANTED_ROTATION_ANGLE_FEEDER_RIGHT_RED = -126;
+    public static final double WANTED_Y_FEEDER_RIGHT_RED = 7.524;
+    public static final double WANTED_ROTATION_ANGLE_FEEDER_RIGHT_RED = -125;
 
 
     // left blue
@@ -82,7 +82,7 @@ public class SwerveDriveConstants {
     // right blue
     public static final double WANTED_X_FEEDER_RIGHT_BLUE = 1.076;
     public static final double WANTED_Y_FEEDER_RIGHT_BLUE = 0.838;
-    public static final double WANTED_ROTATION_ANGLE_FEEDER_RIGHT_BLUE = 60;
+    public static final double WANTED_ROTATION_ANGLE_FEEDER_RIGHT_BLUE = 55;
 
     public static final double Kp_FEEDER_AUTO_DRIVE_TRANSLATION = -2;
     public static final double Kp_FEEDR_AUTO_DRIVE_ROTATION = -0.04;

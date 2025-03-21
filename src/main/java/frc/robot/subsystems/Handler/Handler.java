@@ -177,13 +177,13 @@ public class Handler {
         // && algaeDepleteCounter < 35 && !isCoralIn && !SubsystemManager.getpsJoystick().getHID().getCrossButton();
 
         // SENSOR IMPLEMENTATION
-        if(algaeNetIrValue > HandlerConstants.ALGAE_NET_IR_IN_VALUE){
-            algaeNetCounter ++;
-        }else{
-            algaeNetCounter = 0;
-        }
+        // if(algaeNetIrValue > HandlerConstants.ALGAE_NET_IR_IN_VALUE){
+        //     algaeNetCounter ++;
+        // }else{
+        //     algaeNetCounter = 0;
+        // }
 
-        isAlgaeInNet = (((algaeNetIrValue > HandlerConstants.ALGAE_NET_IR_IN_VALUE && algaeNetCounter > 30) && state == RobotState.INTAKE &&
+        isAlgaeInNet = (((algaeNetIrValue > HandlerConstants.ALGAE_NET_IR_IN_VALUE ) && state == RobotState.INTAKE &&
         (elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET)) || lastIsAlgaeInNet) 
         && algaeDepleteCounter < 35 && !isCoralIn && !SubsystemManager.getpsJoystick().getHID().getCrossButton();
 

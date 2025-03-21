@@ -15,6 +15,8 @@ public class Wrist {
     private static TalonFX master = new TalonFX(WristConstants.WristMotorID);
     private static double wristPosition;
 
+    private static int baseCounter = 0;
+
     private static boolean isMoveWrist = false;
 
     private static WristState lastState = WristState.BASE;
@@ -66,7 +68,13 @@ public class Wrist {
 
         // System.out.println(master.getStatorCurrent().getValueAsDouble());
 
-        if (master.getStatorCurrent().getValueAsDouble() > 28 && state == WristState.BASE && !Handler.isAlgaeInNet() && !Handler.isAlgaeInProcessor()) {
+        if (state == WristState.BASE) {
+            baseCounter++;
+        }else{
+            baseCounter = 0;
+        }
+
+        if (master.getStatorCurrent().getValueAsDouble() > 28 && baseCounter > 40 && !Handler.isAlgaeInNet() && !Handler.isAlgaeInProcessor()) {
             master.setPosition(0);
         }
 

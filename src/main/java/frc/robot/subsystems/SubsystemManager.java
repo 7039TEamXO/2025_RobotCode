@@ -91,8 +91,16 @@ public class SubsystemManager {
         Tray.init();
     }
 
+    private static Command choseFeeder;
     public static void operate(boolean onAuto) { 
-        
+        if (ps4Joystick.L3().getAsBoolean()) {
+            choseFeeder = drivebase.choseFeeder(drivebase.getPose().getY());
+            choseFeeder.schedule();
+        }else{
+            if (choseFeeder != null) {
+                choseFeeder.cancel();
+            }
+        }
         
         
         if (!onAuto) {
@@ -293,7 +301,7 @@ public class SubsystemManager {
 
         if (isAutoElevatorCounting && onAuto) autoElevatorCounter++;
 
-        if (autoElevatorCounter < 40 && onAuto && lastElevatorState == ElevatorState.LEVEL3)
+        if (autoElevatorCounter < 70 && onAuto && lastElevatorState == ElevatorState.LEVEL3)
             elevatorState = ElevatorState.LEVEL3;
         else {
             isAutoElevatorCounting = false;

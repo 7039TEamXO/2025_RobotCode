@@ -161,7 +161,7 @@ public class SwerveSubsystem extends SubsystemBase {
     if (isAuto) {
       counter++;
       Tuple2<Pose2d> tuple = Limelight.update();
-    if (tuple != null && !Limelight.getTyGreaterThan7(true) && isRobotVBelowOne(true) && counter > 20) {
+    if (tuple != null && isRobotVBelowOne(true) && counter > 20) {
       // System.out.println("----------");
       Pose2d pos = new Pose2d(tuple.get_0().getX(), tuple.get_0().getY(), SubsystemManager.getDriveBase().getHeading());
       double timestampSeconds = tuple.get_1().getX();
@@ -387,37 +387,15 @@ public class SwerveSubsystem extends SubsystemBase {
     }
   }
 
-  private static double wantedX;
-  private static double wantedY;
-  private static double wantedAngle;
 
-  public Command setDriveToFeeder(){
-    return driveToFeeder();
+
+  public Command choseFeeder(final double posY){
+    return isRedAlliance() ? 
+    (posY < 4 ? driveToRedLeftFeeder() : driveToRedRightFeeder()) :
+    (posY < 4 ? driveToBlueRightFeeder() : driveToBlueLeftFeeder());
   }
 
-  private Command driveToFeeder() {
-
-    if(isRedAlliance()){
-      if(swerveDrive.getPose().getTranslation().getY() < 4){
-        wantedX = SwerveDriveConstants.WANTED_X_FEEDER_LEFT_RED;
-        wantedY = SwerveDriveConstants.WANTED_Y_FEEDER_LEFT_RED;
-        wantedAngle = SwerveDriveConstants.WANTED_ROTATION_ANGLE_FEEDER_LEFT_RED;
-      }else{
-        wantedX = SwerveDriveConstants.WANTED_X_FEEDER_RIGHT_RED;
-        wantedY = SwerveDriveConstants.WANTED_Y_FEEDER_RIGHT_RED;
-        wantedAngle = SwerveDriveConstants.WANTED_ROTATION_ANGLE_FEEDER_RIGHT_RED;
-      }
-    } else {
-      if(swerveDrive.getPose().getTranslation().getY() < 4){
-        wantedX = SwerveDriveConstants.WANTED_X_FEEDER_RIGHT_BLUE;
-        wantedY = SwerveDriveConstants.WANTED_Y_FEEDER_RIGHT_BLUE;
-        wantedAngle = SwerveDriveConstants.WANTED_ROTATION_ANGLE_FEEDER_RIGHT_BLUE;
-      }else{
-        wantedX = SwerveDriveConstants.WANTED_X_FEEDER_LEFT_BLUE;
-        wantedY = SwerveDriveConstants.WANTED_Y_FEEDER_LEFT_BLUE;
-        wantedAngle = SwerveDriveConstants.WANTED_ROTATION_ANGLE_FEEDER_LEFT_BLUE;
-      }
-    }
+  public Command driveToFeeder(final double wantedX,final double wantedY,final double wantedAngle) {
     return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(
           new Translation2d((swerveDrive.getPose().getTranslation().getX() - wantedX) *
               (SwerveDriveConstants.Kp_FEEDER_AUTO_DRIVE_TRANSLATION), // x - forward
@@ -429,6 +407,30 @@ public class SwerveSubsystem extends SubsystemBase {
           true,
           false));
     }
+
+  private Command driveToRedRightFeeder() {
+    return driveToFeeder(SwerveDriveConstants.WANTED_X_FEEDER_RIGHT_RED, 
+    SwerveDriveConstants.WANTED_Y_FEEDER_RIGHT_RED, SwerveDriveConstants.WANTED_ROTATION_ANGLE_FEEDER_RIGHT_RED);
+  }
+
+  private Command driveToRedLeftFeeder() {
+    return driveToFeeder(SwerveDriveConstants.WANTED_X_FEEDER_LEFT_RED, 
+    SwerveDriveConstants.WANTED_Y_FEEDER_LEFT_RED, SwerveDriveConstants.WANTED_ROTATION_ANGLE_FEEDER_LEFT_RED);
+  }
+
+  private Command driveToBlueRightFeeder() {
+    return driveToFeeder(SwerveDriveConstants.WANTED_X_FEEDER_RIGHT_BLUE, 
+    SwerveDriveConstants.WANTED_Y_FEEDER_RIGHT_BLUE, SwerveDriveConstants.WANTED_ROTATION_ANGLE_FEEDER_RIGHT_BLUE);
+  }
+
+  private Command driveToBlueLeftFeeder() {
+    return driveToFeeder(SwerveDriveConstants.WANTED_X_FEEDER_LEFT_BLUE, 
+    SwerveDriveConstants.WANTED_Y_FEEDER_LEFT_BLUE, SwerveDriveConstants.WANTED_ROTATION_ANGLE_FEEDER_LEFT_BLUE);
+  }
+
+
+
+
 
   /**
    * Command to drive the robot using translative values and heading as a

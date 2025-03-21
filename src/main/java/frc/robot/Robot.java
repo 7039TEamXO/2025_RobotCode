@@ -104,6 +104,8 @@ public class Robot extends TimedRobot {
     Limelight.update();
     Dashboard.update();
 
+    // System.out.println(SubsystemManager.getDriveBase().getPose().getY());
+
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
