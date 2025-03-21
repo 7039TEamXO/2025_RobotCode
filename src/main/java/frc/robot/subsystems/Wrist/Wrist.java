@@ -74,11 +74,11 @@ public class Wrist {
             baseCounter = 0;
         }
 
-        if (master.getStatorCurrent().getValueAsDouble() > 28 && baseCounter > 40 && !Handler.isAlgaeInNet() && !Handler.isAlgaeInProcessor()) {
+        if (master.getStatorCurrent().getValueAsDouble() > 27 && baseCounter > 10 && !Handler.isAlgaeInNet() && !Handler.isAlgaeInProcessor()) {
             master.setPosition(0);
         }
 
-        if ((state == WristState.BASE && master.getStatorCurrent().getValueAsDouble() < 27 && isMoveWrist) && (!Handler.isAlgaeInProcessor() && !Handler.isAlgaeInNet())){
+        if ((state == WristState.BASE && master.getStatorCurrent().getValueAsDouble() < 28 && isMoveWrist) && (!Handler.isAlgaeInProcessor() && !Handler.isAlgaeInNet())){
             master.setControl(new DutyCycleOut(-0.2));
         } else{
             isMoveWrist = false;

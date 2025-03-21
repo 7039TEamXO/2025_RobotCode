@@ -21,7 +21,7 @@ public class HandlerConstants {
     public static final double HANDLER_POWER_FEED_CORAL = -0.05;
     public static final double HANDLER_POWER_PUSH_BACK_CORAL = -0.05;
 
-    public static final double HANDLER_POWER_HOLD_NET = -0.15;
+    public static final double HANDLER_POWER_HOLD_NET = -0.25;
     public static final double HANDLER_POWER_INTAKE_NET = -0.55;
     public static final double HANDLER_POWER_DEPLETE_NET = 1;
 

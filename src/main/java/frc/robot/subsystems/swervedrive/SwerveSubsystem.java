@@ -77,7 +77,7 @@ public class SwerveSubsystem extends SubsystemBase {
    * Swerve drive object.
    */
   private static SwerveDrive swerveDrive;
-  private static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+  private static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
   private static Pose2d tag_pos = null;
   double currentTagX = 0;
   double currentTagY = 0;
@@ -181,7 +181,7 @@ public class SwerveSubsystem extends SubsystemBase {
     else {
       counter = 0;
       Tuple2<Pose2d> tuple = Limelight.update();
-    if (tuple != null && !Limelight.getTyGreaterThan7(false) && isRobotVBelowOne(false)) {
+    if (tuple != null && Limelight.filterTargetByTa(false) && isRobotVBelowOne(false)) {
       // System.out.println("----------");
       Pose2d pos = new Pose2d(tuple.get_0().getX(), tuple.get_0().getY(), SubsystemManager.getDriveBase().getHeading());
       double timestampSeconds = tuple.get_1().getX();
@@ -354,18 +354,20 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public Command advancedAlignByLimelight(DoubleSupplier joystickY, int tagId) {
       return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(
-        new Translation2d((Math.abs(joystickY.getAsDouble()) < 0.05 ?
-        (Limelight.getTy() < 0 ? -Limelight.getTy() * SwerveDriveConstants.ALIGN_LIMELIGHT_Y_KP + 0.2: SwerveDriveConstants.ALIGN_LIMELIGHT_MIN_SPEED):
-          joystickY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()),
+        
+      new Translation2d((Math.abs(joystickY.getAsDouble()) < 0.15 ?
+        
+      (Limelight.getTy() < 0 ? (-(Limelight.getTy() * SwerveDriveConstants.ALIGN_LIMELIGHT_Y_KP) * ((45 - Math.abs(Limelight.getTx())) * 0.02)) + 0.2 :
+       SwerveDriveConstants.ALIGN_LIMELIGHT_MIN_SPEED):
+       joystickY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()),
 
-            Limelight.getTx() * SwerveDriveConstants.ALIGN_LIMELIGHT_X_KP),
-        0.8),
+      Limelight.getTx() * SwerveDriveConstants.ALIGN_LIMELIGHT_X_KP), 0.8),
 
-        (getAngleFromCurrentTag() * SwerveDriveConstants.ALIGN_BY_TAG_ANGLE_ROTATION_KP),
-
-        false,
-
-        false));
+      (getAngleFromCurrentTag() * SwerveDriveConstants.ALIGN_BY_TAG_ANGLE_ROTATION_KP),
+      
+      false,
+      
+      false));
       
   }
 
@@ -406,11 +408,16 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public Command driveToFeeder(final double wantedX,final double wantedY,final double wantedAngle) {
     return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(
-          new Translation2d((swerveDrive.getPose().getTranslation().getX() - wantedX) *
-              (SwerveDriveConstants.Kp_FEEDER_AUTO_DRIVE_TRANSLATION), // x - forward
-              (swerveDrive.getPose().getTranslation().getY() - wantedY) *
-              (SwerveDriveConstants.Kp_FEEDER_AUTO_DRIVE_TRANSLATION)),// y
-          0.8), // y right/left
+    new Translation2d(( Math.abs(getAngleToNet(wantedAngle)) > 70 ? 0 :  
+    
+    swerveDrive.getPose().getTranslation().getX() - wantedX) *
+    (SwerveDriveConstants.Kp_FEEDER_AUTO_DRIVE_TRANSLATION), // x - forward
+    
+    Math.abs(getAngleToNet(wantedAngle)) > 70 ? 0 :
+    (swerveDrive.getPose().getTranslation().getY() - wantedY) *
+    (SwerveDriveConstants.Kp_FEEDER_AUTO_DRIVE_TRANSLATION)),// y
+    
+    0.8), // y right/left
           ((getAngleToNet(wantedAngle)) *
               SwerveDriveConstants.Kp_FEEDR_AUTO_DRIVE_ROTATION), // rotation
           true,

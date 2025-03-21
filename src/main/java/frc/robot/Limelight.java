@@ -165,11 +165,16 @@ public class Limelight {
         LimelightHelpers.setPriorityTagID("limelight", -1);    
     }
 
-    public static boolean getTyGreaterThan7(boolean inAuto){
-        if (inAuto) {
-            return Math.abs(Limelight.getTy()) >= 17;
-        }else{
-            return Math.abs(Limelight.getTy()) >= 17;
-        }
+    public static double getTa(){
+        return LimelightHelpers.getTA("limelight");
+    }
+
+    public static boolean filterTargetByTa(boolean inAuto){
+        return getTa() > 0.15 && hasTarget();
+        // if (inAuto) {
+        //     return Math.abs(Limelight.getTy()) >= 17;
+        // }else{
+        //     return Math.abs(Limelight.getTy()) >= 17;
+        // }
     }
 }
