@@ -170,7 +170,7 @@ public class SwerveSubsystem extends SubsystemBase {
     if (isAuto) {
       counter++;
       Tuple2<Pose2d> tuple = Limelight.update();
-    if (tuple != null && isRobotVBelowOne(true) && counter > 20) {
+    if (tuple != null && isRobotVBelowOne(true) && counter > 10) {
       // System.out.println("----------");
       Pose2d pos = new Pose2d(tuple.get_0().getX(), tuple.get_0().getY(), SubsystemManager.getDriveBase().getHeading());
       double timestampSeconds = tuple.get_1().getX();
@@ -179,6 +179,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
     }
     else {
+
       counter = 0;
       Tuple2<Pose2d> tuple = Limelight.update();
     if (tuple != null && Limelight.filterTargetByTa(false) && isRobotVBelowOne(false)) {
@@ -186,6 +187,9 @@ public class SwerveSubsystem extends SubsystemBase {
       Pose2d pos = new Pose2d(tuple.get_0().getX(), tuple.get_0().getY(), SubsystemManager.getDriveBase().getHeading());
       double timestampSeconds = tuple.get_1().getX();
       swerveDrive.addVisionMeasurement(pos, timestampSeconds);
+      if (Limelight.hasTargetFromReef()) {
+        swerveDrive.resetOdometry(new Pose2d(swerveDrive.getPose().getX(), swerveDrive.getPose().getY(), new Rotation2d(Math.toRadians(Limelight.getAngleFromMT1()))));
+      }
 
     }
     }
@@ -370,7 +374,7 @@ public class SwerveSubsystem extends SubsystemBase {
       false));
       
   }
-
+  
   public Command driveToNetScorePos(DoubleSupplier joystickX) {
     if (isRedAlliance()) {
       return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(
@@ -387,7 +391,6 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     else {
-
       return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(
           new Translation2d((
             Math.abs(getAngleToNet(SwerveDriveConstants.WANTED_ROTATION_ANGLE_NET_ALGAE_POS_BLUE)) > 45 ? 0 :  
@@ -958,9 +961,9 @@ public class SwerveSubsystem extends SubsystemBase {
         (Math.abs(swerveDrive.getRobotVelocity().vyMetersPerSecond) < 2) &&
         ((Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) < 1.5));
     }else{
-      return (Math.abs(swerveDrive.getRobotVelocity().vxMetersPerSecond) < 3) &&
-        (Math.abs(swerveDrive.getRobotVelocity().vyMetersPerSecond) < 3) &&
-        ((Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) < 2.5));
+      return (Math.abs(swerveDrive.getRobotVelocity().vxMetersPerSecond) < 2) &&
+        (Math.abs(swerveDrive.getRobotVelocity().vyMetersPerSecond) < 2) &&
+        ((Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) < 1.5));
     }
   }
 
@@ -976,7 +979,7 @@ public class SwerveSubsystem extends SubsystemBase {
         flippedDeg -= 360;
       }
 
-      double currentHeading = swerveDrive.getOdometryHeading().getDegrees();
+      double currentHeading = swerveDrive.getPose().getRotation().getDegrees();
       double angleDiff = currentHeading - flippedDeg;
 
       if (angleDiff > 180) {
@@ -992,6 +995,8 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
   }
+  
+
   private static double getAngleToNet(double wantedAngle){
     try{
     double currentHeading = swerveDrive.getOdometryHeading().getDegrees();

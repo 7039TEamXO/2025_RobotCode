@@ -36,6 +36,8 @@ public class Limelight {
     private static NetworkTableEntry botPosWpiBlue = limelightTable.getEntry("botpose_wpiblue");
     private static int validIDs[] = new int[]{3, 6, 7, 8, 9, 10, 11, 16, 17, 18, 19, 20, 21, 22};
     private static int allValidIDs[] = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22};
+
+    private static double angleFromMT1 = 0;
     
     private static final SwerveDrivePoseEstimator m_poseEstimator =
     new SwerveDrivePoseEstimator(
@@ -73,6 +75,8 @@ public class Limelight {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static Tuple2<Pose2d> update() {
+        angleFromMT1 = hasTargetFromReef() ? botPosWpiBlue.getDoubleArray(new Double[]{})[5] : angleFromMT1;
+
         boolean doRejectUpdate = false;
         double yawRate = SubsystemManager.getDriveBase().getRobotVelocity().omegaRadiansPerSecond;
         double pitch = 20;
@@ -108,6 +112,21 @@ public class Limelight {
         return LimelightHelpers.getTV("limelight");
     }
 
+    public static boolean hasTargetFromReef(){
+        return getMainAprilTagId() == 6 ||
+        getMainAprilTagId() == 7 ||
+        getMainAprilTagId() == 8 ||
+        getMainAprilTagId() == 9 ||
+        getMainAprilTagId() == 10 ||
+        getMainAprilTagId() == 11 ||
+        getMainAprilTagId() == 17 ||
+        getMainAprilTagId() == 18 ||
+        getMainAprilTagId() == 19 ||
+        getMainAprilTagId() == 20 ||
+        getMainAprilTagId() == 21 ||
+        getMainAprilTagId() == 22;
+    }
+
     public static Pose2d getVisionPose() {
         double x = botPosWpiBlue.getDoubleArray(new Double[]{})[0];
         double y = botPosWpiBlue.getDoubleArray(new Double[]{})[1];
@@ -120,15 +139,18 @@ public class Limelight {
     public static void updatePosition() {
         // MT1 
         if(hasTarget()) {
-            if(tx.getDouble(0) != 0 && ty.getDouble(0) != 0){
                 if (Array.getLength(botPosWpiBlue.getDoubleArray(new Double[]{})) > 2) {
                     SubsystemManager.getDriveBase().resetOdometry(new Pose2d(
-                        botPosWpiBlue.getDoubleArray(new Double[]{})[0],
-                        botPosWpiBlue.getDoubleArray(new Double[]{})[1], 
-                        SubsystemManager.getDriveBase().getHeading()));  
+                        SubsystemManager.getDriveBase().getPose().getX(),
+                        SubsystemManager.getDriveBase().getPose().getY(), 
+                        new Rotation2d(getAngleFromMT1())));  
                 }
-            }
+            
         }
+    }
+
+    public static double getAngleFromMT1(){
+        return angleFromMT1;
     }
 
     // DEPRECATED

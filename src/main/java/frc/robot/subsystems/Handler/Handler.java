@@ -38,6 +38,8 @@ public class Handler {
     private static boolean isCoralIn = false;
     private static boolean isAlgaeInProcessor = false;
     private static boolean isAlgaeInNet = false;
+
+    private static boolean statorCurentNetSayTrue = false;
     // private static boolean lastCoralIn = false;
     // private static boolean feedCoral = false;
     private static int coralIntakeCounter = 0;
@@ -141,7 +143,7 @@ public class Handler {
         else if(!lastCoralIrVal) {
             coralIntakeCounter = 0;
         }
-
+        // System.out.println(coralIrVal);
         if (!coralIrVal && state != RobotState.DEPLETE && coralIntakeCounter > HandlerConstants.CORAL_IN_DEBOUNCE_COUNTER){ //16
             isCoralIn = true;
             CurrenthandlerEncoderPosition = getHandlerMotorDistance();
@@ -177,13 +179,17 @@ public class Handler {
         // && algaeDepleteCounter < 35 && !isCoralIn && !SubsystemManager.getpsJoystick().getHID().getCrossButton();
 
         // SENSOR IMPLEMENTATION
-        // if(algaeNetIrValue > HandlerConstants.ALGAE_NET_IR_IN_VALUE){
+        // System.out.println("Handler" + master.getStatorCurrent().getValueAsDouble());
+
+
+        // if(algaeNetIrValue > HandlerConstants.ALGAE_NET_IR_IN_VALUE || Math.abs(master.getStatorCurrent().getValueAsDouble()) > 50){
         //     algaeNetCounter ++;
         // }else{
         //     algaeNetCounter = 0;
         // }
+    
 
-        isAlgaeInNet = (((algaeNetIrValue > HandlerConstants.ALGAE_NET_IR_IN_VALUE && Wrist.isWristAtSetPoint()) && state == RobotState.INTAKE && 
+        isAlgaeInNet = ((((algaeNetIrValue > HandlerConstants.ALGAE_NET_IR_IN_VALUE || Math.abs(master.getStatorCurrent().getValueAsDouble()) > 80) && Wrist.isWristAtSetPoint()) && state == RobotState.INTAKE && 
         (elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET)) || lastIsAlgaeInNet) 
         && algaeDepleteCounter < 35 && !isCoralIn && !SubsystemManager.getpsJoystick().getHID().getCrossButton();
 

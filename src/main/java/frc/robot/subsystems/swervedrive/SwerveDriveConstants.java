@@ -63,27 +63,27 @@ public class SwerveDriveConstants {
 
     
     // left red
-    public static final double WANTED_X_FEEDER_LEFT_RED = 16.730;
-    public static final double WANTED_Y_FEEDER_LEFT_RED = 0.867;
+    public static final double WANTED_X_FEEDER_LEFT_RED = 16.241;
+    public static final double WANTED_Y_FEEDER_LEFT_RED = 0.614;
     public static final double WANTED_ROTATION_ANGLE_FEEDER_LEFT_RED = 125;
 
     // right red
-    public static final double WANTED_X_FEEDER_RIGHT_RED = 16.794;
-    public static final double WANTED_Y_FEEDER_RIGHT_RED = 7.049;
+    public static final double WANTED_X_FEEDER_RIGHT_RED = 16.155;
+    public static final double WANTED_Y_FEEDER_RIGHT_RED = 7.415;
     public static final double WANTED_ROTATION_ANGLE_FEEDER_RIGHT_RED = -125;
 
 
     // left blue
-    public static final double WANTED_X_FEEDER_LEFT_BLUE = 0.787;
-    public static final double WANTED_Y_FEEDER_LEFT_BLUE = 7.049;
+    public static final double WANTED_X_FEEDER_LEFT_BLUE = 1.287;
+    public static final double WANTED_Y_FEEDER_LEFT_BLUE = 7.286;
     public static final double WANTED_ROTATION_ANGLE_FEEDER_LEFT_BLUE = -55;
 
     // right blue
-    public static final double WANTED_X_FEEDER_RIGHT_BLUE = 0.663;
-    public static final double WANTED_Y_FEEDER_RIGHT_BLUE = 0.99;
+    public static final double WANTED_X_FEEDER_RIGHT_BLUE = 1.201;
+    public static final double WANTED_Y_FEEDER_RIGHT_BLUE = 0.764;
     public static final double WANTED_ROTATION_ANGLE_FEEDER_RIGHT_BLUE = 55;
 
-    public static final double Kp_FEEDER_AUTO_DRIVE_TRANSLATION = -1.65;
+    public static final double Kp_FEEDER_AUTO_DRIVE_TRANSLATION = -1.55;
     public static final double Kp_FEEDR_AUTO_DRIVE_ROTATION = -0.06;
 
 }

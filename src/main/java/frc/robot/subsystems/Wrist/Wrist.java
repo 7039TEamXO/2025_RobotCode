@@ -73,18 +73,21 @@ public class Wrist {
         }else{
             baseCounter = 0;
         }
-
+        // System.out.println("Wrist" + master.getStatorCurrent().getValueAsDouble());
         if (master.getStatorCurrent().getValueAsDouble() > 27 && baseCounter > 10 && !Handler.isAlgaeInNet() && !Handler.isAlgaeInProcessor() && getWwristVelocity() < 1) {
             master.setPosition(0);
         }
 
         if ((state == WristState.BASE && master.getStatorCurrent().getValueAsDouble() < 28 && isMoveWrist) && (!Handler.isAlgaeInProcessor() && !Handler.isAlgaeInNet())){
             master.setControl(new DutyCycleOut(-0.2));
+            //System.out.println("83");
         } else{
             isMoveWrist = false;
-            master.setControl(new DutyCycleOut(0));
+            // master.setControl(new DutyCycleOut(0));
+            //System.out.println("87");
             master.setControl(motorRequest.withPosition(wristPosition + Dashboard.addValueToWrist()));
         }
+        //System.out.println(master.getStatorCurrent().getValueAsDouble());
 
         lastState = state;
         if (SubsystemManager.getResetWrist()) {
@@ -116,7 +119,7 @@ public class Wrist {
     }
 
     public static double getWwristVelocity(){
-        return master.getVelocity().getValueAsDouble();
+        return Math.abs(master.getVelocity().getValueAsDouble());
     }
 
     // public static void resetWrist() {

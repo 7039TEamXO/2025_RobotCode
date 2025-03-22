@@ -210,6 +210,10 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic()
   {
     SubsystemManager.operate(false);
+    // System.out.println(Limelight.getMainAprilTagId());
+    // System.out.println(Limelight.hasTargetFromReef());
+    // System.out.println("MT: " + Limelight.getAngleFromMT1());
+    // System.out.println("ps: " + SubsystemManager.getDriveBase().getPose().getRotation().getDegrees());
   }
 
   @Override
