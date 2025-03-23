@@ -143,7 +143,7 @@ public class Handler {
         else if(!lastCoralIrVal) {
             coralIntakeCounter = 0;
         }
-        // System.out.println(coralIrVal);
+
         if (!coralIrVal && state != RobotState.DEPLETE && coralIntakeCounter > HandlerConstants.CORAL_IN_DEBOUNCE_COUNTER){ //16
             isCoralIn = true;
             CurrenthandlerEncoderPosition = getHandlerMotorDistance();
@@ -154,49 +154,44 @@ public class Handler {
             coralIntakeCounter = 0;
         }
 
-        //ALGAE
+        // ALGAE
 
         if(handlerState == HandlerState.DEPLETE_PROCESSOR || handlerState == HandlerState.DEPLETE_NET) {
-            algaeDepleteCounter ++;
+            algaeDepleteCounter++;
         } else {
             algaeDepleteCounter = 0;
         }
 
-        //ALGAE PROCESSOR
 
-        isAlgaeInProcessor = ((algaeProcIrValue > HandlerConstants.ALGAE_PROC_IR_IN_VALUE && state == RobotState.INTAKE && Wrist.isWristAtSetPoint() &&
-         (elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR || elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR ))
-         || lastIsAlgaeInProcessor) && algaeDepleteCounter < 35 && !isCoralIn;
+        // ALGAE PROCESSOR
 
-        //ALGAE NET
+        if ((algaeProcIrValue > HandlerConstants.ALGAE_PROC_IR_IN_VALUE || Math.abs(master.getStatorCurrent().getValueAsDouble()) > 80) && state == RobotState.INTAKE 
+            && Wrist.isWristAtSetPoint() && (elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR || elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR) && !isCoralIn) {
+            isAlgaeInProcessor = true;
+        } else if (algaeDepleteCounter > 35) {
+            isAlgaeInProcessor = false;
+        }
 
-        // System.out.println(master.getStatorCurrent().getValueAsDouble());
+        // isAlgaeInProcessor = ((algaeProcIrValue > HandlerConstants.ALGAE_PROC_IR_IN_VALUE && state == RobotState.INTAKE && Wrist.isWristAtSetPoint()
+        //     && (elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR || elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR)) || lastIsAlgaeInProcessor) 
+        //     && algaeDepleteCounter < 35 && !isCoralIn;
 
-        // CURRENT IMPLEMENTATION (TEMPORARY)
+        // ALGAE NET
 
-        // isAlgaeInNet = ((master.getStatorCurrent().getValueAsDouble() > 40 && state == RobotState.INTAKE &&
-        // (elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET)) || lastIsAlgaeInNet) 
-        // && algaeDepleteCounter < 35 && !isCoralIn && !SubsystemManager.getpsJoystick().getHID().getCrossButton();
+        if((algaeNetIrValue > HandlerConstants.ALGAE_NET_IR_IN_VALUE || Math.abs(master.getStatorCurrent().getValueAsDouble()) > 80) && Wrist.isWristAtSetPoint()
+            && state == RobotState.INTAKE && (elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET) && !isCoralIn) {
+            isAlgaeInNet = true;
+        } else if(algaeDepleteCounter > 35 || SubsystemManager.getpsJoystick().getHID().getCrossButton()) {
+            isAlgaeInNet = false;
+        }
 
-        // SENSOR IMPLEMENTATION
-        // System.out.println("Handler" + master.getStatorCurrent().getValueAsDouble());
-
-
-        // if(algaeNetIrValue > HandlerConstants.ALGAE_NET_IR_IN_VALUE || Math.abs(master.getStatorCurrent().getValueAsDouble()) > 50){
-        //     algaeNetCounter ++;
-        // }else{
-        //     algaeNetCounter = 0;
-        // }
-    
-
-        isAlgaeInNet = ((((algaeNetIrValue > HandlerConstants.ALGAE_NET_IR_IN_VALUE || Math.abs(master.getStatorCurrent().getValueAsDouble()) > 80) && Wrist.isWristAtSetPoint()) && state == RobotState.INTAKE && 
-        (elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET)) || lastIsAlgaeInNet) 
-        && algaeDepleteCounter < 35 && !isCoralIn && !SubsystemManager.getpsJoystick().getHID().getCrossButton();
+        // isAlgaeInNet = ((algaeNetIrValue > HandlerConstants.ALGAE_NET_IR_IN_VALUE || Math.abs(master.getStatorCurrent().getValueAsDouble()) > 80) && state == RobotState.INTAKE
+        //     && Wrist.isWristAtSetPoint() && (elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET) || lastIsAlgaeInNet) 
+        //     && algaeDepleteCounter < 35 && !isCoralIn && !SubsystemManager.getpsJoystick().getHID().getCrossButton();
 
         isFinishedDepletingAlgae = (!isAlgaeInProcessor && lastIsAlgaeInProcessor) || (!isAlgaeInNet && lastIsAlgaeInNet);
 
         lastCoralIrVal = coralIrVal;
-        // lastCoralIn = isCoralIn;
         lastIsAlgaeInProcessor = isAlgaeInProcessor;
         lastIsAlgaeInNet = isAlgaeInNet;
     }

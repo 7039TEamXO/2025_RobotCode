@@ -45,6 +45,8 @@ public class Dashboard {
     
     private static NetworkTableEntry addValueToHandler;
 
+    private static NetworkTableEntry returnClimbToDefault;
+
     public static void init() {
         Autos[] states = Autos.values();
         for (int i = 0; i < states.length; i++) {
@@ -59,7 +61,10 @@ public class Dashboard {
         // -----------------------
           
         SmartDashboard.putData("Autos", autoChooser);
-        
+
+        SmartDashboard.putBoolean("Return Climb", false);
+        returnClimbToDefault = SmartDashboard.getEntry("Return Climb");
+
         SmartDashboard.putBoolean("Accept State Changes", false);
         acceptStateChanges = SmartDashboard.getEntry("Accept State Changes");
 
@@ -155,6 +160,10 @@ public class Dashboard {
 
     public static boolean getAcceptChanges() {
         return acceptStateChanges.getBoolean(false);
+    }
+
+    public static boolean getIsReturnClimb() {
+        return returnClimbToDefault.getBoolean(false);
     }
 
     public static void setElevatorState() {

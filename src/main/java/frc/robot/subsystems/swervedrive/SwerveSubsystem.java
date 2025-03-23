@@ -407,10 +407,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
 
 
-  public Command choseFeeder(final double posY){
+  public Command chooseFeeder(final double posY){
     return isRedAlliance() ? 
-    (posY < 4 ? driveToRedLeftFeeder() : driveToRedRightFeeder()) :
-    (posY < 4 ? driveToBlueRightFeeder() : driveToBlueLeftFeeder());
+      (posY < 4 ? driveToRedLeftFeeder() : driveToRedRightFeeder()) :
+      (posY < 4 ? driveToBlueRightFeeder() : driveToBlueLeftFeeder());
   }
 
   public Command driveToFeeder(final double wantedX,final double wantedY,final double wantedAngle) {

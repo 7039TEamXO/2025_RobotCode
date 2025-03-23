@@ -10,8 +10,7 @@ public class ClimbConstants {
 
     public static final double CLIMB_WANTED_POSE_CLIMB = 235;
 
-    public static final double CLIMB_SERVO_CLOSE = 0;
-    public static final double CLIMB_SERVO_OPEN = 0;
+    public static final double CLIMB_TRAVEL_POSE = -27.9;
 
     public static final double kS = 0.25; // Add 0.25 V output to overcome static friction
     public static final double kV = 0.12; // A velocity target of 1 rps results in 0.12 V output

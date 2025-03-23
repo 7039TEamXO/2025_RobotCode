@@ -91,64 +91,61 @@ public class SubsystemManager {
         Tray.init();
     }
 
-    private static Command choseFeeder;
+    private static Command chooseFeeder;
     public static void operate(boolean onAuto) { 
         if (ps4Joystick.L3().getAsBoolean()) {
-            choseFeeder = drivebase.choseFeeder(drivebase.getPose().getY());
-            choseFeeder.schedule();
-        }else{
-            if (choseFeeder != null) {
-                choseFeeder.cancel();
+            chooseFeeder = drivebase.chooseFeeder(drivebase.getPose().getY());
+            chooseFeeder.schedule();
+        } else{
+            if (chooseFeeder != null) {
+                chooseFeeder.cancel();
             }
         }
-
-    
-        
         
         if (!onAuto) {
             state = psController_HID.getPOV(0) == 0 ? RobotState.TRAVEL : 
-            state == RobotState.CLIMB ? RobotState.CLIMB :
-            psController_HID.getL2Button() ? RobotState.DEPLETE :
-            // psController_HID.getR2Button() ? RobotState.INTAKE :
-            psController_HID.getShareButton() ? RobotState.CLIMB :
-            psController_HID.getPOV(0) == 90 ? RobotState.INTAKE :
-            psController_HID.getPOV(0) == 270 ? RobotState.INTAKE :
-            psController_HID.getCrossButton() && !Handler.isAlgaeInProcessor() && !Handler.isAlgaeInNet() ? 
-                RobotState.INTAKE : lastState;
+                state == RobotState.CLIMB ? RobotState.CLIMB :
+                psController_HID.getL2Button() ? RobotState.DEPLETE :
+                // psController_HID.getR2Button() ? RobotState.INTAKE :
+                psController_HID.getShareButton() ? RobotState.CLIMB :
+                psController_HID.getPOV(0) == 90 ? RobotState.INTAKE :
+                psController_HID.getPOV(0) == 270 ? RobotState.INTAKE :
+                psController_HID.getCrossButton() && !Handler.isAlgaeInProcessor() && !Handler.isAlgaeInNet() ? // wtf
+                    RobotState.INTAKE : lastState;
 
             elevatorState = state == RobotState.CLIMB ? ElevatorState.BASE :
-            psController_HID.getCrossButton() || psController_HID.getR2Button() ? ElevatorState.BASE : // BASE
-            psController_HID.getSquareButton() ? ElevatorState.LEVEL1 :
-            psController_HID.getTriangleButton() ? ElevatorState.LEVEL3 :
-            psController_HID.getCircleButton() ? ElevatorState.LEVEL2 :
-            psController_HID.getPOV(0) == 90 ? ElevatorState.ALGAE_LOW_NET : // right
-            psController_HID.getPOV(0) == 180 ? ElevatorState.LEVEL0 : // down
-            psController_HID.getPOV(0) == 270 ? ElevatorState.ALGAE_LOW_PROCESSOR : // left
-            lastElevatorState;
+                psController_HID.getCrossButton() || psController_HID.getR2Button() ? ElevatorState.BASE : // BASE
+                psController_HID.getSquareButton() ? ElevatorState.LEVEL1 :
+                psController_HID.getTriangleButton() ? ElevatorState.LEVEL3 :
+                psController_HID.getCircleButton() ? ElevatorState.LEVEL2 :
+                psController_HID.getPOV(0) == 90 ? ElevatorState.ALGAE_LOW_NET :        // right
+                psController_HID.getPOV(0) == 180 ? ElevatorState.LEVEL0 :              // down
+                psController_HID.getPOV(0) == 270 ? ElevatorState.ALGAE_LOW_PROCESSOR : // left
+                lastElevatorState;
 
             
             if ((elevatorState == ElevatorState.ALGAE_LOW_NET || elevatorState == ElevatorState.ALGAE_HIGH_NET) && !Handler.isAlgaeInNet() && Limelight.hasTarget()) {
                 if(Limelight.hasTarget() && (Limelight.getMainAprilTagId() == highAlgaeTags[0] ||
-                Limelight.getMainAprilTagId() == highAlgaeTags[1] ||
-                Limelight.getMainAprilTagId() == highAlgaeTags[2] ||
-                Limelight.getMainAprilTagId() == highAlgaeTags[3] ||
-                Limelight.getMainAprilTagId() == highAlgaeTags[4] ||
-                Limelight.getMainAprilTagId() == highAlgaeTags[5])){
+                                             Limelight.getMainAprilTagId() == highAlgaeTags[1] ||
+                                             Limelight.getMainAprilTagId() == highAlgaeTags[2] ||
+                                             Limelight.getMainAprilTagId() == highAlgaeTags[3] ||
+                                             Limelight.getMainAprilTagId() == highAlgaeTags[4] ||
+                                             Limelight.getMainAprilTagId() == highAlgaeTags[5])) {
                     elevatorState = ElevatorState.ALGAE_HIGH_NET;
-                }else{
+                } else {
                     elevatorState = ElevatorState.ALGAE_LOW_NET;
                 }
             }
 
             if ((elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR || elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR) && !Handler.isAlgaeInProcessor() && Limelight.hasTarget()) {
                 if((Limelight.getMainAprilTagId() == highAlgaeTags[0] ||
-                Limelight.getMainAprilTagId() == highAlgaeTags[1] ||
-                Limelight.getMainAprilTagId() == highAlgaeTags[2] ||
-                Limelight.getMainAprilTagId() == highAlgaeTags[3] ||
-                Limelight.getMainAprilTagId() == highAlgaeTags[4] ||
-                Limelight.getMainAprilTagId() == highAlgaeTags[5])){
+                    Limelight.getMainAprilTagId() == highAlgaeTags[1] ||
+                    Limelight.getMainAprilTagId() == highAlgaeTags[2] ||
+                    Limelight.getMainAprilTagId() == highAlgaeTags[3] ||
+                    Limelight.getMainAprilTagId() == highAlgaeTags[4] ||
+                    Limelight.getMainAprilTagId() == highAlgaeTags[5])) {
                     elevatorState = ElevatorState.ALGAE_HIGH_PROCESSOR;
-                }else{
+                } else{
                     elevatorState = ElevatorState.ALGAE_LOW_PROCESSOR;
                 }
             }
@@ -181,8 +178,8 @@ public class SubsystemManager {
                     elevatorState = ElevatorState.BASE;
                 
                 trayState = TrayState.BASE;
+                climbState = ClimbState.TRAVEL;
                 isLocked = false;
-                climbState = ClimbState.STOP;
                 break;
 
         /************/     
@@ -210,18 +207,18 @@ public class SubsystemManager {
                     elevatorState = ElevatorState.ALGAE_HOLD_NET;
                     if (Elevator.getCurrentPosition() > ElevatorConstants.ELEVATOR_POSE_ALGAE_THROW_POS) {
                         handlerState = HandlerState.DEPLETE_NET;
-                    }else{
+                    } else{
                         handlerState = HandlerState.HOLD_NET;
                     }
                 }
-                else if (elevatorState == ElevatorState.LEVEL3 || Handler.isAlgaeInProcessor() || elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR || elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR){
-
+                else if (elevatorState == ElevatorState.LEVEL3 || Handler.isAlgaeInProcessor() || 
+                    elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR || elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR) {
                     handlerState = HandlerState.DEPLETE_PROCESSOR;
                 }
-                else if (elevatorState == ElevatorState.LEVEL0){
+                else if (elevatorState == ElevatorState.LEVEL0) {
                     handlerState =  HandlerState.DEPLETE_CORAL_LEVEL0;
                 }
-                else{
+                else {
                     handlerState = HandlerState.DEPLETE_CORAL;
                 }
                   
@@ -231,27 +228,26 @@ public class SubsystemManager {
                 } else{
                     state = RobotState.DEPLETE;
                 }
-
-                climbState = ClimbState.STOP;
+                climbState = ClimbState.TRAVEL;
                 trayState = TrayState.BASE;
                 break;
 
         /************/
         
             case INTAKE: 
-                if ((elevatorState != ElevatorState.ALGAE_HIGH_PROCESSOR && elevatorState != ElevatorState.ALGAE_LOW_PROCESSOR && elevatorState != ElevatorState.ALGAE_HIGH_NET && elevatorState != ElevatorState.ALGAE_LOW_NET) && !Handler.isCoralIn()) {
+                if ((elevatorState != ElevatorState.ALGAE_HIGH_PROCESSOR && elevatorState != ElevatorState.ALGAE_LOW_PROCESSOR && 
+                     elevatorState != ElevatorState.ALGAE_HIGH_NET && elevatorState != ElevatorState.ALGAE_LOW_NET) && !Handler.isCoralIn()) {
                     handlerState = HandlerState.INTAKE_CORAL;
                     elevatorState = ElevatorState.BASE;
                 }
-                else if (elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR || elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR){
+                else if (elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR || elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR) {
                     handlerState = HandlerState.INTAKE_ALGAE;
-                }else if(elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET){
-                    handlerState= HandlerState.INTAKE_NET;
+                } else if(elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET) {
+                    handlerState = HandlerState.INTAKE_NET;
                 }
                 
                 state = Handler.isAlgaeInProcessor() || Handler.isCoralIn() || Handler.isAlgaeInNet() ? RobotState.TRAVEL : RobotState.INTAKE;
-
-                climbState = ClimbState.STOP;
+                climbState = ClimbState.TRAVEL;
                 trayState = TrayState.BASE;
                 break;
         }

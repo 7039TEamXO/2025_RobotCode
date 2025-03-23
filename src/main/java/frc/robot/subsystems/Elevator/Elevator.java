@@ -63,9 +63,11 @@ public class Elevator {
             case ALGAE_LOW_IN:
                 elevatorPosition = ElevatorConstants.ELEVATOR_POSE_ALGAE_LOW + ElevatorConstants.ELEVATOR_POSE_ALGAE_IN_OFFSET;
                 break;
+                
             case ALGAE_HIGH_NET:
                 elevatorPosition = ElevatorConstants.ELEVATOR_POSE_ALGAE_HIGH_NET;
                 break;
+
             case ALGAE_LOW_NET:
                 elevatorPosition = ElevatorConstants.ELEVATOR_POSE_ALGAE_LOW_NET;
                 break;

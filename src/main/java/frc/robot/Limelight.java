@@ -31,28 +31,10 @@ import org.opencv.core.Mat.Tuple2;
 
 public class Limelight {
     private static NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
-    private static NetworkTableEntry tx = limelightTable.getEntry("tx");
-    private static NetworkTableEntry ty = limelightTable.getEntry("ty");
     private static NetworkTableEntry botPosWpiBlue = limelightTable.getEntry("botpose_wpiblue");
-    private static int validIDs[] = new int[]{3, 6, 7, 8, 9, 10, 11, 16, 17, 18, 19, 20, 21, 22};
     private static int allValidIDs[] = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22};
 
     private static double angleFromMT1 = 0;
-    
-    private static final SwerveDrivePoseEstimator m_poseEstimator =
-    new SwerveDrivePoseEstimator(
-        SubsystemManager.getDriveBase().getKinematics(), 
-        SubsystemManager.getDriveBase().getHeading(), 
-        new SwerveModulePosition[] {
-            SubsystemManager.getDriveBase().getSwerveDriveConfiguration().modules[0].getPosition(),
-            SubsystemManager.getDriveBase().getSwerveDriveConfiguration().modules[1].getPosition(),
-            SubsystemManager.getDriveBase().getSwerveDriveConfiguration().modules[2].getPosition(),
-            SubsystemManager.getDriveBase().getSwerveDriveConfiguration().modules[3].getPosition()
-        }, // go through all modules and do .getPosition
-        new Pose2d(),
-        VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
-        VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30))
-    );
 
     public static void init() {
         setPipeline(2);
@@ -78,8 +60,6 @@ public class Limelight {
         angleFromMT1 = hasTargetFromReef() ? botPosWpiBlue.getDoubleArray(new Double[]{})[5] : angleFromMT1;
 
         boolean doRejectUpdate = false;
-        double yawRate = SubsystemManager.getDriveBase().getRobotVelocity().omegaRadiansPerSecond;
-        double pitch = 20;
 
         LimelightHelpers.SetRobotOrientation("limelight", (SubsystemManager.getDriveBase().getHeading().getDegrees()), 0, 0, 0, 0, 0);
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
@@ -96,15 +76,9 @@ public class Limelight {
         
             if(!doRejectUpdate) {
                 return new Tuple2(mt2.pose, new Pose2d(mt2.timestampSeconds,0 ,new Rotation2d(0)));
-                // m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
-                // m_poseEstimator.addVisionMeasurement(
-                //     mt2.pose,
-                //     mt2.timestampSeconds);
-                // updatePosition();
             }
         }
         
-        // printRobotPose(); 
         return null;  
     }
 
@@ -149,11 +123,10 @@ public class Limelight {
         }
     }
 
-    public static double getAngleFromMT1(){
+    public static double getAngleFromMT1() {
         return angleFromMT1;
     }
 
-    // DEPRECATED
     public static void printRobotPose() {
         System.out.println("x: " +  SubsystemManager.getDriveBase().getPose().getX());
         System.out.println("y: " +  SubsystemManager.getDriveBase().getPose().getY());
@@ -166,8 +139,7 @@ public class Limelight {
         return limelightTable.getEntry("ty").getNumber(0).doubleValue();
     }
 
-    public static void setPointOfInterest(double offsetX){
-        double[] array = {0, offsetX, 0};
+    public static void setPointOfInterest(double offsetX) {
         LimelightHelpers.setFiducial3DOffset("limelight", offsetX, 0, 0);
     }
 
@@ -175,28 +147,23 @@ public class Limelight {
         limelightTable.getEntry("pipeline").setNumber(pipeline);
     }
 
-    public static int getMainAprilTagId(){
+    public static int getMainAprilTagId() {
         return (int) LimelightHelpers.getFiducialID("limelight");
     }
 
-    public static void setPriorityTagId(int tagId){
+    public static void setPriorityTagId(int tagId) {
         LimelightHelpers.setPriorityTagID("limelight", tagId);
     }
 
-    public static void resetPriorityTagId(){
+    public static void resetPriorityTagId() {
         LimelightHelpers.setPriorityTagID("limelight", -1);    
     }
 
-    public static double getTa(){
+    public static double getTa() {
         return LimelightHelpers.getTA("limelight");
     }
 
-    public static boolean filterTargetByTa(boolean inAuto){
+    public static boolean filterTargetByTa(boolean inAuto) {
         return getTa() > 0.15 && hasTarget();
-        // if (inAuto) {
-        //     return Math.abs(Limelight.getTy()) >= 17;
-        // }else{
-        //     return Math.abs(Limelight.getTy()) >= 17;
-        // }
     }
 }

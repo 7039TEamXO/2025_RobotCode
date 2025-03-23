@@ -95,11 +95,12 @@ public class DeliveryManager {
                 break;
 
             case ALGAE_LOW_NET:
-            wristState = WristState.HOLD_ALGAE_NET;
+                wristState = WristState.HOLD_ALGAE_NET;
                 break;
+                
             case ALGAE_HOLD_NET:
-            elevatorState = ElevatorState.LEVEL3;
-            wristState = WristState.THROW_ALGAE_NET;
+                elevatorState = ElevatorState.LEVEL3;
+                wristState = WristState.THROW_ALGAE_NET;
                 break;
         }
             

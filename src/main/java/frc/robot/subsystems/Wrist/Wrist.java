@@ -115,7 +115,7 @@ public class Wrist {
     }
 
     public static boolean isWristAtSetPoint(){
-        return Math.abs(wristPosition - master.getPosition().getValueAsDouble()) < 0.25;
+        return Math.abs(wristPosition - master.getPosition().getValueAsDouble()) < 1;
     }
 
     public static double getWwristVelocity(){
