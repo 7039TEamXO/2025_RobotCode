@@ -1,14 +1,20 @@
 package frc.robot.subsystems.Tray;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import frc.robot.Robot;
+
 public class Tray {
     private static TalonFX trayMotor = new TalonFX(TrayConstants.TrayMotorID);
     private static double trayPosition = 0;
+
+    private static double startCounter = 0;
+    private static boolean isStartGame = true;
 
     private static final MotionMagicVoltage motorRequest = new MotionMagicVoltage(0);
 
@@ -27,8 +33,25 @@ public class Tray {
                 trayPosition = TrayConstants.TRAY_POS_UP;
                 break;
         }
+        
+        if(Robot.isAuto()){
+        if(startCounter <= 150){
+            startCounter ++;
+            trayMotor.setControl(new DutyCycleOut(-0.1));
+            if(startCounter == 150){
+                trayMotor.setPosition(0);
+                trayMotor.setControl(motorRequest.withPosition(trayPosition));
+                startCounter ++;
+            }
+
+        }else{
+            trayMotor.setControl(motorRequest.withPosition(trayPosition));
+        }
+        }
+        else{
         // System.out.println(trayMotor.getPosition().getValueAsDouble());
         trayMotor.setControl(motorRequest.withPosition(trayPosition));
+        }
     }
 
     private static void setMotorConfigs() {

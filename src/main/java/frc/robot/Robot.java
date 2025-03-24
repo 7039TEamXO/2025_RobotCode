@@ -253,6 +253,10 @@ public class Robot extends TimedRobot {
   public void simulationPeriodic()
   {
   }
+
+  public static boolean isAuto() {
+    return SubsystemManager.getDriveBase().isAuto;
+  }
   // public void cameraSetup() {
   //   // USB CAMERA //
   //   try {

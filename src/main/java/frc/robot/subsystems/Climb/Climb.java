@@ -16,6 +16,8 @@ public class Climb {
     private static double wantedPower = ClimbConstants.CLIMB_WANTED_POWER_STOP;
     private static double wantedPose = 0;
 
+    
+
     private static final MotionMagicVoltage motorRequest = new MotionMagicVoltage(0);
 
     public static void init() {
@@ -45,6 +47,7 @@ public class Climb {
                 break;
 
         }
+        
         
         if(state == ClimbState.TRAVEL){
             if(Dashboard.getIsReturnClimb()){
