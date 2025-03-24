@@ -14,7 +14,6 @@ public class Tray {
     private static double trayPosition = 0;
 
     private static double startCounter = 0;
-    private static boolean isStartGame = true;
 
     private static final MotionMagicVoltage motorRequest = new MotionMagicVoltage(0);
 
