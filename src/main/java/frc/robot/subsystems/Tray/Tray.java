@@ -34,23 +34,21 @@ public class Tray {
                 break;
         }
         
-        if(Robot.isAuto()){
-        if(startCounter <= 150){
-            startCounter ++;
-            trayMotor.setControl(new DutyCycleOut(-0.1));
-            if(startCounter == 150){
-                trayMotor.setPosition(0);
-                trayMotor.setControl(motorRequest.withPosition(trayPosition));
+        if(Robot.isAuto()) {
+            if(startCounter <= 150) {
                 startCounter ++;
+                trayMotor.setControl(new DutyCycleOut(-0.1));
+                if(startCounter == 150) {
+                    trayMotor.setPosition(0);
+                    trayMotor.setControl(motorRequest.withPosition(trayPosition));
+                    startCounter ++;
+                }
+            } else {
+                trayMotor.setControl(motorRequest.withPosition(trayPosition));
             }
-
-        }else{
+        } else {
+            // System.out.println(trayMotor.getPosition().getValueAsDouble());
             trayMotor.setControl(motorRequest.withPosition(trayPosition));
-        }
-        }
-        else{
-        // System.out.println(trayMotor.getPosition().getValueAsDouble());
-        trayMotor.setControl(motorRequest.withPosition(trayPosition));
         }
     }
 
