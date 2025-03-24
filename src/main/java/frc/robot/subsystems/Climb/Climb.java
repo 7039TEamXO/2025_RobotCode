@@ -48,7 +48,6 @@ public class Climb {
 
         }
         
-        
         if(state == ClimbState.TRAVEL){
             if(Dashboard.getIsReturnClimb()){
                 climbMotor.setControl(motorRequest.withPosition(0));
