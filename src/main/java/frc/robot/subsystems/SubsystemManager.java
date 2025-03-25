@@ -211,12 +211,14 @@ public class SubsystemManager {
                         handlerState = HandlerState.HOLD_NET;
                     }
                 }
-                else if (elevatorState == ElevatorState.LEVEL3 || Handler.isAlgaeInProcessor() || 
+                else if (Handler.isAlgaeInProcessor() || 
                     elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR || elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR) {
                     handlerState = HandlerState.DEPLETE_PROCESSOR;
                 }
                 else if (elevatorState == ElevatorState.LEVEL0) {
                     handlerState =  HandlerState.DEPLETE_CORAL_LEVEL0;
+                }else if(elevatorState == ElevatorState.LEVEL3){
+                    handlerState = HandlerState.DEPLETE_CORAL_HIGH;
                 }
                 else {
                     handlerState = HandlerState.DEPLETE_CORAL;

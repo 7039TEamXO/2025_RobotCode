@@ -105,6 +105,10 @@ public class Handler {
             case INTAKE_NET:
             power = HandlerConstants.HANDLER_POWER_INTAKE_NET;
                 break;
+            case DEPLETE_CORAL_HIGH:
+            power = -0.6;
+                break;
+
         }
 
         if((SubsystemManager.getElevatorState() == ElevatorState.INTAKE_CORAL ||
@@ -116,7 +120,7 @@ public class Handler {
         } else if (SubsystemManager.getElevatorState() == ElevatorState.LEVEL3 && SubsystemManager.getIsMoveCoral()){
             master.setControl(new DutyCycleOut(-HandlerConstants.HANDLER_POWER_PUSH_BACK_CORAL));
         }
-        else if (state != HandlerState.DEPLETE_PROCESSOR && SubsystemManager.getElevatorState() == ElevatorState.LEVEL3 && 
+        else if (state != HandlerState.DEPLETE_CORAL_HIGH && SubsystemManager.getElevatorState() == ElevatorState.LEVEL3 && 
             Math.abs(getHandlerMotorDistance() - CurrenthandlerEncoderPosition) <= HandlerConstants.LEVEL4_CORAL_PUSH_DISTANCE){
             // System.out.println(state);
             master.setControl(new DutyCycleOut(-HandlerConstants.HANDLER_POWER_PUSH_BACK_CORAL));
