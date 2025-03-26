@@ -53,7 +53,7 @@ public class Tray {
             trayMotor.setControl(motorRequest.withPosition(trayPosition));
 
         }
-        if(SubsystemManager.getpsJoystick().getHID().getPOV(0) == 0){
+        if(SubsystemManager.getpsJoystick().getHID().getTouchpadButton() && state != TrayState.UP){
             trayMotor.setControl(new DutyCycleOut(-0.1));
             trayMotor.setPosition(0);
         }

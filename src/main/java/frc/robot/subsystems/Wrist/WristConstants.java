@@ -20,7 +20,7 @@ public class WristConstants {
     public static final double MaxEncoderPos = 13.77;
 
     public static final double WRIST_POS_BASE = 0;
-    public static final double WRIST_POS_DEPLETE_CORAL_LEVEL0 = 3.5;
+    public static final double WRIST_POS_DEPLETE_CORAL_LEVEL0 = 3.8;
     public static final double WRIST_POS_HIGH = 9.7;
     public static final double WRIST_POS_INTAKE_ALGAE = 7.7;//7.7
     public static final double WRIST_POS_DEPLETE_CORAL = 0.8;
