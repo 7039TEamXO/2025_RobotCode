@@ -47,7 +47,7 @@ public class SwerveDriveConstants {
     public static final double ALIGN_LIMELIGHT_X_KP = -0.047;
     public static final double ALIGN_BY_TAG_ANGLE_ROTATION_KP = -0.06; //align to reef angle
     public static final double ALIGN_LIMELIGHT_Y_KP = 0.15;
-    public static final double ALIGN_LIMELIGHT_MIN_SPEED = 0.25;
+    public static final double ALIGN_LIMELIGHT_MIN_SPEED = 0.35;
 
         // public static final double ALIGN_LIMELIGHT_ROTATION_KP = -0.02; //align to tx 
 
