@@ -169,6 +169,8 @@ public class Robot extends TimedRobot {
       // m_autonomousCommand.schedule();
       autoCommand.schedule();
     }
+
+    SubsystemManager.setState(RobotState.TRAVEL);
   }
 
   /**

@@ -434,7 +434,7 @@ public class SwerveSubsystem extends SubsystemBase {
         
       new Translation2d((Math.abs(joystickY.getAsDouble()) < 0.15 ?
         
-      (Limelight.getTy() < 0 ? (-(Limelight.getTy() * SwerveDriveConstants.ALIGN_LIMELIGHT_Y_KP) * ((45 - Math.abs(Limelight.getTx())) * 0.02)) + 0.2 :
+      (Limelight.getTy() < 0 ? (-(Limelight.getTy() * SwerveDriveConstants.ALIGN_LIMELIGHT_Y_KP) * ((45 - Math.abs(Limelight.getTx())) * 0.013)) + 0.15 :
        SwerveDriveConstants.ALIGN_LIMELIGHT_MIN_SPEED):
        joystickY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()),
 

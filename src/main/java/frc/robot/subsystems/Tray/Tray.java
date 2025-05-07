@@ -7,7 +7,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import frc.robot.Dashboard;
 import frc.robot.Robot;
+import frc.robot.subsystems.SubsystemManager;
 
 public class Tray {
     private static TalonFX trayMotor = new TalonFX(TrayConstants.TrayMotorID);
@@ -49,6 +51,11 @@ public class Tray {
         } else {
             // System.out.println(trayMotor.getPosition().getValueAsDouble());
             trayMotor.setControl(motorRequest.withPosition(trayPosition));
+
+        }
+        if(SubsystemManager.getpsJoystick().getHID().getTouchpadButton() && state != TrayState.UP){
+            trayMotor.setControl(new DutyCycleOut(-0.1));
+            trayMotor.setPosition(0);
         }
     }
 
