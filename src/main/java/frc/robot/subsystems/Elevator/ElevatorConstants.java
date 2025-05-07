@@ -10,7 +10,7 @@ public class ElevatorConstants {
     public static final double kS = 0.5;    //Add 0.25 V output to overcome static friction
     public static final double kV = 0;      //A velocity target of 1 rps results in 0.12 V output
     public static final double kA = 0;      //An acceleration of 1 rps/s requires 0.01 V output
-    public static final double kP = 2.5;    //A position error of 2.5 rotations results in 12 V output
+    public static final double kP = 2;//2.5    //A position error of 2.5 rotations results in 12 V output
     public static final double kI = 0.7;    //output for integrated error
     public static final double kD = 0.1;    //A velocity error of 1 rps results in 0.1 V output
     ///
@@ -26,7 +26,7 @@ public class ElevatorConstants {
     public static final double ELEVATOR_POSE_LEVEL0 = 0.7; 
     public static final double ELEVATOR_POSE_LEVEL1 = 4.84;
     public static final double ELEVATOR_POSE_LEVEL2 = 10.57;
-    public static final double ELEVATOR_POSE_LEVEL3 = 18.4;
+    public static final double ELEVATOR_POSE_LEVEL3 = 18; //8.4
     public static final double ELEVATOR_POSE_ALGAE_LOW = 5.3;
     public static final double ELEVATOR_POSE_ALGAE_HIGH = 11; //11
     public static final double ELEVATOR_POSE_ALGAE_IN_OFFSET = 2.7;

@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.SubsystemManager;
+import frc.robot.subsystems.swervedrive.ReefOrientation;
 
 import java.util.Map;
 import java.util.Optional;
@@ -125,26 +126,31 @@ public class RobotContainer
    */
   private void configureBindings()
   {
+
+    
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     SubsystemManager.getpsJoystick().PS().onTrue((Commands.runOnce(SubsystemManager.getDriveBase()::zeroGyroWithAlliance)));// if we will use it, in case if driver push this buttom, our rotation will be messed up
-    // SubsystemManager.getpsJoystick().touchpad().onTrue(SubsystemManager.getDriveBase().driveToPose(new Pose2d(12.573, 2.879, Rotation2d.fromDegrees(60))))
-    ;
+
+    // SubsystemManager.getpsJoystick().R1().onTrue(SubsystemManager.getDriveBase().driveToPose2(new Pose2d(13.611, 2.754, Rotation2d.fromDegrees(120))).until(() -> !SubsystemManager.getpsJoystick().R1().getAsBoolean()));
+    // SubsystemManager.getpsJoystick().R3().onTrue(SubsystemManager.getDriveBase().driveToClosestReefPoint(ReefOrientation.MIDDLE).until(() -> !SubsystemManager.getpsJoystick().R3().getAsBoolean()));
+
+    //SubsystemManager.getpsJoystick().L1().onTrue(SubsystemManager.getDriveBase().driveToPose(new Pose2d(13.569, 2.805, Rotation2d.fromDegrees(120))));
 
     // chnage pipeling when we press align
-    SubsystemManager.getpsJoystick().R1().onTrue(Commands.runOnce( () -> Limelight.setPipeline(0)));
-    SubsystemManager.getpsJoystick().L1().onTrue(Commands.runOnce( () -> Limelight.setPipeline(1)));
-    SubsystemManager.getpsJoystick().R3().onTrue(Commands.runOnce( () -> Limelight.setPipeline(2))); // button 12
+    // SubsystemManager.getpsJoystick().R1().onTrue(Commands.runOnce( () -> Limelight.setPipeline(0)));
+    // SubsystemManager.getpsJoystick().L1().onTrue(Commands.runOnce( () -> Limelight.setPipeline(1)));
+    // SubsystemManager.getpsJoystick().R3().onTrue(Commands.runOnce( () -> Limelight.setPipeline(2))); // button 12
 
     // Set priority tag when we press align, reset on release    
-    SubsystemManager.getpsJoystick().R3().onTrue(Commands.runOnce( () -> Limelight.setPriorityTagId(SubsystemManager.getDriveBase().getClosestReefTag())));
+    // SubsystemManager.getpsJoystick().R3().onTrue(Commands.runOnce( () -> Limelight.setPriorityTagId(SubsystemManager.getDriveBase().getClosestReefTag())));
     // SubsystemManager.getpsJoystick().button(12).onTrue(Commands.runOnce( () -> Limelight.setPriorityTagId(Limelight.getMainAprilTagId())));
-    SubsystemManager.getpsJoystick().R3().onFalse(Commands.runOnce( () -> Limelight.resetPriorityTagId()));
-    SubsystemManager.getpsJoystick().R1().onTrue(Commands.runOnce( () -> Limelight.setPriorityTagId(SubsystemManager.getDriveBase().getClosestReefTag())));
-    SubsystemManager.getpsJoystick().R1().onFalse(Commands.runOnce( () -> Limelight.resetPriorityTagId()));
-    SubsystemManager.getpsJoystick().L1().onTrue(Commands.runOnce( () -> Limelight.setPriorityTagId(SubsystemManager.getDriveBase().getClosestReefTag())));
-    SubsystemManager.getpsJoystick().L1().onFalse(Commands.runOnce( () -> Limelight.resetPriorityTagId()));
+    // SubsystemManager.getpsJoystick().R3().onFalse(Commands.runOnce( () -> Limelight.resetPriorityTagId()));
+    // SubsystemManager.getpsJoystick().R1().onTrue(Commands.runOnce( () -> Limelight.setPriorityTagId(SubsystemManager.getDriveBase().getClosestReefTag())));
+    // SubsystemManager.getpsJoystick().R1().onFalse(Commands.runOnce( () -> Limelight.resetPriorityTagId()));
+    // SubsystemManager.getpsJoystick().L1().onTrue(Commands.runOnce( () -> Limelight.setPriorityTagId(SubsystemManager.getDriveBase().getClosestReefTag())));
+    // SubsystemManager.getpsJoystick().L1().onFalse(Commands.runOnce( () -> Limelight.resetPriorityTagId()));
 
-    SubsystemManager.getpsJoystick().R2().whileTrue(SubsystemManager.getDriveBase().driveToNetScorePos(() -> modifyAxis(SubsystemManager.getpsJoystick().getLeftX())));
+    // SubsystemManager.getpsJoystick().R2().whileTrue(SubsystemManager.getDriveBase().driveToNetScorePos(() -> modifyAxis(SubsystemManager.getpsJoystick().getLeftX())));
     // SubsystemManager.getpsJoystick().L3().whileTrue(SubsystemManager.getDriveBase().chooseFeeder(SubsystemManager.getDriveBase().getPose().getY()));
 
     //======================//
@@ -154,12 +160,10 @@ public class RobotContainer
     // SubsystemManager.getpsJoystick().L1().whileTrue(SubsystemManager.getDriveBase().alignByLimelight( () -> modifyAxis(-SubsystemManager.getpsJoystick().getLeftY())));
     // SubsystemManager.getpsJoystick().button(12).whileTrue(SubsystemManager.getDriveBase().alignByLimelight( () -> modifyAxis(-SubsystemManager.getpsJoystick().getLeftY())));
     
-    SubsystemManager.getpsJoystick().R3().whileTrue(SubsystemManager.getDriveBase().advancedAlignByLimelight( () -> modifyAxis(-SubsystemManager.getpsJoystick().getLeftY()), Limelight.getMainAprilTagId()));
-    SubsystemManager.getpsJoystick().R1().whileTrue(SubsystemManager.getDriveBase().advancedAlignByLimelight( () -> modifyAxis(-SubsystemManager.getpsJoystick().getLeftY()), Limelight.getMainAprilTagId()));
-    SubsystemManager.getpsJoystick().L1().whileTrue(SubsystemManager.getDriveBase().advancedAlignByLimelight( () -> modifyAxis(-SubsystemManager.getpsJoystick().getLeftY()), Limelight.getMainAprilTagId()));
-
+    // SubsystemManager.getpsJoystick().R3().whileTrue(SubsystemManager.getDriveBase().advancedAlignByLimelight( () -> modifyAxis(-SubsystemManager.getpsJoystick().getLeftY()), Limelight.getMainAprilTagId()));
+    // SubsystemManager.getpsJoystick().R1().whileTrue(SubsystemManager.getDriveBase().advancedAlignByLimelight( () -> modifyAxis(-SubsystemManager.getpsJoystick().getLeftY()), Limelight.getMainAprilTagId()));
+    // SubsystemManager.getpsJoystick().L1().whileTrue(SubsystemManager.getDriveBase().advancedAlignByLimelight( () -> modifyAxis(-SubsystemManager.getpsJoystick().getLeftY()), Limelight.getMainAprilTagId()));
   }
-
 
   private void configureDriveCommand() {
     if (teamColorIsBlue()) {

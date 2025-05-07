@@ -6,6 +6,7 @@ package frc.robot.subsystems.swervedrive;
 
 import static edu.wpi.first.units.Units.Meter;
 
+import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -17,6 +18,8 @@ import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Vector;
+import edu.wpi.first.math.controller.PIDController;
 //import edu.wpi.first.apriltag.AprilTagFieldLayout;
 //import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -48,9 +51,11 @@ import java.io.File;
 import java.lang.System.Logger;
 import java.rmi.server.ServerCloneException;
 import java.util.Optional;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-
+import org.dyn4j.dynamics.TimeStep;
+import org.dyn4j.geometry.Vector2;
 import org.opencv.core.Mat.Tuple2;
 import org.photonvision.PhotonCamera;
 //import org.photonvision.targeting.PhotonPipelineResult;
@@ -65,6 +70,8 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import frc.robot.Limelight;
 import frc.robot.subsystems.Handler.Handler;
+import frc.robot.subsystems.Elevator.Elevator;
+
 import frc.robot.subsystems.Tray.TrayState;
 
 public class SwerveSubsystem extends SubsystemBase {
@@ -79,6 +86,7 @@ public class SwerveSubsystem extends SubsystemBase {
   private static SwerveDrive swerveDrive;
   private static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
   private static Pose2d tag_pos = null;
+  private static boolean isCloseEnoughToReef = false;
   double currentTagX = 0;
   double currentTagY = 0;
   double currentTagAngle = 0;
@@ -156,47 +164,50 @@ public class SwerveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    
+    System.out.println(driveXPID.getError());
+    System.out.println(isCloseEnoughToReef());
+
+    isCloseEnoughToReef = Math.abs(driveXPID.getError()) < SwerveDriveConstants.TEST_DISTANCE_TOLERANCE &&
+        Math.abs(driveYPID.getError()) < SwerveDriveConstants.TEST_DISTANCE_TOLERANCE &&
+        Math.abs(rotationPID.getError()) < SwerveDriveConstants.TEST_ANGLE_TOLERANCE && 
+        !isFarEnoughFromReef() &&
+        (SubsystemManager.getpsJoystick().L1().getAsBoolean() || 
+        SubsystemManager.getpsJoystick().R1().getAsBoolean() ||
+        SubsystemManager.getpsJoystick().R3().getAsBoolean());
+
     if (SubsystemManager.getTrayState() == TrayState.UP) {
       swerveDrive.setMaximumAllowableSpeeds(Constants.CLIMB_SPEED, Constants.MIN_ROTATION_V);
     }
 
     else {
-    swerveDrive.setMaximumAllowableSpeeds(calculateSpeedAccordingToElevator(Constants.MAX_SPEED, Constants.MIN_SPEED),
+      swerveDrive.setMaximumAllowableSpeeds(calculateSpeedAccordingToElevator(Constants.MAX_SPEED, Constants.MIN_SPEED),
         calculateSpeedAccordingToElevator(Constants.MAX_ROTATION_V, Constants.MIN_ROTATION_V));
-
     }
 
     if (isAuto) {
       counter++;
       Tuple2<Pose2d> tuple = Limelight.update();
-    if (tuple != null && isRobotVBelowOne(true) && counter > 10) {
-      // System.out.println("----------");
-      Pose2d pos = new Pose2d(tuple.get_0().getX(), tuple.get_0().getY(), SubsystemManager.getDriveBase().getHeading());
-      double timestampSeconds = tuple.get_1().getX();
-      swerveDrive.addVisionMeasurement(pos, timestampSeconds);
-
-    }
+      if (tuple != null && isRobotVBelowOne(true) && counter > 10) {
+        Pose2d pos = new Pose2d(tuple.get_0().getX(), tuple.get_0().getY(), SubsystemManager.getDriveBase().getHeading());
+        double timestampSeconds = tuple.get_1().getX();
+        swerveDrive.addVisionMeasurement(pos, timestampSeconds);
+      }
     }
     else {
-
       counter = 0;
       Tuple2<Pose2d> tuple = Limelight.update();
-    if (tuple != null && Limelight.filterTargetByTa(false) && isRobotVBelowOne(false)) {
-      // System.out.println("----------");
-      Pose2d pos = new Pose2d(tuple.get_0().getX(), tuple.get_0().getY(), SubsystemManager.getDriveBase().getHeading());
-      double timestampSeconds = tuple.get_1().getX();
-      swerveDrive.addVisionMeasurement(pos, timestampSeconds);
-      if (Limelight.hasTargetFromReef()) {
-        swerveDrive.resetOdometry(new Pose2d(swerveDrive.getPose().getX(), swerveDrive.getPose().getY(), new Rotation2d(Math.toRadians(Limelight.getAngleFromMT1()))));
+      if (tuple != null && Limelight.filterTargetByTa(false) && isRobotVBelowOne(false)) {
+        Pose2d pos = new Pose2d(tuple.get_0().getX(), tuple.get_0().getY(), SubsystemManager.getDriveBase().getHeading());
+        double timestampSeconds = tuple.get_1().getX();
+        swerveDrive.addVisionMeasurement(pos, timestampSeconds);
+        if (Limelight.hasTargetFromReef()) {
+          swerveDrive.resetOdometry(new Pose2d(swerveDrive.getPose().getX(), swerveDrive.getPose().getY(), new Rotation2d(Math.toRadians(Limelight.getAngleFromMT1()))));
+        }
       }
-
-    }
     }
 
-    
     swerveDrive.updateOdometry();
-      updateClosestReefFace(getPose());
+    updateClosestReefFace(getPose());
   }
 
   public void updateCloserPoints() {
@@ -207,8 +218,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   @Override
-  public void simulationPeriodic() {
-  }
+  public void simulationPeriodic() {}
 
   /**
    * Setup AutoBuilder for PathPlanner.
@@ -295,52 +305,115 @@ public class SwerveSubsystem extends SubsystemBase {
     return new PathPlannerAuto(pathName);
   }
 
+  // terrible quit conditions, not for use
+
   /**
    * Use PathPlanner Path finding to go to a point on the field.
    *
    * @param pose Target {@link Pose2d} to go to.
    * @return PathFinding command
    */
-  public Command driveToPose(Pose2d pose) {
-    // Create the constraints to use while pathfinding
-    PathConstraints constraints = new PathConstraints(
-        swerveDrive.getMaximumChassisVelocity(), 4.0,
-        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+  // public Command driveToPose(Pose2d pose) {
+  //   // Create the constraints to use while pathfinding
+  //   PathConstraints constraints = new PathConstraints(
+  //       swerveDrive.getMaximumChassisVelocity(), 4.0,
+  //       swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
 
-    // Since AutoBuilder is configured, we can use it to build pathfinding commands
-    return AutoBuilder.pathfindToPose(
-        pose,
-        constraints,
-        edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
-    );
+  //   // Since AutoBuilder is configured, we can use it to build pathfinding commands
+  //   return AutoBuilder.pathfindToPose(
+  //       pose,
+  //       constraints,
+  //       edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
+  //   );
+  // }
+
+  private Vector2 getReefCenter() {
+    if(isRedAlliance()) return new Vector2(13.055, 4.025);
+    else return new Vector2(4.485, 4.025);
+  }
+
+  public boolean isCloseEnoughToReef() {
+    return isCloseEnoughToReef;
+  }
+
+  public boolean isFarEnoughFromReef() {
+    return getReefCenter().distance(new Vector2(getPose().getX(), getPose().getY())) > 1.7;
+  }
+
+  private static double getRotationFactorFromElevator(){
+    return Elevator.getCurrentPosition() > 14 ? 0.8 :
+    Elevator.getCurrentPosition() > 5 ? 0.8 : 1;
+  }
+
+  private PIDController driveXPID = new PIDController(SwerveDriveConstants.TEST_KP, 0, SwerveDriveConstants.TEST_KD);
+  private PIDController driveYPID = new PIDController(SwerveDriveConstants.TEST_KP, 0, SwerveDriveConstants.TEST_KD);
+  private PIDController rotationPID = new PIDController(SwerveDriveConstants.TEST_KP_ANGULAR, 0, SwerveDriveConstants.TEST_KD_ANGULAR);
+
+  private Pose2d driveToPoseWanted = new Pose2d(0,0,new Rotation2d(0));
+
+
+  public Command driveToPose(Pose2d pose) {
+    driveToPoseWanted = pose;
+    return run(() -> {
+      driveXPID.setSetpoint(pose.getX());
+      driveYPID.setSetpoint(pose.getY());
+      rotationPID.setSetpoint(pose.getRotation().getRadians());
+    
+      Translation2d freshTranslation = new Translation2d(driveXPID.calculate(getPose().getX()), 
+        driveYPID.calculate(getPose().getY()));
+      Translation2d scaledTranslation = freshTranslation.times(Math.min(1, 
+        swerveDrive.getMaximumChassisVelocity() / freshTranslation.getDistance(Translation2d.kZero)));
+
+      // Ensuring that the error is in the -180 ... +180 degree range
+      double robotAngle = getPose().getRotation().getRadians();
+      double angleError = robotAngle - rotationPID.getSetpoint();
+      if(angleError > Math.PI) robotAngle -= 2 * Math.PI;
+      if(angleError < -Math.PI) robotAngle += 2 * Math.PI;
+
+      swerveDrive.drive(scaledTranslation, rotationPID.calculate(robotAngle) * getRotationFactorFromElevator(), true, false);
+    });
+  }
+
+  public Command driveToClosestReefPoint(ReefOrientation orientation) {
+      switch(orientation) {
+        case LEFT:
+          return driveToPose(calculateLeftAndRightReefPointsFromTag(getClosestReefFaceRobotPos().getX(), getClosestReefFaceRobotPos().getY(), getClosestReefFaceRobotPos().getRotation().getRadians())[0]);
+        case MIDDLE:
+          return driveToPose(getClosestReefFaceRobotPos());
+        case RIGHT:
+          return driveToPose(calculateLeftAndRightReefPointsFromTag(getClosestReefFaceRobotPos().getX(), getClosestReefFaceRobotPos().getY(), getClosestReefFaceRobotPos().getRotation().getRadians())[1]);
+      }
+
+      return null;
+
   }
 
   // DEPRECATED
-  public Command driveToRightReefPoint() {
-    // Create the constraints to use while pathfinding
-    tag_pos = getClosestReefFace(swerveDrive.getPose());
+  // public Command driveToRightReefPoint() {
+  //   // Create the constraints to use while pathfinding
+  //   tag_pos = getClosestReefFace(swerveDrive.getPose());
 
-    currentTagX = tag_pos.getTranslation().getX();
-    currentTagY = tag_pos.getTranslation().getY();
-    currentTagAngle = tag_pos.getRotation().getRadians();
+  //   currentTagX = tag_pos.getTranslation().getX();
+  //   currentTagY = tag_pos.getTranslation().getY();
+  //   currentTagAngle = tag_pos.getRotation().getRadians();
 
-    Pose2d reefPoints[] = calculateLeftAndRightReefPointsFromTag(currentTagX, currentTagY, currentTagAngle);
-    currentLeftReefPos = reefPoints[0];
-    currentRightReefPos = reefPoints[1];
-    double kp = -0.6;
+  //   Pose2d reefPoints[] = calculateLeftAndRightReefPointsFromTag(currentTagX, currentTagY, currentTagAngle);
+  //   currentLeftReefPos = reefPoints[0];
+  //   currentRightReefPos = reefPoints[1];
+  //   double kp = -0.6;
 
-    return run(() -> {
+  //   return run(() -> {
 
-      swerveDrive.drive((new Translation2d(((swerveDrive.getPose().getX() - currentRightReefPos.getX()) * kp),
-          ((swerveDrive.getPose().getY() - currentRightReefPos.getY()) * kp))),
-          ((swerveDrive.getPose().getRotation().getDegrees() - currentRightReefPos.getRotation().getDegrees()) * 0.00), // TODO
-                                                                                                                        // set
-                                                                                                                        // angular
-                                                                                                                        // kP
-          false,
-          false);
-    });
-  }
+  //     swerveDrive.drive((new Translation2d(((swerveDrive.getPose().getX() - currentRightReefPos.getX()) * kp),
+  //         ((swerveDrive.getPose().getY() - currentRightReefPos.getY()) * kp))),
+  //         ((swerveDrive.getPose().getRotation().getDegrees() - currentRightReefPos.getRotation().getDegrees()) * 0.00), // TODO
+  //                                                                                                                       // set
+  //                                                                                                                       // angular
+  //                                                                                                                       // kP
+  //         false,
+  //         false);
+  //   });
+  // }
 
   // public Command advancedAlignByLimelight(DoubleSupplier joystickY, int tagId) {
   //   return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(
@@ -372,7 +445,6 @@ public class SwerveSubsystem extends SubsystemBase {
       false,
       
       false));
-      
   }
   
   public Command driveToNetScorePos(DoubleSupplier joystickX) {
@@ -405,8 +477,6 @@ public class SwerveSubsystem extends SubsystemBase {
     }
   }
 
-
-
   public Command chooseFeeder(final double posY){
     return isRedAlliance() ? 
       (posY < 4 ? driveToRedLeftFeeder() : driveToRedRightFeeder()) :
@@ -414,22 +484,8 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public Command driveToFeeder(final double wantedX,final double wantedY,final double wantedAngle) {
-    return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(
-    new Translation2d(( Math.abs(getAngleToNet(wantedAngle)) > 70 ? 0 :  
-    
-    swerveDrive.getPose().getTranslation().getX() - wantedX) *
-    (SwerveDriveConstants.Kp_FEEDER_AUTO_DRIVE_TRANSLATION), // x - forward
-    
-    Math.abs(getAngleToNet(wantedAngle)) > 70 ? 0 :
-    (swerveDrive.getPose().getTranslation().getY() - wantedY) *
-    (SwerveDriveConstants.Kp_FEEDER_AUTO_DRIVE_TRANSLATION)),// y
-    
-    0.8), // y right/left
-          ((getAngleToNet(wantedAngle)) *
-              SwerveDriveConstants.Kp_FEEDR_AUTO_DRIVE_ROTATION), // rotation
-          true,
-          false));
-    }
+    return driveToPose(new Pose2d(wantedX, wantedY, new Rotation2d(Math.toRadians(wantedAngle))));
+  }
 
   private Command driveToRedRightFeeder() {
     return driveToFeeder(SwerveDriveConstants.WANTED_X_FEEDER_RIGHT_RED, 
@@ -450,10 +506,6 @@ public class SwerveSubsystem extends SubsystemBase {
     return driveToFeeder(SwerveDriveConstants.WANTED_X_FEEDER_LEFT_BLUE, 
     SwerveDriveConstants.WANTED_Y_FEEDER_LEFT_BLUE, SwerveDriveConstants.WANTED_ROTATION_ANGLE_FEEDER_LEFT_BLUE);
   }
-
-
-
-
 
   /**
    * Command to drive the robot using translative values and heading as a
@@ -821,7 +873,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private static int selected_face = -1;
     private static Pose2d closestReefFace = null;
-
+    private static Pose2d closestReefFaceRobotPos = null;
 
     private static void updateClosestReefFace(Pose2d currentRobotPose2d){
       double minDist = Double.MAX_VALUE;
@@ -877,11 +929,23 @@ public class SwerveSubsystem extends SubsystemBase {
       }
       // System.out.println(selected_face);
       // System.out.println("TAG: " + selected_face);
+      closestReefFaceRobotPos = new Pose2d(
+        closestReefFace.getX() + 0.51 * Math.cos(closestReefFace.getRotation().getRadians()),
+        closestReefFace.getY() + 0.51 * Math.sin(closestReefFace.getRotation().getRadians()),
+        new Rotation2d(closestReefFace.getRotation().getRadians() + Math.PI)
+      );
+
+      // System.out.println(closestReefFace);
+      // System.out.println("   " + closestReefFaceRobotPos);
     }
 
   
     private static Pose2d getClosestReefFace(Pose2d currentRobotPose2d){
       return closestReefFace;
+    }
+
+    private static Pose2d getClosestReefFaceRobotPos(){
+      return closestReefFaceRobotPos;
     }
 
 
@@ -909,22 +973,19 @@ public class SwerveSubsystem extends SubsystemBase {
       return rad / Constants.DEG_TO_RAD;
     }
   
-    private static Pose2d[] calculateLeftAndRightReefPointsFromTag(double x, double y, double deg){
-          double xR = x + SwerveDriveConstants.M_FROM_TAG_TO_POLES * Math.cos(deg);
-          double yR = y + SwerveDriveConstants.M_FROM_TAG_TO_POLES * Math.sin(deg);
-          double xL = x - SwerveDriveConstants.M_FROM_TAG_TO_POLES * Math.cos(deg);
-          double yL = y - SwerveDriveConstants.M_FROM_TAG_TO_POLES * Math.sin(deg);
-  
+  private static Pose2d[] calculateLeftAndRightReefPointsFromTag(double x, double y, double deg){
+    double xR = x + SwerveDriveConstants.M_FROM_TAG_TO_POLES * Math.sin(deg);
+    double yR = y - SwerveDriveConstants.M_FROM_TAG_TO_POLES * Math.cos(deg);
+    double xL = x - SwerveDriveConstants.M_FROM_TAG_TO_POLES * Math.sin(deg);
+    double yL = y + SwerveDriveConstants.M_FROM_TAG_TO_POLES * Math.cos(deg);
 
-    double flippedDeg = (deg + 180) % 360;
-    if (flippedDeg > 180) {
-      flippedDeg -= 360;
-    }
+    // System.out.println("XR: " + xR + " YR: " + yR);
+    // System.out.println("XL: " + xL + " YL: " + yL);
 
     return new Pose2d[] { // check if you can return pose2d array or need to return normal array
-                          // containing pose2d
-        new Pose2d(xL, yL, new Rotation2d(flippedDeg)),
-        new Pose2d(xR, yR, new Rotation2d(flippedDeg))
+                        // containing pose2d
+      new Pose2d(xL, yL, new Rotation2d(deg)),
+      new Pose2d(xR, yR, new Rotation2d(deg))
     };
   }
 
@@ -961,9 +1022,10 @@ public class SwerveSubsystem extends SubsystemBase {
         (Math.abs(swerveDrive.getRobotVelocity().vyMetersPerSecond) < 2) &&
         ((Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) < 1.5));
     }else{
-      return (Math.abs(swerveDrive.getRobotVelocity().vxMetersPerSecond) < 2) &&
-        (Math.abs(swerveDrive.getRobotVelocity().vyMetersPerSecond) < 2) &&
-        ((Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) < 1.5));
+      return true;
+      // return (Math.abs(swerveDrive.getRobotVelocity().vxMetersPerSecond) < 3) &&
+        // (Math.abs(swerveDrive.getRobotVelocity().vyMetersPerSecond) < 3) &&
+        // ((Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) < 2));
     }
   }
 

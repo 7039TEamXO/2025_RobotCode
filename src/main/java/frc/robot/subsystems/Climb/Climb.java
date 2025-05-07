@@ -49,23 +49,23 @@ public class Climb {
         }
         
         
-        if(state == ClimbState.TRAVEL){
-            if(Dashboard.getIsReturnClimb()){
-                climbMotor.setControl(motorRequest.withPosition(0));
-            }else{
-                climbMotor.setControl(motorRequest.withPosition(wantedPose));
-            }
-        }else{        
-        if (climbMotor.getPosition().getValueAsDouble() >= ClimbConstants.CLIMB_WANTED_POSE_CLIMB && wantedPower == ClimbConstants.CLIMB_WANTED_POWER_CLIMB) {  //climbMotor.getPosition().getValueAsDouble() <= -220 && wantedPower == ClimbConstants.CLIMB_WANTED_POWER_DESCEND
-            wantedPower = ClimbConstants.CLIMB_WANTED_POWER_STOP;
-        } 
+        // if(state == ClimbState.TRAVEL){
+        //     if(Dashboard.getIsReturnClimb()){
+        //         climbMotor.setControl(motorRequest.withPosition(0));
+        //     }else{
+        //         climbMotor.setControl(motorRequest.withPosition(wantedPose));
+        //     }
+        // }else{        
+        // if (climbMotor.getPosition().getValueAsDouble() >= ClimbConstants.CLIMB_WANTED_POSE_CLIMB && wantedPower == ClimbConstants.CLIMB_WANTED_POWER_CLIMB) {  //climbMotor.getPosition().getValueAsDouble() <= -220 && wantedPower == ClimbConstants.CLIMB_WANTED_POWER_DESCEND
+        //     wantedPower = ClimbConstants.CLIMB_WANTED_POWER_STOP;
+        // } 
         
-        if (SubsystemManager.getIsPushClimb()) {
-            wantedPower = ClimbConstants.CLIMB_WANTED_POWER_CLIMB;
-        }
+        // if (SubsystemManager.getIsPushClimb()) {
+        //     wantedPower = ClimbConstants.CLIMB_WANTED_POWER_CLIMB;
+        // }
         
-        climbMotor.setControl(new DutyCycleOut(wantedPower));
-        }
+        // climbMotor.setControl(new DutyCycleOut(wantedPower));
+        //}
 
     } 
 

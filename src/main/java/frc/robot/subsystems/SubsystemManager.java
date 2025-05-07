@@ -32,6 +32,7 @@ import frc.robot.subsystems.Handler.Handler;
 import frc.robot.subsystems.Wrist.Wrist;
 import frc.robot.subsystems.Wrist.WristConstants;
 import frc.robot.subsystems.Wrist.WristState;
+import frc.robot.subsystems.swervedrive.ReefOrientation;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 public class SubsystemManager {
@@ -92,7 +93,17 @@ public class SubsystemManager {
     }
 
     private static Command chooseFeeder;
+    private static Command driveToReef;
     public static void operate(boolean onAuto) { 
+        if (ps4Joystick.getHID().getR3Button() || ps4Joystick.getHID().getR1Button() || ps4Joystick.getHID().getL1Button()) {
+            driveToReef = getDriveBase().driveToClosestReefPoint(ps4Joystick.getHID().getR1Button() ? ReefOrientation.RIGHT :
+            ps4Joystick.getHID().getL1Button() ? ReefOrientation.LEFT : ReefOrientation.MIDDLE);
+            driveToReef.schedule();
+        } else if (driveToReef != null) {
+            driveToReef.cancel();
+        }
+
+
         if (ps4Joystick.L3().getAsBoolean()) {
             chooseFeeder = drivebase.chooseFeeder(drivebase.getPose().getY());
             chooseFeeder.schedule();
@@ -171,6 +182,7 @@ public class SubsystemManager {
                     handlerState = HandlerState.HOLD_NET;
                 }
                 else {
+                    if(drivebase.isCloseEnoughToReef() && Handler.isCoralIn()) {state = RobotState.DEPLETE;}
                     handlerState = HandlerState.STOP;
                 }
                 
@@ -214,20 +226,33 @@ public class SubsystemManager {
                 else if (elevatorState == ElevatorState.LEVEL3 || Handler.isAlgaeInProcessor() || 
                     elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR || elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR) {
                     handlerState = HandlerState.DEPLETE_PROCESSOR;
+                    if (elevatorState == ElevatorState.LEVEL3 && drivebase.isFarEnoughFromReef()) {
+                        state = RobotState.INTAKE;
+                        elevatorState = ElevatorState.BASE;
+                    }
                 }
                 else if (elevatorState == ElevatorState.LEVEL0) {
                     handlerState =  HandlerState.DEPLETE_CORAL_LEVEL0;
+                    if(drivebase.isFarEnoughFromReef()) {
+                        state = RobotState.INTAKE;
+                        elevatorState = ElevatorState.BASE;
+                    }
                 }
                 else {
                     handlerState = HandlerState.DEPLETE_CORAL;
+                    if(drivebase.isFarEnoughFromReef()) {
+                        state = RobotState.INTAKE;
+                        elevatorState = ElevatorState.BASE;
+                    }
                 }
                   
                 if(Handler.isFinishedDepletingAlgae()) {
                     state = RobotState.INTAKE;
                     elevatorState = ElevatorState.INTAKE_CORAL;
-                } else{
+                } else if(state != RobotState.INTAKE) {
                     state = RobotState.DEPLETE;
                 }
+
                 climbState = ClimbState.TRAVEL;
                 trayState = TrayState.BASE;
                 break;
@@ -260,8 +285,6 @@ public class SubsystemManager {
         /****** Auto Counter ******/
         waitForElevatorInAuto(onAuto);
 
-        
-
         // ---------- debuging in game
         if (psController_HID.getOptionsButton() && state != RobotState.CLIMB) {
             isMoveCoral = true;
@@ -272,7 +295,6 @@ public class SubsystemManager {
         if (Dashboard.getAcceptChanges()){
             handlerState = Dashboard.getSelectedHandlerState();
         }
-
         
         // System.out.println(Handler.isAlgaeInNet());
 
@@ -306,7 +328,6 @@ public class SubsystemManager {
             autoElevatorCounter = 0;
         }
     }
-
     
     public static SwerveSubsystem getDriveBase() {
         return drivebase;
@@ -344,7 +365,7 @@ public class SubsystemManager {
         return climbState;
     }
 
-    public static TrayState getTrayState(){
+    public static TrayState getTrayState() {
         return trayState;
     }
 
