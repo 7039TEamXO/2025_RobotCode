@@ -65,20 +65,20 @@ public class SwerveDriveConstants {
     public static final double TEST_KP_ANGULAR = 2.7;
     public static final double TEST_KD_ANGULAR = 0;
 
-    public static final double TEST_DISTANCE_TOLERANCE = 0.13;
-    public static final double TEST_ANGLE_TOLERANCE = Math.toRadians(5);
+    public static final double TEST_DISTANCE_TOLERANCE = 0.18;
+    public static final double TEST_ANGLE_TOLERANCE = Math.toRadians(7);
 
     public static final double TEST_DISTANCE_TOLERANCE_L4 = 0.13;
     public static final double TEST_ANGLE_TOLERANCE_L4 = Math.toRadians(5);
     
     // left red
-    public static final double WANTED_X_FEEDER_LEFT_RED = 16.241;
-    public static final double WANTED_Y_FEEDER_LEFT_RED = 0.614;
+    public static final double WANTED_X_FEEDER_LEFT_RED = 16.5; // 16.241
+    public static final double WANTED_Y_FEEDER_LEFT_RED = 0.8; // 0.614
     public static final double WANTED_ROTATION_ANGLE_FEEDER_LEFT_RED = 125;
 
     // right red
-    public static final double WANTED_X_FEEDER_RIGHT_RED = 16.155;
-    public static final double WANTED_Y_FEEDER_RIGHT_RED = 7.415;
+    public static final double WANTED_X_FEEDER_RIGHT_RED = 16.2; // 16.155
+    public static final double WANTED_Y_FEEDER_RIGHT_RED = 7.5; // 7.415
     public static final double WANTED_ROTATION_ANGLE_FEEDER_RIGHT_RED = -125;
 
 

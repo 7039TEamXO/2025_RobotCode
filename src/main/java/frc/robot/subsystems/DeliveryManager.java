@@ -38,8 +38,8 @@ public class DeliveryManager {
             case ALGAE_HIGH_PROCESSOR:
                 if (Elevator.getCurrentPosition() >= ElevatorConstants.ELEVATOR_POSE_SAFE_TO_ROTATE) {
                     if (Handler.isAlgaeInProcessor()) {
-                     elevatorState = ElevatorState.ALGAE_HIGH_IN;
-                    }else{
+                        elevatorState = ElevatorState.ALGAE_HIGH_IN;
+                    } else{
                         wristState = WristState.HOLD_ALGAE_PROCESSOR;
                     }
                 }

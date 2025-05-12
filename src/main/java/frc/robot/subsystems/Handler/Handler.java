@@ -102,6 +102,7 @@ public class Handler {
             case HOLD_NET:
                 power = HandlerConstants.HANDLER_POWER_HOLD_NET;
                 break;
+
             case INTAKE_NET:
             power = HandlerConstants.HANDLER_POWER_INTAKE_NET;
                 break;
@@ -117,7 +118,7 @@ public class Handler {
             master.setControl(new DutyCycleOut(-HandlerConstants.HANDLER_POWER_PUSH_BACK_CORAL));
         }
         else if (state != HandlerState.DEPLETE_PROCESSOR && SubsystemManager.getElevatorState() == ElevatorState.LEVEL3 && 
-            Math.abs(getHandlerMotorDistance() - CurrenthandlerEncoderPosition) <= HandlerConstants.LEVEL4_CORAL_PUSH_DISTANCE){
+            Math.abs(getHandlerMotorDistance() - CurrenthandlerEncoderPosition) <= HandlerConstants.LEVEL4_CORAL_PUSH_DISTANCE) {
             // System.out.println(state);
             master.setControl(new DutyCycleOut(-HandlerConstants.HANDLER_POWER_PUSH_BACK_CORAL));
         } 

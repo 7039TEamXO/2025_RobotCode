@@ -37,25 +37,25 @@ public class Tray {
         }
         
         if(Robot.isAuto()) {
-            if(startCounter <= 150) {
-                startCounter ++;
-                trayMotor.setControl(new DutyCycleOut(-0.1));
-                if(startCounter == 150) {
-                    trayMotor.setPosition(0);
-                    trayMotor.setControl(motorRequest.withPosition(trayPosition));
-                    startCounter ++;
-                }
-            } else {
-                trayMotor.setControl(motorRequest.withPosition(trayPosition));
-            }
+            // if(startCounter <= 150) {
+            //     startCounter ++;
+            //     trayMotor.setControl(new DutyCycleOut(-0.1));
+            //     if(startCounter == 150) {
+            //         trayMotor.setPosition(0);
+            //         trayMotor.setControl(motorRequest.withPosition(trayPosition));
+            //         startCounter ++;
+            //     }
+            // } else {
+            //     trayMotor.setControl(motorRequest.withPosition(trayPosition));
+            // }
         } else {
             // System.out.println(trayMotor.getPosition().getValueAsDouble());
             trayMotor.setControl(motorRequest.withPosition(trayPosition));
 
-        }
-        if(SubsystemManager.getpsJoystick().getHID().getTouchpadButton() && state != TrayState.UP){
-            trayMotor.setControl(new DutyCycleOut(-0.1));
-            trayMotor.setPosition(0);
+        // }
+        // if(SubsystemManager.getpsJoystick().getHID().getTouchpadButton() && state != TrayState.UP){
+        //     trayMotor.setControl(new DutyCycleOut(-0.1));
+        //     trayMotor.setPosition(0);
         }
     }
 

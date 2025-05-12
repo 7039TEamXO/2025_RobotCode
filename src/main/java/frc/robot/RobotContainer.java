@@ -150,7 +150,7 @@ public class RobotContainer
     // SubsystemManager.getpsJoystick().L1().onTrue(Commands.runOnce( () -> Limelight.setPriorityTagId(SubsystemManager.getDriveBase().getClosestReefTag())));
     // SubsystemManager.getpsJoystick().L1().onFalse(Commands.runOnce( () -> Limelight.resetPriorityTagId()));
 
-    // SubsystemManager.getpsJoystick().R2().whileTrue(SubsystemManager.getDriveBase().driveToNetScorePos(() -> modifyAxis(SubsystemManager.getpsJoystick().getLeftX())));
+    SubsystemManager.getpsJoystick().L3().whileTrue(SubsystemManager.getDriveBase().driveToNetScorePos(() -> modifyAxis(SubsystemManager.getpsJoystick().getLeftX())));
     // SubsystemManager.getpsJoystick().L3().whileTrue(SubsystemManager.getDriveBase().chooseFeeder(SubsystemManager.getDriveBase().getPose().getY()));
 
     //======================//

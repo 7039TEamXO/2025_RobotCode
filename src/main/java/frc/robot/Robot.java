@@ -122,7 +122,7 @@ public class Robot extends TimedRobot {
 
     if (isFirstTimeAtDisabled) {
       autoInitCommand = new PathPlannerAuto(m_robotContainer.getAutonomousCommand()).ignoringDisable(true);
-      autoInitCommand.schedule();
+      // autoInitCommand.schedule();
       isFirstTimeAtDisabled = false;
       System.out.println("first time at disabled");
     }

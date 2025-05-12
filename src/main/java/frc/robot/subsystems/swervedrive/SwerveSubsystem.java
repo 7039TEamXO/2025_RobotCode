@@ -164,8 +164,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    System.out.println(driveXPID.getError());
-    System.out.println(isCloseEnoughToReef());
+    // System.out.println(driveXPID.getError());
+    // System.out.println(isCloseEnoughToReef());
 
     isCloseEnoughToReef = Math.abs(driveXPID.getError()) < SwerveDriveConstants.TEST_DISTANCE_TOLERANCE &&
         Math.abs(driveYPID.getError()) < SwerveDriveConstants.TEST_DISTANCE_TOLERANCE &&
@@ -337,7 +337,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public boolean isFarEnoughFromReef() {
-    return getReefCenter().distance(new Vector2(getPose().getX(), getPose().getY())) > 1.7;
+    return getReefCenter().distance(new Vector2(getPose().getX(), getPose().getY())) > 1.8;
   }
 
   private static double getRotationFactorFromElevator(){
@@ -349,11 +349,10 @@ public class SwerveSubsystem extends SubsystemBase {
   private PIDController driveYPID = new PIDController(SwerveDriveConstants.TEST_KP, 0, SwerveDriveConstants.TEST_KD);
   private PIDController rotationPID = new PIDController(SwerveDriveConstants.TEST_KP_ANGULAR, 0, SwerveDriveConstants.TEST_KD_ANGULAR);
 
-  private Pose2d driveToPoseWanted = new Pose2d(0,0,new Rotation2d(0));
-
+  // private Pose2d driveToPoseWanted = new Pose2d(0,0,new Rotation2d(0));
 
   public Command driveToPose(Pose2d pose) {
-    driveToPoseWanted = pose;
+    // driveToPoseWanted = pose;
     return run(() -> {
       driveXPID.setSetpoint(pose.getX());
       driveYPID.setSetpoint(pose.getY());
@@ -382,6 +381,10 @@ public class SwerveSubsystem extends SubsystemBase {
           return driveToPose(getClosestReefFaceRobotPos());
         case RIGHT:
           return driveToPose(calculateLeftAndRightReefPointsFromTag(getClosestReefFaceRobotPos().getX(), getClosestReefFaceRobotPos().getY(), getClosestReefFaceRobotPos().getRotation().getRadians())[1]);
+        case MIDDLE_FAR:
+          return driveToPose(calculateLeftAndRightReefPointsFromTag(getClosestReefFaceRobotPos().getX(), getClosestReefFaceRobotPos().getY(), getClosestReefFaceRobotPos().getRotation().getRadians())[2]);
+        case MIDDLE_VERY_FAR:
+          return driveToPose(calculateLeftAndRightReefPointsFromTag(getClosestReefFaceRobotPos().getX(), getClosestReefFaceRobotPos().getY(), getClosestReefFaceRobotPos().getRotation().getRadians())[3]);
       }
 
       return null;
@@ -957,7 +960,7 @@ public class SwerveSubsystem extends SubsystemBase {
       /* Gets: degrees 0-360 
        * Returns" 
        */
-      if(deg > 360){
+      if(deg > 360) {
         return 0;
       }
       return deg * Constants.DEG_TO_RAD;
@@ -967,7 +970,7 @@ public class SwerveSubsystem extends SubsystemBase {
       /*Gets: radians 0-2pi
        * Returns: degrees: 0-360
        */
-      if(rad > Math.PI * 2){
+      if(rad > Math.PI * 2) {
         return 0;
       }
       return rad / Constants.DEG_TO_RAD;
@@ -978,6 +981,10 @@ public class SwerveSubsystem extends SubsystemBase {
     double yR = y - SwerveDriveConstants.M_FROM_TAG_TO_POLES * Math.cos(deg);
     double xL = x - SwerveDriveConstants.M_FROM_TAG_TO_POLES * Math.sin(deg);
     double yL = y + SwerveDriveConstants.M_FROM_TAG_TO_POLES * Math.cos(deg);
+    double xM = x - 0.2 * Math.cos(deg);
+    double yM = y - 0.2 * Math.sin(deg);
+    double xVM = x - 1 * Math.cos(deg);
+    double yVM = y - 1 * Math.sin(deg);
 
     // System.out.println("XR: " + xR + " YR: " + yR);
     // System.out.println("XL: " + xL + " YL: " + yL);
@@ -985,7 +992,9 @@ public class SwerveSubsystem extends SubsystemBase {
     return new Pose2d[] { // check if you can return pose2d array or need to return normal array
                         // containing pose2d
       new Pose2d(xL, yL, new Rotation2d(deg)),
-      new Pose2d(xR, yR, new Rotation2d(deg))
+      new Pose2d(xR, yR, new Rotation2d(deg)),
+      new Pose2d(xM, yM, new Rotation2d(deg)),
+      new Pose2d(xVM, yVM, new Rotation2d(deg))
     };
   }
 

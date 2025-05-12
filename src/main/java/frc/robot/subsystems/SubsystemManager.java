@@ -50,8 +50,11 @@ public class SubsystemManager {
     private static ElevatorState elevatorState = ElevatorState.BASE;
     private static ElevatorState lastElevatorState = ElevatorState.BASE;
 
-    private static int autoElevatorCounter = 0;
-    private static boolean isAutoElevatorCounting = false;
+    private static ElevatorState chosenElevatorState = ElevatorState.BASE;
+    private static ElevatorState currentAlgaeElevatorState = ElevatorState.BASE;
+
+    // private static int autoElevatorCounter = 0;
+    // private static boolean isAutoElevatorCounting = false;
     
     private static HandlerState handlerState = HandlerState.STOP;
 
@@ -94,17 +97,16 @@ public class SubsystemManager {
 
     private static Command chooseFeeder;
     private static Command driveToReef;
+
     public static void operate(boolean onAuto) { 
         if (ps4Joystick.getHID().getR3Button() || ps4Joystick.getHID().getR1Button() || ps4Joystick.getHID().getL1Button()) {
             driveToReef = getDriveBase().driveToClosestReefPoint(ps4Joystick.getHID().getR1Button() ? ReefOrientation.RIGHT :
-            ps4Joystick.getHID().getL1Button() ? ReefOrientation.LEFT : ReefOrientation.MIDDLE);
-            driveToReef.schedule();
+            ps4Joystick.getHID().getL1Button() ? ReefOrientation.LEFT : ReefOrientation.MIDDLE_FAR);
         } else if (driveToReef != null) {
             driveToReef.cancel();
         }
 
-
-        if (ps4Joystick.L3().getAsBoolean()) {
+        if (ps4Joystick.R2().getAsBoolean()) {
             chooseFeeder = drivebase.chooseFeeder(drivebase.getPose().getY());
             chooseFeeder.schedule();
         } else{
@@ -125,7 +127,7 @@ public class SubsystemManager {
                     RobotState.INTAKE : lastState;
 
             elevatorState = state == RobotState.CLIMB ? ElevatorState.BASE :
-                psController_HID.getCrossButton() || psController_HID.getR2Button() ? ElevatorState.BASE : // BASE
+                psController_HID.getCrossButton() /*|| psController_HID.getR2Button()*/ ? ElevatorState.BASE : // BASE
                 psController_HID.getSquareButton() ? ElevatorState.LEVEL1 :
                 psController_HID.getTriangleButton() ? ElevatorState.LEVEL3 :
                 psController_HID.getCircleButton() ? ElevatorState.LEVEL2 :
@@ -133,20 +135,28 @@ public class SubsystemManager {
                 psController_HID.getPOV(0) == 180 ? ElevatorState.LEVEL0 :              // down
                 psController_HID.getPOV(0) == 270 ? ElevatorState.ALGAE_LOW_PROCESSOR : // left
                 lastElevatorState;
-
             
-            if ((elevatorState == ElevatorState.ALGAE_LOW_NET || elevatorState == ElevatorState.ALGAE_HIGH_NET) && !Handler.isAlgaeInNet() && Limelight.hasTarget()) {
+            if(Limelight.hasTarget()) {
                 if(Limelight.hasTarget() && (Limelight.getMainAprilTagId() == highAlgaeTags[0] ||
-                                             Limelight.getMainAprilTagId() == highAlgaeTags[1] ||
-                                             Limelight.getMainAprilTagId() == highAlgaeTags[2] ||
-                                             Limelight.getMainAprilTagId() == highAlgaeTags[3] ||
-                                             Limelight.getMainAprilTagId() == highAlgaeTags[4] ||
-                                             Limelight.getMainAprilTagId() == highAlgaeTags[5])) {
-                    elevatorState = ElevatorState.ALGAE_HIGH_NET;
+                                            Limelight.getMainAprilTagId() == highAlgaeTags[1] ||
+                                            Limelight.getMainAprilTagId() == highAlgaeTags[2] ||
+                                            Limelight.getMainAprilTagId() == highAlgaeTags[3] ||
+                                            Limelight.getMainAprilTagId() == highAlgaeTags[4] ||
+                                            Limelight.getMainAprilTagId() == highAlgaeTags[5])) {
+                    currentAlgaeElevatorState = ElevatorState.ALGAE_HIGH_NET;
                 } else {
-                    elevatorState = ElevatorState.ALGAE_LOW_NET;
+                    currentAlgaeElevatorState = ElevatorState.ALGAE_LOW_NET;
                 }
             }
+                
+            if ((elevatorState == ElevatorState.ALGAE_LOW_NET || elevatorState == ElevatorState.ALGAE_HIGH_NET) && !Handler.isAlgaeInNet()) {
+                chosenElevatorState = currentAlgaeElevatorState;
+                if(drivebase.isFarEnoughFromReef()) {
+                    elevatorState = chosenElevatorState;
+                } else {
+                    elevatorState = lastElevatorState;
+                }
+            } else chosenElevatorState = ElevatorState.BASE;
 
             if ((elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR || elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR) && !Handler.isAlgaeInProcessor() && Limelight.hasTarget()) {
                 if((Limelight.getMainAprilTagId() == highAlgaeTags[0] ||
@@ -166,7 +176,6 @@ public class SubsystemManager {
 
         isResetWrist = state != RobotState.CLIMB && psController_HID.getTouchpadButton();
 
-
         switch (state) {
             case TRAVEL:
                 if(Handler.isAlgaeInProcessor() && (elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR || 
@@ -179,16 +188,22 @@ public class SubsystemManager {
                                                     elevatorState == ElevatorState.ALGAE_HIGH_NET ||
                                                     elevatorState == ElevatorState.ALGAE_HOLD_NET ||
                                                     elevatorState == ElevatorState.BASE)) {
+                    if (drivebase.isFarEnoughFromReef()) {
+                        elevatorState = ElevatorState.BASE;
+                    }
                     handlerState = HandlerState.HOLD_NET;
                 }
                 else {
-                    if(drivebase.isCloseEnoughToReef() && Handler.isCoralIn()) {state = RobotState.DEPLETE;}
+                    if(drivebase.isCloseEnoughToReef() && Handler.isCoralIn()) {
+                        state = RobotState.DEPLETE;
+                    }
                     handlerState = HandlerState.STOP;
                 }
-                
-                if ((lastElevatorState == ElevatorState.INTAKE_CORAL && Handler.isCoralIn()) && elevatorState != ElevatorState.LEVEL0)
+
+                if ((lastElevatorState == ElevatorState.INTAKE_CORAL && Handler.isCoralIn()) && elevatorState != ElevatorState.LEVEL0) {
                     elevatorState = ElevatorState.BASE;
-                
+                }
+
                 trayState = TrayState.BASE;
                 climbState = ClimbState.TRAVEL;
                 isLocked = false;
@@ -261,14 +276,23 @@ public class SubsystemManager {
         
             case INTAKE: 
                 if ((elevatorState != ElevatorState.ALGAE_HIGH_PROCESSOR && elevatorState != ElevatorState.ALGAE_LOW_PROCESSOR && 
-                     elevatorState != ElevatorState.ALGAE_HIGH_NET && elevatorState != ElevatorState.ALGAE_LOW_NET) && !Handler.isCoralIn()) {
+                     elevatorState != ElevatorState.ALGAE_HIGH_NET && elevatorState != ElevatorState.ALGAE_LOW_NET &&
+                     chosenElevatorState != ElevatorState.ALGAE_HIGH_NET && chosenElevatorState != ElevatorState.ALGAE_LOW_NET) && !Handler.isCoralIn()) {
                     handlerState = HandlerState.INTAKE_CORAL;
                     elevatorState = ElevatorState.BASE;
                 }
                 else if (elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR || elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR) {
                     handlerState = HandlerState.INTAKE_ALGAE;
-                } else if(elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET) {
-                    handlerState = HandlerState.INTAKE_NET;
+                } else if(elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET ||
+                chosenElevatorState == ElevatorState.ALGAE_HIGH_NET || chosenElevatorState == ElevatorState.ALGAE_LOW_NET) {
+                    System.out.println(elevatorState);
+                    if (elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET) {
+                        handlerState = HandlerState.INTAKE_NET;
+                        elevatorState = chosenElevatorState;
+                        driveToReef = getDriveBase().driveToClosestReefPoint(ReefOrientation.MIDDLE);
+                    } else {
+                        driveToReef = getDriveBase().driveToClosestReefPoint(ReefOrientation.MIDDLE_VERY_FAR);
+                    }
                 }
                 
                 state = Handler.isAlgaeInProcessor() || Handler.isCoralIn() || Handler.isAlgaeInNet() ? RobotState.TRAVEL : RobotState.INTAKE;
@@ -283,26 +307,34 @@ public class SubsystemManager {
         else isTxSeen = false;
         
         /****** Auto Counter ******/
-        waitForElevatorInAuto(onAuto);
+        //waitForElevatorInAuto(onAuto);
 
-        // ---------- debuging in game
+        // ---------- debugging in game
         if (psController_HID.getOptionsButton() && state != RobotState.CLIMB) {
             isMoveCoral = true;
         } else {
             isMoveCoral = false;
         }
 
-        if (Dashboard.getAcceptChanges()){
+        if (Dashboard.getAcceptChanges()) {
             handlerState = Dashboard.getSelectedHandlerState();
         }
         
-        // System.out.println(Handler.isAlgaeInNet());
+        if(!drivebase.isFarEnoughFromReef()) elevatorState = lastElevatorState;
 
         DeliveryManager.operate(elevatorState, state);
         Handler.operate(handlerState);
         Climb.operate(climbState);
         Tray.operate(trayState);
-        
+
+        if (driveToReef != null && 
+        (!ps4Joystick.getHID().getR3Button() && !ps4Joystick.getHID().getR1Button() && 
+        !ps4Joystick.getHID().getL1Button() && !(psController_HID.getPOV(0) == 90))) {
+            driveToReef.cancel();
+        } else if(driveToReef != null) {
+            driveToReef.schedule();
+        }
+
         if (isLocked) drivebase.lock();
 
         lastState = state;
@@ -316,18 +348,18 @@ public class SubsystemManager {
         operate(true);
     }
     
-    private static void waitForElevatorInAuto(boolean onAuto){
-        isAutoElevatorCounting = onAuto && elevatorState != ElevatorState.LEVEL3 && lastElevatorState == ElevatorState.LEVEL3 ? true : isAutoElevatorCounting;
+    // private static void waitForElevatorInAuto(boolean onAuto){
+    //     isAutoElevatorCounting = onAuto && elevatorState != ElevatorState.LEVEL3 && lastElevatorState == ElevatorState.LEVEL3 ? true : isAutoElevatorCounting;
 
-        if (isAutoElevatorCounting && onAuto) autoElevatorCounter++;
+    //     if (isAutoElevatorCounting && onAuto) autoElevatorCounter++;
 
-        if (autoElevatorCounter < 70 && onAuto && lastElevatorState == ElevatorState.LEVEL3)
-            elevatorState = ElevatorState.LEVEL3;
-        else {
-            isAutoElevatorCounting = false;
-            autoElevatorCounter = 0;
-        }
-    }
+    //     if (autoElevatorCounter < 70 && onAuto && lastElevatorState == ElevatorState.LEVEL3)
+    //         elevatorState = ElevatorState.LEVEL3;
+    //     else {
+    //         isAutoElevatorCounting = false;
+    //         autoElevatorCounter = 0;
+    //     }
+    // }
     
     public static SwerveSubsystem getDriveBase() {
         return drivebase;

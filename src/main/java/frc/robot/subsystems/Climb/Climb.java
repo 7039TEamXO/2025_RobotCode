@@ -10,13 +10,10 @@ import edu.wpi.first.wpilibj.Servo;
 import frc.robot.Dashboard;
 import frc.robot.subsystems.SubsystemManager;
 
-
 public class Climb {
     private static TalonFX climbMotor = new TalonFX(ClimbConstants.ClimbMotorID);
     private static double wantedPower = ClimbConstants.CLIMB_WANTED_POWER_STOP;
     private static double wantedPose = 0;
-
-    
 
     private static final MotionMagicVoltage motorRequest = new MotionMagicVoltage(0);
 
@@ -48,15 +45,15 @@ public class Climb {
 
         }
         
-        if(state == ClimbState.TRAVEL){
-            if(Dashboard.getIsReturnClimb()){
-                climbMotor.setControl(motorRequest.withPosition(0));
-            }else{
-                climbMotor.setControl(motorRequest.withPosition(wantedPose));
-            }
-        }else if (climbMotor.getPosition().getValueAsDouble() >= ClimbConstants.CLIMB_WANTED_POSE_CLIMB && wantedPower == ClimbConstants.CLIMB_WANTED_POWER_CLIMB) {  //climbMotor.getPosition().getValueAsDouble() <= -220 && wantedPower == ClimbConstants.CLIMB_WANTED_POWER_DESCEND
-            wantedPower = ClimbConstants.CLIMB_WANTED_POWER_STOP;
-        } 
+        // if(state == ClimbState.TRAVEL){
+        //     if(Dashboard.getIsReturnClimb()){
+        //         climbMotor.setControl(motorRequest.withPosition(0));
+        //     }else{
+        //         climbMotor.setControl(motorRequest.withPosition(wantedPose));
+        //     }
+        // }else if (climbMotor.getPosition().getValueAsDouble() >= ClimbConstants.CLIMB_WANTED_POSE_CLIMB && wantedPower == ClimbConstants.CLIMB_WANTED_POWER_CLIMB) {  //climbMotor.getPosition().getValueAsDouble() <= -220 && wantedPower == ClimbConstants.CLIMB_WANTED_POWER_DESCEND
+        //     wantedPower = ClimbConstants.CLIMB_WANTED_POWER_STOP;
+        // } 
         
         // if (SubsystemManager.getIsPushClimb()) {
         //     wantedPower = ClimbConstants.CLIMB_WANTED_POWER_CLIMB;
