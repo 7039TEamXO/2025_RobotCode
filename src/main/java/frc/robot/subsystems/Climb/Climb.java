@@ -59,7 +59,7 @@ public class Climb {
         //     wantedPower = ClimbConstants.CLIMB_WANTED_POWER_CLIMB;
         // }
         
-        // climbMotor.setControl(new DutyCycleOut(wantedPower));
+          climbMotor.setControl(new DutyCycleOut(wantedPower));
         //}
 
     } 

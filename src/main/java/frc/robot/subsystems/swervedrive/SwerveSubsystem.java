@@ -200,9 +200,6 @@ public class SwerveSubsystem extends SubsystemBase {
         Pose2d pos = new Pose2d(tuple.get_0().getX(), tuple.get_0().getY(), SubsystemManager.getDriveBase().getHeading());
         double timestampSeconds = tuple.get_1().getX();
         swerveDrive.addVisionMeasurement(pos, timestampSeconds);
-        if (Limelight.hasTargetFromReef()) {
-          swerveDrive.resetOdometry(new Pose2d(swerveDrive.getPose().getX(), swerveDrive.getPose().getY(), new Rotation2d(Math.toRadians(Limelight.getAngleFromMT1()))));
-        }
       }
     }
 
@@ -337,6 +334,10 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public boolean isFarEnoughFromReef() {
+    return getReefCenter().distance(new Vector2(getPose().getX(), getPose().getY())) > 1.7;
+  }
+
+  public boolean isVeryFarEnoughFromReef() {
     return getReefCenter().distance(new Vector2(getPose().getX(), getPose().getY())) > 1.8;
   }
 
@@ -391,92 +392,20 @@ public class SwerveSubsystem extends SubsystemBase {
 
   }
 
-  // DEPRECATED
-  // public Command driveToRightReefPoint() {
-  //   // Create the constraints to use while pathfinding
-  //   tag_pos = getClosestReefFace(swerveDrive.getPose());
-
-  //   currentTagX = tag_pos.getTranslation().getX();
-  //   currentTagY = tag_pos.getTranslation().getY();
-  //   currentTagAngle = tag_pos.getRotation().getRadians();
-
-  //   Pose2d reefPoints[] = calculateLeftAndRightReefPointsFromTag(currentTagX, currentTagY, currentTagAngle);
-  //   currentLeftReefPos = reefPoints[0];
-  //   currentRightReefPos = reefPoints[1];
-  //   double kp = -0.6;
-
-  //   return run(() -> {
-
-  //     swerveDrive.drive((new Translation2d(((swerveDrive.getPose().getX() - currentRightReefPos.getX()) * kp),
-  //         ((swerveDrive.getPose().getY() - currentRightReefPos.getY()) * kp))),
-  //         ((swerveDrive.getPose().getRotation().getDegrees() - currentRightReefPos.getRotation().getDegrees()) * 0.00), // TODO
-  //                                                                                                                       // set
-  //                                                                                                                       // angular
-  //                                                                                                                       // kP
-  //         false,
-  //         false);
-  //   });
-  // }
-
-  // public Command advancedAlignByLimelight(DoubleSupplier joystickY, int tagId) {
-  //   return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(
-  //       new Translation2d((joystickY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()),
-
-  //           Limelight.getTx() * SwerveDriveConstants.ALIGN_LIMELIGHT_X_KP),
-  //       0.8),
-
-  //       (getAngleFromCurrentTag() * SwerveDriveConstants.ALIGN_BY_TAG_ANGLE_ROTATION_KP),
-
-  //       false,
-
-  //       false));
-  // }
-
-  public Command advancedAlignByLimelight(DoubleSupplier joystickY, int tagId) {
-      return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(
-        
-      new Translation2d((Math.abs(joystickY.getAsDouble()) < 0.15 ?
-        
-      (Limelight.getTy() < 0 ? (-(Limelight.getTy() * SwerveDriveConstants.ALIGN_LIMELIGHT_Y_KP) * ((45 - Math.abs(Limelight.getTx())) * 0.013)) + 0.15 :
-       SwerveDriveConstants.ALIGN_LIMELIGHT_MIN_SPEED):
-       joystickY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()),
-
-      Limelight.getTx() * SwerveDriveConstants.ALIGN_LIMELIGHT_X_KP), 0.8),
-
-      (getAngleFromCurrentTag() * SwerveDriveConstants.ALIGN_BY_TAG_ANGLE_ROTATION_KP),
-      
-      false,
-      
-      false));
-  }
-  
   public Command driveToNetScorePos(DoubleSupplier joystickX) {
     if (isRedAlliance()) {
-      return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(
-          new Translation2d(
-          Math.abs(getAngleToNet(SwerveDriveConstants.WANTED_ROTATION_ANGLE_NET_ALGAE_POS_RED)) > 45 ? 0 :
-          (swerveDrive.getPose().getTranslation().getX() - SwerveDriveConstants.WANTED_X_NET_ALGAE_POS_RED) *
-              (SwerveDriveConstants.Kp_NET_AUTO_DRIVE_X), // x - forward
-              joystickX.getAsDouble() * swerveDrive.getMaximumChassisVelocity()),
-          0.8), // y right/left
-          ((getAngleToNet(SwerveDriveConstants.WANTED_ROTATION_ANGLE_NET_ALGAE_POS_RED)) *
-              SwerveDriveConstants.Kp_NET_AUTO_DRIVE_ROTATION), // rotation
-          true,
-          false));
+      return driveToPose(new Pose2d(
+        SwerveDriveConstants.WANTED_X_NET_ALGAE_POS_RED, 
+        getPose().getY(), 
+        new Rotation2d(SwerveDriveConstants.WANTED_ROTATION_ANGLE_NET_ALGAE_POS_RED)
+      ));
     }
-
     else {
-      return run(() -> swerveDrive.drive(SwerveMath.scaleTranslation(
-          new Translation2d((
-            Math.abs(getAngleToNet(SwerveDriveConstants.WANTED_ROTATION_ANGLE_NET_ALGAE_POS_BLUE)) > 45 ? 0 :  
-          swerveDrive.getPose().getTranslation().getX() - SwerveDriveConstants.WANTED_X_NET_ALGAE_POS_BLUE) *
-              (SwerveDriveConstants.Kp_NET_AUTO_DRIVE_X), // x - forward
-              joystickX.getAsDouble() * swerveDrive.getMaximumChassisVelocity()),
-          0.8), // y right/left
-          ((getAngleToNet(SwerveDriveConstants.WANTED_ROTATION_ANGLE_NET_ALGAE_POS_BLUE)) *
-              SwerveDriveConstants.Kp_NET_AUTO_DRIVE_ROTATION), // rotation
-          true,
-          false));
+      return driveToPose(new Pose2d(
+        SwerveDriveConstants.WANTED_X_NET_ALGAE_POS_BLUE, 
+        getPose().getY(), 
+        new Rotation2d(SwerveDriveConstants.WANTED_ROTATION_ANGLE_NET_ALGAE_POS_BLUE)
+      ));
     }
   }
 
@@ -486,7 +415,7 @@ public class SwerveSubsystem extends SubsystemBase {
       (posY < 4 ? driveToBlueRightFeeder() : driveToBlueLeftFeeder());
   }
 
-  public Command driveToFeeder(final double wantedX,final double wantedY,final double wantedAngle) {
+  public Command driveToFeeder(final double wantedX, final double wantedY, final double wantedAngle) {
     return driveToPose(new Pose2d(wantedX, wantedY, new Rotation2d(Math.toRadians(wantedAngle))));
   }
 
@@ -540,55 +469,6 @@ public class SwerveSubsystem extends SubsystemBase {
     });
   }
 
-  /**
-   * Command to drive the robot using translative values and heading as a
-   * setpoint.
-   *
-   * @param translationX Translation in the X direction.
-   * @param translationY Translation in the Y direction.
-   * @param rotation     Rotation as a value between [-1, 1] converted to radians.
-   * @return Drive command.
-   */
-  public Command simDriveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier rotation) {
-    // swerveDrive.setHeadingCorrection(true); // Normally you would want heading
-    // correction for this kind of control.
-    return run(() -> {
-      // Make the robot move
-      driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(translationX.getAsDouble(),
-          translationY.getAsDouble(),
-          rotation.getAsDouble() * Math.PI,
-          swerveDrive.getOdometryHeading().getRadians(),
-          swerveDrive.getMaximumChassisVelocity()));
-    });
-  }
-
-  /**
-   * Command to characterize the robot drive motors using SysId
-   *
-   * @return SysId Drive Command
-   */
-  public Command sysIdDriveMotorCommand() {
-    return SwerveDriveTest.generateSysIdCommand(
-        SwerveDriveTest.setDriveSysIdRoutine(
-            new Config(),
-            this, swerveDrive, 12, true),
-        3.0, 5.0, 3.0);
-    }
-  
-    /**
-     * Command to characterize the robot angle motors using SysId
-     *
-     * @return SysId Angle Command
-     */
-    public Command sysIdAngleMotorCommand()
-    {
-      return SwerveDriveTest.generateSysIdCommand(
-          SwerveDriveTest.setAngleSysIdRoutine(
-              new Config(),
-              this, swerveDrive),
-          3.0, 5.0, 3.0);
-    }
-  
     /**
      * Command to drive the robot using translative values and heading as angular velocity.
      *
@@ -610,7 +490,7 @@ public class SwerveSubsystem extends SubsystemBase {
       });
     }
   
-    /**>
+    /**
      * The primary method for controlling the drivebase.  Takes a {@link Translation2d} and a rotation rate, and
      * calculates and commands module states accordingly.  Can use either open-loop or closed-loop velocity control for
      * the wheel velocities.  Also has field- and robot-relative modes, which affect how the translation vector is used.
@@ -618,7 +498,7 @@ public class SwerveSubsystem extends SubsystemBase {
      * @param translation   {@link Translation2d} that is the commanded linear velocity of the robot, in meters per
      *                      second. In robot-relative mode, positive x is torwards the bow (front) and positive y is
      *                      torwards port (left).  In field-relative mode, positive x is away from the alliance wall
-     *                      (field North) and positive y is torwards the left wall when looking through the driver station
+     *                      (field North) and positive y is towards the left wall when looking through the driver station
      *                      glass (field West).
      * @param rotation      Robot angular rate, in radians per second. CCW positive.  Unaffected by field/robot
      *                      relativity.
@@ -957,9 +837,6 @@ public class SwerveSubsystem extends SubsystemBase {
     }
   
     public static double convertDegToRag(double deg){
-      /* Gets: degrees 0-360 
-       * Returns" 
-       */
       if(deg > 360) {
         return 0;
       }
@@ -967,9 +844,6 @@ public class SwerveSubsystem extends SubsystemBase {
     }
   
     public static double convertRadToDeg(double rad){
-      /*Gets: radians 0-2pi
-       * Returns: degrees: 0-360
-       */
       if(rad > Math.PI * 2) {
         return 0;
       }

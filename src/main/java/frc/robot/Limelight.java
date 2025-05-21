@@ -34,8 +34,6 @@ public class Limelight {
     private static NetworkTableEntry botPosWpiBlue = limelightTable.getEntry("botpose_wpiblue");
     private static int allValidIDs[] = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22};
 
-    private static double angleFromMT1 = 0;
-
     public static void init() {
         setPipeline(2);
         setConfigurationToLimelight();
@@ -46,19 +44,17 @@ public class Limelight {
         LimelightHelpers.SetFiducialIDFiltersOverride("limelight", allValidIDs); // Only track these tag IDs
         LimelightHelpers.SetFiducialDownscalingOverride("limelight", 2.0f); // Process at half resolution for improved framerate and reduced range
         LimelightHelpers.setCameraPose_RobotSpace("limelight", 
-        0.4,   // Forward offset (meters)
-        0.0,      // Side offset (meters)
-        0.2,        // Height offset (meters)
-        0.0,      // Roll (degrees)
-        20,      // Pitch (degrees)
-        0          // Yaw (degrees)
+            0.4,   // Forward offset (meters)
+            0.0,      // Side offset (meters)
+            0.2,        // Height offset (meters)
+            0.0,      // Roll (degrees)
+            20,      // Pitch (degrees)
+            0          // Yaw (degrees)
         );
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static Tuple2<Pose2d> update() {
-        angleFromMT1 = hasTargetFromReef() ? botPosWpiBlue.getDoubleArray(new Double[]{})[5] : angleFromMT1;
-
         boolean doRejectUpdate = false;
 
         LimelightHelpers.SetRobotOrientation("limelight", (SubsystemManager.getDriveBase().getHeading().getDegrees()), 0, 0, 0, 0, 0);
@@ -107,24 +103,6 @@ public class Limelight {
         double yaw = botPosWpiBlue.getDoubleArray(new Double[]{})[5];
         Pose2d pose = new Pose2d(new Translation2d(x, y), new Rotation2d(yaw));
         return pose;
-    }
-
-    // DEPRECATED
-    public static void updatePosition() {
-        // MT1 
-        if(hasTarget()) {
-                if (Array.getLength(botPosWpiBlue.getDoubleArray(new Double[]{})) > 2) {
-                    SubsystemManager.getDriveBase().resetOdometry(new Pose2d(
-                        SubsystemManager.getDriveBase().getPose().getX(),
-                        SubsystemManager.getDriveBase().getPose().getY(), 
-                        new Rotation2d(getAngleFromMT1())));  
-                }
-            
-        }
-    }
-
-    public static double getAngleFromMT1() {
-        return angleFromMT1;
     }
 
     public static void printRobotPose() {

@@ -4,7 +4,9 @@ import java.io.File;
 import java.lang.annotation.ElementType;
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix.motorcontrol.IFollower;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.config.RobotConfig;
 
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -18,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import frc.robot.Dashboard;
 import frc.robot.LED;
 import frc.robot.Limelight;
+import frc.robot.RobotContainer;
 import frc.robot.RobotState;
 import frc.robot.subsystems.Climb.Climb;
 import frc.robot.subsystems.Climb.ClimbConstants;
@@ -107,7 +110,9 @@ public class SubsystemManager {
         }
 
         if (ps4Joystick.R2().getAsBoolean()) {
-            chooseFeeder = drivebase.chooseFeeder(drivebase.getPose().getY());
+            chooseFeeder = Handler.isAlgaeInNet() ?
+            chooseFeeder = getDriveBase().driveToNetScorePos(() -> SubsystemManager.getpsJoystick().getLeftX()) :
+                drivebase.chooseFeeder(drivebase.getPose().getY());
             chooseFeeder.schedule();
         } else{
             if (chooseFeeder != null) {
@@ -188,7 +193,7 @@ public class SubsystemManager {
                                                     elevatorState == ElevatorState.ALGAE_HIGH_NET ||
                                                     elevatorState == ElevatorState.ALGAE_HOLD_NET ||
                                                     elevatorState == ElevatorState.BASE)) {
-                    if (drivebase.isFarEnoughFromReef()) {
+                    if (drivebase.isVeryFarEnoughFromReef()) {
                         elevatorState = ElevatorState.BASE;
                     }
                     handlerState = HandlerState.HOLD_NET;
@@ -319,8 +324,6 @@ public class SubsystemManager {
         if (Dashboard.getAcceptChanges()) {
             handlerState = Dashboard.getSelectedHandlerState();
         }
-        
-        if(!drivebase.isFarEnoughFromReef()) elevatorState = lastElevatorState;
 
         DeliveryManager.operate(elevatorState, state);
         Handler.operate(handlerState);

@@ -65,8 +65,8 @@ public class SwerveDriveConstants {
     public static final double TEST_KP_ANGULAR = 2.7;
     public static final double TEST_KD_ANGULAR = 0;
 
-    public static final double TEST_DISTANCE_TOLERANCE = 0.18;
-    public static final double TEST_ANGLE_TOLERANCE = Math.toRadians(7);
+    public static final double TEST_DISTANCE_TOLERANCE = 0.15;
+    public static final double TEST_ANGLE_TOLERANCE = Math.toRadians(5);
 
     public static final double TEST_DISTANCE_TOLERANCE_L4 = 0.13;
     public static final double TEST_ANGLE_TOLERANCE_L4 = Math.toRadians(5);

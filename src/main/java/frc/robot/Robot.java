@@ -68,7 +68,7 @@ public class Robot extends TimedRobot {
   public void robotInit()
   {
     SubsystemManager.init();
-    // shuflboard
+    
     Dashboard.init();
     // Dashboard.setElevatorState();
     // Dashboard.setWristState();
@@ -119,7 +119,6 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit()
   {
-
     if (isFirstTimeAtDisabled) {
       autoInitCommand = new PathPlannerAuto(m_robotContainer.getAutonomousCommand()).ignoringDisable(true);
       // autoInitCommand.schedule();
