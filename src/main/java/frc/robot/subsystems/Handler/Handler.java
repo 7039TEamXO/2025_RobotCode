@@ -39,13 +39,10 @@ public class Handler {
     private static boolean isAlgaeInProcessor = false;
     private static boolean isAlgaeInNet = false;
 
-    private static boolean statorCurentNetSayTrue = false;
     // private static boolean lastCoralIn = false;
     // private static boolean feedCoral = false;
     private static int coralIntakeCounter = 0;
     private static int algaeDepleteCounter = 0;
-
-    private static int algaeNetCounter = 0;
 
     private static double CurrenthandlerEncoderPosition = 0;
     // private static boolean isReset = false;
@@ -127,8 +124,7 @@ public class Handler {
         }
 
         // System.out.println("stator " + master.getStatorCurrent().getValueAsDouble());
-    }   
-
+    }
 
     public static void updateHandlerIr(RobotState state, ElevatorState elevatorState, HandlerState handlerState) { // boolean isReset
         algaeProcIrValue = algaeProcIrInput.getValue();
@@ -162,7 +158,6 @@ public class Handler {
         } else {
             algaeDepleteCounter = 0;
         }
-
 
         // ALGAE PROCESSOR
 

@@ -75,11 +75,6 @@ import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Tray.TrayState;
 
 public class SwerveSubsystem extends SubsystemBase {
-
-  /**
-   * PhotonVision class to keep an accurate odometry.
-   */
-  // private Vision vision;
   /**
    * Swerve drive object.
    */
@@ -92,16 +87,6 @@ public class SwerveSubsystem extends SubsystemBase {
   double currentTagAngle = 0;
   static Pose2d currentLeftReefPos = new Pose2d(0, 0, new Rotation2d(0));
   static Pose2d currentRightReefPos = new Pose2d(0, 0, new Rotation2d(0));
-
-  /**
-   * AprilTag field layout.
-   */
-  // private final AprilTagFieldLayout aprilTagFieldLayout =
-  // AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
-  /**
-   * Enable vision odometry updates while driving.
-   */
-  // private final boolean visionDriveTest = false;
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -123,15 +108,9 @@ public class SwerveSubsystem extends SubsystemBase {
     // double driveConversionFactor =
     // SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4), 6.75);
 
-    // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
-    // objects being created.
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try {
       swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.MAX_SPEED);
-      // Alternative method if you don't want to supply the conversion factor via JSON
-      // files.
-      // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed,
-      // angleConversionFactor, driveConversionFactor);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -142,8 +121,6 @@ public class SwerveSubsystem extends SubsystemBase {
                                              // simulations since it causes discrepancies not seen in real life.
     swerveDrive.setAngularVelocityCompensation(true, true, 0.1);
     swerveDrive.setModuleEncoderAutoSynchronize(false, 1);
-
-    SwerveController controller = swerveDrive.getSwerveController();
 
     setupPathPlanner();
   }
@@ -164,9 +141,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // System.out.println(driveXPID.getError());
-    // System.out.println(isCloseEnoughToReef());
-
     isCloseEnoughToReef = Math.abs(driveXPID.getError()) < SwerveDriveConstants.TEST_DISTANCE_TOLERANCE &&
         Math.abs(driveYPID.getError()) < SwerveDriveConstants.TEST_DISTANCE_TOLERANCE &&
         Math.abs(rotationPID.getError()) < SwerveDriveConstants.TEST_ANGLE_TOLERANCE && 
@@ -178,7 +152,6 @@ public class SwerveSubsystem extends SubsystemBase {
     if (SubsystemManager.getTrayState() == TrayState.UP) {
       swerveDrive.setMaximumAllowableSpeeds(Constants.CLIMB_SPEED, Constants.MIN_ROTATION_V);
     }
-
     else {
       swerveDrive.setMaximumAllowableSpeeds(calculateSpeedAccordingToElevator(Constants.MAX_SPEED, Constants.MIN_SPEED),
         calculateSpeedAccordingToElevator(Constants.MAX_ROTATION_V, Constants.MIN_ROTATION_V));
@@ -199,6 +172,8 @@ public class SwerveSubsystem extends SubsystemBase {
       if (tuple != null && Limelight.filterTargetByTa(false) && isRobotVBelowOne(false)) {
         Pose2d pos = new Pose2d(tuple.get_0().getX(), tuple.get_0().getY(), SubsystemManager.getDriveBase().getHeading());
         double timestampSeconds = tuple.get_1().getX();
+
+        if(Limelight.hasTargetFromReef()) pos = new Pose2d(pos.getX(), pos.getY(), new Rotation2d(Math.toRadians(Limelight.getAngleFromMT1())));
         swerveDrive.addVisionMeasurement(pos, timestampSeconds);
       }
     }
@@ -217,16 +192,13 @@ public class SwerveSubsystem extends SubsystemBase {
   @Override
   public void simulationPeriodic() {}
 
-  /**
-   * Setup AutoBuilder for PathPlanner.
-   */
   public void setupPathPlanner() {
     RobotConfig config;
     try {
       config = RobotConfig.fromGUISettings();
 
       final boolean enableFeedforward = true;
-      // Configure AutoBuilder last
+
       AutoBuilder.configure(
           this::getPose,
           // Robot pose supplier
@@ -247,22 +219,13 @@ public class SwerveSubsystem extends SubsystemBase {
           // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also
           // optionally outputs individual module feedforwards
           new PPHolonomicDriveController(
-              // PPHolonomicController is the built in path following controller for holonomic
-              // drive trains
               Constants.AutoConstants.TRANSLATION_PID,
-              // Translation PID constants
               Constants.AutoConstants.ANGLE_PID
-          // Rotation PID constants
           ),
           config,
 
           // The robot configuration
           () -> {
-            // Boolean supplier that controls when the path will be mirrored for the red
-            // alliance
-            // This will flip the path being followed to the red side of the field.
-            // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
             var alliance = DriverStation.getAlliance();
             if (alliance.isPresent()) {
               return alliance.get() == DriverStation.Alliance.Red;
@@ -350,10 +313,7 @@ public class SwerveSubsystem extends SubsystemBase {
   private PIDController driveYPID = new PIDController(SwerveDriveConstants.TEST_KP, 0, SwerveDriveConstants.TEST_KD);
   private PIDController rotationPID = new PIDController(SwerveDriveConstants.TEST_KP_ANGULAR, 0, SwerveDriveConstants.TEST_KD_ANGULAR);
 
-  // private Pose2d driveToPoseWanted = new Pose2d(0,0,new Rotation2d(0));
-
   public Command driveToPose(Pose2d pose) {
-    // driveToPoseWanted = pose;
     return run(() -> {
       driveXPID.setSetpoint(pose.getX());
       driveYPID.setSetpoint(pose.getY());
@@ -366,6 +326,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
       // Ensuring that the error is in the -180 ... +180 degree range
       double robotAngle = getPose().getRotation().getRadians();
+
       double angleError = robotAngle - rotationPID.getSetpoint();
       if(angleError > Math.PI) robotAngle -= 2 * Math.PI;
       if(angleError < -Math.PI) robotAngle += 2 * Math.PI;
@@ -392,19 +353,19 @@ public class SwerveSubsystem extends SubsystemBase {
 
   }
 
-  public Command driveToNetScorePos(DoubleSupplier joystickX) {
+  public Command driveToNet(DoubleSupplier joystickX) {
     if (isRedAlliance()) {
       return driveToPose(new Pose2d(
         SwerveDriveConstants.WANTED_X_NET_ALGAE_POS_RED, 
         getPose().getY(), 
-        new Rotation2d(SwerveDriveConstants.WANTED_ROTATION_ANGLE_NET_ALGAE_POS_RED)
+        new Rotation2d(Math.toRadians(SwerveDriveConstants.WANTED_ROTATION_ANGLE_NET_ALGAE_POS_RED))
       ));
     }
     else {
       return driveToPose(new Pose2d(
         SwerveDriveConstants.WANTED_X_NET_ALGAE_POS_BLUE, 
         getPose().getY(), 
-        new Rotation2d(SwerveDriveConstants.WANTED_ROTATION_ANGLE_NET_ALGAE_POS_BLUE)
+        new Rotation2d(Math.toRadians(SwerveDriveConstants.WANTED_ROTATION_ANGLE_NET_ALGAE_POS_BLUE))
       ));
     }
   }
@@ -456,6 +417,9 @@ public class SwerveSubsystem extends SubsystemBase {
     // swerveDrive.setHeadingCorrection(true); // Normally you would want heading
     // correction for this kind of control.
     return run(() -> {
+      System.out.println("I am here!");
+      System.out.println(translationX.getAsDouble());
+      System.out.println(translationY.getAsDouble());
 
       Translation2d scaledInputs = SwerveMath.scaleTranslation(new Translation2d(translationX.getAsDouble(),
           translationY.getAsDouble()), 0.8);
@@ -755,8 +719,8 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     private static int selected_face = -1;
-    private static Pose2d closestReefFace = null;
-    private static Pose2d closestReefFaceRobotPos = null;
+    private static Pose2d closestReefFace = new Pose2d();
+    private static Pose2d closestReefFaceRobotPos = new Pose2d();
 
     private static void updateClosestReefFace(Pose2d currentRobotPose2d){
       double minDist = Double.MAX_VALUE;
@@ -904,11 +868,8 @@ public class SwerveSubsystem extends SubsystemBase {
       return (Math.abs(swerveDrive.getRobotVelocity().vxMetersPerSecond) < 2) &&
         (Math.abs(swerveDrive.getRobotVelocity().vyMetersPerSecond) < 2) &&
         ((Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) < 1.5));
-    }else{
+    } else {
       return true;
-      // return (Math.abs(swerveDrive.getRobotVelocity().vxMetersPerSecond) < 3) &&
-        // (Math.abs(swerveDrive.getRobotVelocity().vyMetersPerSecond) < 3) &&
-        // ((Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) < 2));
     }
   }
 

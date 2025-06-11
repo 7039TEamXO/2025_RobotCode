@@ -126,6 +126,8 @@ public class Dashboard {
         SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Algae IR (Net)", Handler.getAlgaeNetIrValue()));
 
         SmartDashboard.postListenerTask(() -> SmartDashboard.putString("Elevator State", SubsystemManager.getElevatorState().name()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putString("Chosen Algae ES", SubsystemManager.getChosenAlgaeElevatorState().name()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putString("Current Algae ES", SubsystemManager.getCurrentAlgaeElevatorState().name()));
         SmartDashboard.postListenerTask(() -> SmartDashboard.putString("Robot State", SubsystemManager.getRobotState().name()));
         SmartDashboard.postListenerTask(() -> SmartDashboard.putString("Handler State", SubsystemManager.getHandlerState().name()));
         SmartDashboard.postListenerTask(() -> SmartDashboard.putString("Wrist State", DeliveryManager.getWristState().name()));

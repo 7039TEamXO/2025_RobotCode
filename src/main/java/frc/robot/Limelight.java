@@ -34,6 +34,8 @@ public class Limelight {
     private static NetworkTableEntry botPosWpiBlue = limelightTable.getEntry("botpose_wpiblue");
     private static int allValidIDs[] = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22};
 
+    private static double angleFromMT1 = 0;
+
     public static void init() {
         setPipeline(2);
         setConfigurationToLimelight();
@@ -55,9 +57,13 @@ public class Limelight {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static Tuple2<Pose2d> update() {
+        angleFromMT1 = hasTargetFromReef() ? botPosWpiBlue.getDoubleArray(new Double[]{})[5] : angleFromMT1;
+
         boolean doRejectUpdate = false;
 
-        LimelightHelpers.SetRobotOrientation("limelight", (SubsystemManager.getDriveBase().getHeading().getDegrees()), 0, 0, 0, 0, 0);
+        double suppliedAngle = SubsystemManager.getDriveBase().getHeading().getDegrees();
+        
+        LimelightHelpers.SetRobotOrientation("limelight", suppliedAngle, 0, 0, 0, 0, 0);
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
       
         if (mt2 != null) {
@@ -95,6 +101,10 @@ public class Limelight {
         getMainAprilTagId() == 20 ||
         getMainAprilTagId() == 21 ||
         getMainAprilTagId() == 22;
+    }
+
+    public static double getAngleFromMT1() {
+        return angleFromMT1;
     }
 
     public static Pose2d getVisionPose() {

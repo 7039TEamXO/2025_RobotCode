@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import edu.wpi.first.hal.AllianceStationID;
@@ -24,11 +20,6 @@ import java.util.Optional;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import com.pathplanner.lib.auto.NamedCommands;
 
-/**
- * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
- * little robot logic should actually be handled in the {@link Robot} periodic methods (other than the scheduler calls).
- * Instead, the structure of the robot (including subsystems, commands, and trigger mappings) should be declared here.
- */
 public class RobotContainer
 {
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -79,21 +70,7 @@ public class RobotContainer
       () -> MathUtil.applyDeadband(-SubsystemManager.getpsJoystick().getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
       () -> -SubsystemManager.getpsJoystick().getRightX());
       
-  // Command alignRightCommand =  SubsystemManager.getDriveBase().alignByLimelight(modifyAxis(-SubsystemManager.getpsJoystick().getLeftY()));
-
   SlewRateLimiter joystickSlewRateLimiter = new SlewRateLimiter(4);
-  // Command driveFieldOrientedDirectAngleSim = SubsystemManager.getDriveBase().simDriveCommand(
-  //     () -> MathUtil.applyDeadband(SubsystemManager.ps4Joystick.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-  //     () -> MathUtil.applyDeadband(SubsystemManager.ps4Joystick.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-  //     () -> SubsystemManager.ps4Joystick.getRawAxis(2));
-
-  // drivebase.setDefaultCommand(
-  //     false ? driveFieldOrientedDirectAngle : driveFieldOrientedDirectAngleSim);
-  
-  // SubsystemManager.ps4Joystick.povUp().toggleOnTrue(closedAbsoluteDriveAdv);
-  // SubsystemManager.ps4Joystick.povLeft().toggleOnTrue(closedAbsoluteDriveAdv);
-  // SubsystemManager.ps4Joystick.povRight().toggleOnTrue(closedAbsoluteDriveAdv);
-  // SubsystemManager.ps4Joystick.povDown().toggleOnTrue(closedAbsoluteDriveAdv);
 
   public RobotContainer()
   {
@@ -125,61 +102,24 @@ public class RobotContainer
    * controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight joysticks}.
    */
   private void configureBindings()
-  {
-
-    
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    SubsystemManager.getpsJoystick().PS().onTrue((Commands.runOnce(SubsystemManager.getDriveBase()::zeroGyroWithAlliance)));// if we will use it, in case if driver push this buttom, our rotation will be messed up
-
-    // SubsystemManager.getpsJoystick().R1().onTrue(SubsystemManager.getDriveBase().driveToPose2(new Pose2d(13.611, 2.754, Rotation2d.fromDegrees(120))).until(() -> !SubsystemManager.getpsJoystick().R1().getAsBoolean()));
-    // SubsystemManager.getpsJoystick().R3().onTrue(SubsystemManager.getDriveBase().driveToClosestReefPoint(ReefOrientation.MIDDLE).until(() -> !SubsystemManager.getpsJoystick().R3().getAsBoolean()));
-
-    //SubsystemManager.getpsJoystick().L1().onTrue(SubsystemManager.getDriveBase().driveToPose(new Pose2d(13.569, 2.805, Rotation2d.fromDegrees(120))));
-
-    // chnage pipeling when we press align
-    // SubsystemManager.getpsJoystick().R1().onTrue(Commands.runOnce( () -> Limelight.setPipeline(0)));
-    // SubsystemManager.getpsJoystick().L1().onTrue(Commands.runOnce( () -> Limelight.setPipeline(1)));
-    // SubsystemManager.getpsJoystick().R3().onTrue(Commands.runOnce( () -> Limelight.setPipeline(2))); // button 12
-
-    // Set priority tag when we press align, reset on release    
-    // SubsystemManager.getpsJoystick().R3().onTrue(Commands.runOnce( () -> Limelight.setPriorityTagId(SubsystemManager.getDriveBase().getClosestReefTag())));
-    // SubsystemManager.getpsJoystick().button(12).onTrue(Commands.runOnce( () -> Limelight.setPriorityTagId(Limelight.getMainAprilTagId())));
-    // SubsystemManager.getpsJoystick().R3().onFalse(Commands.runOnce( () -> Limelight.resetPriorityTagId()));
-    // SubsystemManager.getpsJoystick().R1().onTrue(Commands.runOnce( () -> Limelight.setPriorityTagId(SubsystemManager.getDriveBase().getClosestReefTag())));
-    // SubsystemManager.getpsJoystick().R1().onFalse(Commands.runOnce( () -> Limelight.resetPriorityTagId()));
-    // SubsystemManager.getpsJoystick().L1().onTrue(Commands.runOnce( () -> Limelight.setPriorityTagId(SubsystemManager.getDriveBase().getClosestReefTag())));
-    // SubsystemManager.getpsJoystick().L1().onFalse(Commands.runOnce( () -> Limelight.resetPriorityTagId()));
-
-    // SubsystemManager.getpsJoystick().L3().whileTrue(SubsystemManager.getDriveBase().driveToNetScorePos(() -> modifyAxis(SubsystemManager.getpsJoystick().getLeftX())));
-    // SubsystemManager.getpsJoystick().L3().whileTrue(SubsystemManager.getDriveBase().chooseFeeder(SubsystemManager.getDriveBase().getPose().getY()));
-
-    //======================//
-
-    // Align only by TX and not reef angle 
-    // SubsystemManager.getpsJoystick().R1().whileTrue(SubsystemManager.getDriveBase().alignByLimelight( () -> modifyAxis(-SubsystemManager.getpsJoystick().getLeftY())));
-    // SubsystemManager.getpsJoystick().L1().whileTrue(SubsystemManager.getDriveBase().alignByLimelight( () -> modifyAxis(-SubsystemManager.getpsJoystick().getLeftY())));
-    // SubsystemManager.getpsJoystick().button(12).whileTrue(SubsystemManager.getDriveBase().alignByLimelight( () -> modifyAxis(-SubsystemManager.getpsJoystick().getLeftY())));
-    
-    // SubsystemManager.getpsJoystick().R3().whileTrue(SubsystemManager.getDriveBase().advancedAlignByLimelight( () -> modifyAxis(-SubsystemManager.getpsJoystick().getLeftY()), Limelight.getMainAprilTagId()));
-    // SubsystemManager.getpsJoystick().R1().whileTrue(SubsystemManager.getDriveBase().advancedAlignByLimelight( () -> modifyAxis(-SubsystemManager.getpsJoystick().getLeftY()), Limelight.getMainAprilTagId()));
-    // SubsystemManager.getpsJoystick().L1().whileTrue(SubsystemManager.getDriveBase().advancedAlignByLimelight( () -> modifyAxis(-SubsystemManager.getpsJoystick().getLeftY()), Limelight.getMainAprilTagId()));
+  {    
+    SubsystemManager.getpsJoystick().PS().onTrue((Commands.runOnce(SubsystemManager.getDriveBase()::zeroGyroWithAlliance)));
+      // we will use it in case our rotation is be messed up
   }
 
   private void configureDriveCommand() {
     if (teamColorIsBlue()) {
-      // SubsystemManager.getDriveBase().zeroGyroWithAlliance();
       SubsystemManager.getDriveBase().zeroGyro();
       SubsystemManager.getDriveBase().resetOdometry(new Pose2d(SubsystemManager.getDriveBase().getPose().getTranslation(), Rotation2d.fromDegrees(180)));
       driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
-      () -> (modifyAxis(-SubsystemManager.getpsJoystick().getLeftY())),
-      () -> (modifyAxis(-SubsystemManager.getpsJoystick().getLeftX())),
-      () -> (modifyAxis(-SubsystemManager.getpsJoystick().getRightX())));
+        () -> (modifyAxis(-SubsystemManager.getpsJoystick().getLeftY())),
+        () -> (modifyAxis(-SubsystemManager.getpsJoystick().getLeftX())),
+        () -> (modifyAxis(-SubsystemManager.getpsJoystick().getRightX())));
     } else {
-      // SubsystemManager.getDriveBase().zeroGyroWithAlliance();
       driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
-      () -> (modifyAxis(SubsystemManager.getpsJoystick().getLeftY())),
-      () -> (modifyAxis(SubsystemManager.getpsJoystick().getLeftX())),
-      () -> (modifyAxis(-SubsystemManager.getpsJoystick().getRightX())));
+        () -> (modifyAxis(SubsystemManager.getpsJoystick().getLeftY())),
+        () -> (modifyAxis(SubsystemManager.getpsJoystick().getLeftX())),
+        () -> (modifyAxis(-SubsystemManager.getpsJoystick().getRightX())));
     }
     
     SubsystemManager.setDefaultCommand(driveFieldOrientedAngularVelocity);
@@ -195,12 +135,10 @@ public class RobotContainer
   {
     // An example command will be run in autonomous
     return SubsystemManager.getDriveBase().getAutonomousCommand(Dashboard.getSelectedAutonomy());
-
   }
 
   public void setDriveMode()
-  {
-  }
+  {}
 
   public void setMotorBrake(boolean brake)
   {

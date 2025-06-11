@@ -14,6 +14,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -40,14 +42,15 @@ import swervelib.parser.SwerveParser;
  */
 public class Robot extends TimedRobot {
   private static Robot   instance;
-  private Command m_autonomousCommand;
+  private Command autonomousCommand;
   private Command autoCommand;
   private Command autoInitCommand;
 
 
   private boolean isFirstTimeAtDisabled = true;
 
-  private RobotContainer m_robotContainer;
+  private RobotContainer robotContainer;
+  private final Field2d field = new Field2d();
 
   private Timer disabledTimer;
 
@@ -70,16 +73,14 @@ public class Robot extends TimedRobot {
     SubsystemManager.init();
     
     Dashboard.init();
-    // Dashboard.setElevatorState();
-    // Dashboard.setWristState();
-    // Dashboard.acceptChanges();
-    // Dashboard.cameraInit();
     // cameraSetup();
     Limelight.init();
     LED.init();
+    
+    SmartDashboard.putData("Field", field);
 
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-    m_robotContainer = new RobotContainer();
+    robotContainer = new RobotContainer();
 
     // Activate Elastic layout
     WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
@@ -101,8 +102,9 @@ public class Robot extends TimedRobot {
   {
     // System.out.println(RobotContainer.teamColorIsBlue());
     LED.setLedData();
-    Limelight.update();
     Dashboard.update();
+
+    field.setRobotPose(SubsystemManager.getDriveBase().getPose());
 
     // System.out.println(SubsystemManager.getDriveBase().getPose().getY());
 
@@ -120,13 +122,13 @@ public class Robot extends TimedRobot {
   public void disabledInit()
   {
     if (isFirstTimeAtDisabled) {
-      autoInitCommand = new PathPlannerAuto(m_robotContainer.getAutonomousCommand()).ignoringDisable(true);
+      autoInitCommand = new PathPlannerAuto(robotContainer.getAutonomousCommand()).ignoringDisable(true);
       // autoInitCommand.schedule();
       isFirstTimeAtDisabled = false;
-      System.out.println("first time at disabled");
+      System.out.println("First time at disabled!");
     }
 
-    m_robotContainer.setMotorBrake(true);
+    robotContainer.setMotorBrake(true);
     disabledTimer.reset();
     disabledTimer.start();
   }
@@ -134,16 +136,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic()
   {
-
     SubsystemManager.getDriveBase().isAuto = false;
-
-    // if (disabledTimer.hasElapsed(Constants.DrivebaseConstants.WHEEL_LOCK_TIME))
-    // {
-    //   m_robotContainer.setMotorBrake(false);
-    //   disabledTimer.stop();
-    // }
-
-    // Limelight.printRobotPose();
   }
 
   /**
@@ -152,13 +145,12 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit()
   {
-
-    m_robotContainer.setMotorBrake(true);
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    robotContainer.setMotorBrake(true);
+    autonomousCommand = robotContainer.getAutonomousCommand();
 
     // SubsystemManager.init();
-    if (m_autonomousCommand != null) {
-      autoCommand = new WaitCommand(0.01).andThen(m_autonomousCommand);
+    if (autonomousCommand != null) {
+      autoCommand = new WaitCommand(0.01).andThen(autonomousCommand);
     }
 
     // schedule the autonomous command (example)
@@ -185,12 +177,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit()
   {
-
     SubsystemManager.setState(RobotState.TRAVEL);
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
 
     if (autoInitCommand != null) {
       autoInitCommand.cancel();
@@ -200,8 +187,8 @@ public class Robot extends TimedRobot {
     {
       autoCommand.cancel();
     }
-    m_robotContainer.setDriveMode();
-    m_robotContainer.setMotorBrake(true);
+    robotContainer.setDriveMode();
+    robotContainer.setMotorBrake(true);
   }
 
   /**
@@ -211,25 +198,11 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic()
   {
     SubsystemManager.operate(false);
-    // System.out.println(Limelight.getMainAprilTagId());
-    // System.out.println(Limelight.hasTargetFromReef());
-    // System.out.println("MT: " + Limelight.getAngleFromMT1());
-    // System.out.println("ps: " + SubsystemManager.getDriveBase().getPose().getRotation().getDegrees());
   }
 
   @Override
   public void testInit()
-  {
-    // Cancels all running commands at the start of test mode.
-    // CommandScheduler.getInstance().cancelAll();
-    // try
-    // {
-    //   new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve"));
-    // } catch (IOException e)
-    // {
-    //   throw new RuntimeException(e);
-    // }
-  }
+  {}
 
   /**
    * This function is called periodically during test mode.
@@ -258,6 +231,8 @@ public class Robot extends TimedRobot {
   public static boolean isAuto() {
     return SubsystemManager.getDriveBase().isAuto;
   }
+
+  // LEGACY CODE
   // public void cameraSetup() {
   //   // USB CAMERA //
   //   try {
