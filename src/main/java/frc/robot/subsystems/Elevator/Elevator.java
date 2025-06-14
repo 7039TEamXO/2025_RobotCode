@@ -48,6 +48,7 @@ public class Elevator {
                 elevatorPosition = ElevatorConstants.ELEVATOR_POSE_LEVEL2;
                 break;
 
+            case ALGAE_HOLD_NET:
             case LEVEL3:
                 elevatorPosition = ElevatorConstants.ELEVATOR_POSE_LEVEL3;
                 break;

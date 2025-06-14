@@ -64,12 +64,7 @@ public class AbsoluteDriveAdv extends Command
     addRequirements(swerve);
   }
 
-//   public AbsoluteDriveAdv(SwerveSubsystem drivebase, DoubleSupplier vX2, DoubleSupplier vY2,
-//         DoubleSupplier headingAdjust2, Object lookAway2, Object lookTowards2, Object lookLeft2, Object lookRight2) {
-//     //TODO Auto-generated constructor stub
-// }
-
-@Override
+  @Override
   public void initialize()
   {
     resetHeading = true;

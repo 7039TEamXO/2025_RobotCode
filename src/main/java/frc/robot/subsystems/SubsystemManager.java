@@ -1,14 +1,6 @@
 package frc.robot.subsystems;
 
 import java.io.File;
-import java.lang.annotation.ElementType;
-import java.util.function.DoubleSupplier;
-
-import com.ctre.phoenix.motorcontrol.IFollower;
-import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.pathplanner.lib.config.RobotConfig;
-
-import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 
@@ -18,12 +10,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import frc.robot.Dashboard;
-import frc.robot.LED;
 import frc.robot.Limelight;
-import frc.robot.RobotContainer;
 import frc.robot.RobotState;
 import frc.robot.subsystems.Climb.Climb;
-import frc.robot.subsystems.Climb.ClimbConstants;
 import frc.robot.subsystems.Climb.ClimbState;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorConstants;
@@ -32,9 +21,6 @@ import frc.robot.subsystems.Handler.HandlerState;
 import frc.robot.subsystems.Tray.Tray;
 import frc.robot.subsystems.Tray.TrayState;
 import frc.robot.subsystems.Handler.Handler;
-import frc.robot.subsystems.Wrist.Wrist;
-import frc.robot.subsystems.Wrist.WristConstants;
-import frc.robot.subsystems.Wrist.WristState;
 import frc.robot.subsystems.swervedrive.ReefOrientation;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
@@ -241,7 +227,7 @@ public class SubsystemManager {
                     elevatorState = ElevatorState.ALGAE_HOLD_NET;
                     if (Elevator.getCurrentPosition() > ElevatorConstants.ELEVATOR_POSE_ALGAE_THROW_POS) {
                         handlerState = HandlerState.DEPLETE_NET;
-                    } else{
+                    } else {
                         handlerState = HandlerState.HOLD_NET;
                     }
                 }
@@ -320,7 +306,7 @@ public class SubsystemManager {
         else isTxSeen = false;
         
         /****** Auto Counter ******/
-        //waitForElevatorInAuto(onAuto);
+        // waitForElevatorInAuto(onAuto);
 
         if (psController_HID.getOptionsButton() && state != RobotState.CLIMB) {
             isMoveCoral = true;

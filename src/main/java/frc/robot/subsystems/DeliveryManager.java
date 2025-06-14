@@ -35,6 +35,7 @@ public class DeliveryManager {
 
             /*===========================*/
 
+            case ALGAE_HIGH_IN:
             case ALGAE_HIGH_PROCESSOR:
                 if (Elevator.getCurrentPosition() >= ElevatorConstants.ELEVATOR_POSE_SAFE_TO_ROTATE) {
                     if (Handler.isAlgaeInProcessor()) {
@@ -47,6 +48,7 @@ public class DeliveryManager {
             
             /*===========================*/
             
+            case ALGAE_LOW_IN:
             case ALGAE_LOW_PROCESSOR:
                 if (Elevator.getCurrentPosition() >= ElevatorConstants.ELEVATOR_POSE_SAFE_TO_ROTATE) {
                     if (Handler.isAlgaeInProcessor())

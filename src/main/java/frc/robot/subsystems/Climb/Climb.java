@@ -1,21 +1,14 @@
 package frc.robot.subsystems.Climb;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.wpilibj.Servo;
-import frc.robot.Dashboard;
-import frc.robot.subsystems.SubsystemManager;
-
 public class Climb {
     private static TalonFX climbMotor = new TalonFX(ClimbConstants.ClimbMotorID);
     private static double wantedPower = ClimbConstants.CLIMB_WANTED_POWER_STOP;
-    private static double wantedPose = 0;
-
-    private static final MotionMagicVoltage motorRequest = new MotionMagicVoltage(0);
+    // private static double wantedPose = 0;
 
     public static void init() {
         setMotorConfigs();
@@ -39,29 +32,14 @@ public class Climb {
             case DESCEND:
                 wantedPower = ClimbConstants.CLIMB_WANTED_POWER_DESCEND;
                 break;
+
             case TRAVEL:
-                wantedPose = ClimbConstants.CLIMB_TRAVEL_POSE;
+                // wantedPose = ClimbConstants.CLIMB_TRAVEL_POSE;
                 break;
 
         }
         
-        // if(state == ClimbState.TRAVEL){
-        //     if(Dashboard.getIsReturnClimb()){
-        //         climbMotor.setControl(motorRequest.withPosition(0));
-        //     }else{
-        //         climbMotor.setControl(motorRequest.withPosition(wantedPose));
-        //     }
-        // }else if (climbMotor.getPosition().getValueAsDouble() >= ClimbConstants.CLIMB_WANTED_POSE_CLIMB && wantedPower == ClimbConstants.CLIMB_WANTED_POWER_CLIMB) {  //climbMotor.getPosition().getValueAsDouble() <= -220 && wantedPower == ClimbConstants.CLIMB_WANTED_POWER_DESCEND
-        //     wantedPower = ClimbConstants.CLIMB_WANTED_POWER_STOP;
-        // } 
-        
-        // if (SubsystemManager.getIsPushClimb()) {
-        //     wantedPower = ClimbConstants.CLIMB_WANTED_POWER_CLIMB;
-        // }
-        
-          climbMotor.setControl(new DutyCycleOut(wantedPower));
-        //}
-
+        climbMotor.setControl(new DutyCycleOut(wantedPower));
     } 
 
     private static void setMotorConfigs() {
@@ -90,9 +68,6 @@ public class Climb {
         climbMotor.getConfigurator().apply(talonFXConfigs);
     }
 
-    // public static boolean isOpen() {
-    //     return Math.abs(climbServo.getAngle() - ClimbConstants.CLIMB_SERVO_OPEN) < 1;
-    // }
     public static double getClimbPose() {
         return climbMotor.getPosition().getValueAsDouble();
     }

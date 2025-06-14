@@ -1,16 +1,7 @@
 package frc.robot;
 
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.CvSink;
-import edu.wpi.first.cscore.CvSource;
-
 import edu.wpi.first.cscore.HttpCamera;
-import edu.wpi.first.cscore.MjpegServer;
-import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.util.PixelFormat;
-import edu.wpi.first.wpilibj.shuffleboard.SendableCameraWrapper;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.DeliveryManager;
@@ -57,7 +48,7 @@ public class Dashboard {
             }
             autoChooser.addOption(name_state, name_state);
         }
-    
+
         // -----------------------
           
         SmartDashboard.putData("Autos", autoChooser);
@@ -90,15 +81,7 @@ public class Dashboard {
         addValueToWrist = SmartDashboard.getEntry("Add Wrist Value");
 
         SmartDashboard.putNumber("Add Handler Value", 0);
-        addValueToHandler = SmartDashboard.getEntry("Add Handler Value");
-
-        // SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("HandlerEncoder", () -> Handler.getHandlerMotorDistance());
-        
-        // debugging.addNumber("HandlerCounter", () -> Handler.getCoralIntakeCounter());
-        // debugging.addBoolean("HandlerReset", () -> Handler.getReset());
-
-        // debugging.addString("ElevatorState",() -> SubsystemManager.getElevatorState().name());
-        // debugging.addString("LastElevatorState",() -> SubsystemManager.getLastElevatorState().name());        
+        addValueToHandler = SmartDashboard.getEntry("Add Handler Value");   
 
         update();
 

@@ -1,10 +1,8 @@
 package frc.robot;
 
-import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -13,9 +11,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.SubsystemManager;
-import frc.robot.subsystems.swervedrive.ReefOrientation;
 
-import java.util.Map;
 import java.util.Optional;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -24,10 +20,6 @@ public class RobotContainer
 {
   // Replace with CommandPS4Controller or CommandJoystick if needed
   // final CommandPS4Controller SubsystemManager.ps4Joystick = new CommandPS4Controller(0);
-
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
 
   // Applies deadbands and inverts controls because joysticks
   // are back-right positive while robot
