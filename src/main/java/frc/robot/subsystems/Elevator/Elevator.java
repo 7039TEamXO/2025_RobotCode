@@ -1,28 +1,39 @@
 package frc.robot.subsystems.Elevator;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import frc.robot.Dashboard;
+import frc.robot.subsystems.IO.ElevatorIO;
+import frc.robot.subsystems.IO.ElevatorIO.ElevatorIOInputs;
 
 public class Elevator {
     private static double elevatorPosition; 
     private static final MotionMagicVoltage motorRequest = new MotionMagicVoltage(0);
 
-    private static TalonFX elevatorMasterMotor = new TalonFX(ElevatorConstants.ElevatorRightMotorID);
-    private static TalonFX elevatorSlaveMotor = new TalonFX(ElevatorConstants.ElevatorLeftMotorID);
-    
-    public static void init() {
-        elevatorMasterMotor.setPosition(0); // we start our position from 0
-        elevatorSlaveMotor.setPosition(0); // we start our position from 0
+    private static ElevatorIO io;
+    private static ElevatorIOInputs inputs = new ElevatorIOInputs();
+
+    public static void init(ElevatorIO _io) {
+        io = _io;
+
+        io.setLeadMotorPosition(0); // we start our position from 0
+        io.setFollowerMotorPosition(0);
+
         setMotorConfigs();
+
+        io.updateInputs(inputs);
+        Logger.processInputs("Elevator", inputs);
     }
 
-    public static void operate(ElevatorState state){
+    public static void operate(ElevatorState state) {
+        io.updateInputs(inputs);
+        Logger.processInputs("Elevator", inputs);
+
         switch (state) {
             case BASE: 
                 elevatorPosition = ElevatorConstants.ELEVATOR_POSE_BASE;
@@ -74,23 +85,24 @@ public class Elevator {
                 break;
         }
         elevatorPosition = elevatorPosition + Dashboard.addValueToElevator();
-        elevatorMasterMotor.setControl(motorRequest.withPosition(elevatorPosition)); // set position for elevator
+        
+        io.setLeadMotionMagic(motorRequest.withPosition(elevatorPosition));
     }
 
     public static double getCurrentPosition() {
-        return elevatorMasterMotor.getPosition().getValueAsDouble();
+        return inputs.masterPosition;
     }
 
-    public static double getCmFromEncoder(double encoder) {
-        return encoder * ElevatorConstants.EncoderMultiplier;
+    public static double getCurrentVelocity() {
+        return inputs.masterVelocity;
     }
 
-    public static double getMotorOutput(){
-        return elevatorMasterMotor.getVelocity().getValueAsDouble();
+    public static double getCurrentVoltage() {
+        return inputs.masterAppliedVolts;
     }
 
     private static void setMotorConfigs() {
-        elevatorSlaveMotor.setControl(new Follower(elevatorMasterMotor.getDeviceID(), true));
+        io.setFollowerMotionMagic(io.createFollower());
 
         var rightTalonFXConfigs = new TalonFXConfiguration();
         var slot0Configs = rightTalonFXConfigs.Slot0;
@@ -116,7 +128,7 @@ public class Elevator {
         rightTalonFXConfigs.MotorOutput.PeakForwardDutyCycle = 1;
         rightTalonFXConfigs.MotorOutput.PeakReverseDutyCycle = -0.6;
 
-        elevatorMasterMotor.getConfigurator().apply(rightTalonFXConfigs);
+        io.applyMasterTalonFXConfig(rightTalonFXConfigs);
 
         var leftTalonFXConfigs = new TalonFXConfiguration();
 
@@ -130,6 +142,10 @@ public class Elevator {
         leftTalonFXConfigs.MotorOutput.PeakForwardDutyCycle = 1;
         leftTalonFXConfigs.MotorOutput.PeakReverseDutyCycle = -0.6;
 
-        elevatorSlaveMotor.getConfigurator().apply(leftTalonFXConfigs);
+        io.applySlaveTalonFXConfig(leftTalonFXConfigs);
+    }
+
+    public static void simulationPeriodic() {
+      io.simulationPeriodic();
     }
 }

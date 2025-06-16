@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.swervedrive;
+package frc.robot.subsystems.SwerveDrive;
 
 import static edu.wpi.first.units.Units.Meter;
 
@@ -132,7 +132,7 @@ public class SwerveSubsystem extends SubsystemBase {
       counter++;
       Tuple2<Pose2d> tuple = Limelight.update();
       if (tuple != null && isRobotVBelowOne(true) && counter > 10) {
-        Pose2d pos = new Pose2d(tuple.get_0().getX(), tuple.get_0().getY(), SubsystemManager.getDriveBase().getHeading());
+        Pose2d pos = new Pose2d(tuple.get_0().getX(), tuple.get_0().getY(), getHeading());
         double timestampSeconds = tuple.get_1().getX();
         swerveDrive.addVisionMeasurement(pos, timestampSeconds);
       }
@@ -141,7 +141,7 @@ public class SwerveSubsystem extends SubsystemBase {
       counter = 0;
       Tuple2<Pose2d> tuple = Limelight.update();
       if (tuple != null && Limelight.filterTargetByTa(false) && isRobotVBelowOne(false)) {
-        Pose2d pos = new Pose2d(tuple.get_0().getX(), tuple.get_0().getY(), SubsystemManager.getDriveBase().getHeading());
+        Pose2d pos = new Pose2d(tuple.get_0().getX(), tuple.get_0().getY(), getHeading());
         double timestampSeconds = tuple.get_1().getX();
 
         if(Limelight.hasTargetFromReef()) pos = new Pose2d(pos.getX(), pos.getY(), new Rotation2d(Math.toRadians(Limelight.getAngleFromMT1())));
@@ -664,7 +664,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     return (maxV - minV) -
-        ((Elevator.getCurrentPosition() / ElevatorConstants.maxPos) * (maxV - minV)) + minV;
+        ((Elevator.getCurrentPosition() / ElevatorConstants.EncoderMaxPos) * (maxV - minV)) + minV;
   }
 
   public static boolean isRobotVBelowOne(boolean inAuto) {

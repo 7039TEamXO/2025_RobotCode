@@ -21,8 +21,10 @@ public class Dashboard {
     private final static SendableChooser<String> chosenWristStates = new SendableChooser<>();
     private final static SendableChooser<String> chosenHandlerStates = new SendableChooser<>();
 
-    private static HttpCamera limelightCamera = new HttpCamera("limelight", "http://10.70.39.203:5801");
-    private static HttpCamera limelightClimbCamera = new HttpCamera("limelight-camera", "http://10.70.39.200:5801");
+    @SuppressWarnings("unused")
+    private static HttpCamera limelightCamera;
+    @SuppressWarnings("unused")
+    private static HttpCamera limelightClimbCamera;
 
     private static NetworkTableEntry acceptStateChanges;
     private static NetworkTableEntry acceptCoralChanges;
@@ -48,6 +50,9 @@ public class Dashboard {
             }
             autoChooser.addOption(name_state, name_state);
         }
+
+        limelightCamera = new HttpCamera("limelight", "http://10.70.39.203:5801");
+        limelightClimbCamera = new HttpCamera("limelight-camera", "http://10.70.39.200:5801");
 
         // -----------------------
           
@@ -92,21 +97,21 @@ public class Dashboard {
     }
 
     public static void update() {
-        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("X", SubsystemManager.getDriveBase().getPose().getX()));
-        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Y", SubsystemManager.getDriveBase().getPose().getY()));
-        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Rotation", SubsystemManager.getDriveBase().getPose().getRotation().getDegrees()));
-        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Front Left", SubsystemManager.getDriveBase().getSwerveDriveConfiguration().modules[0].getPosition().angle.getDegrees()));
-        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Front Right", SubsystemManager.getDriveBase().getSwerveDriveConfiguration().modules[1].getPosition().angle.getDegrees()));
-        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Back Left", SubsystemManager.getDriveBase().getSwerveDriveConfiguration().modules[2].getPosition().angle.getDegrees()));
-        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Back Right", SubsystemManager.getDriveBase().getSwerveDriveConfiguration().modules[3].getPosition().angle.getDegrees()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("X", SubsystemManager.getDrivebase().getPose().getX()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Y", SubsystemManager.getDrivebase().getPose().getY()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Rotation", SubsystemManager.getDrivebase().getPose().getRotation().getDegrees()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Front Left", SubsystemManager.getDrivebase().getSwerveDriveConfiguration().modules[0].getPosition().angle.getDegrees()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Front Right", SubsystemManager.getDrivebase().getSwerveDriveConfiguration().modules[1].getPosition().angle.getDegrees()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Back Left", SubsystemManager.getDrivebase().getSwerveDriveConfiguration().modules[2].getPosition().angle.getDegrees()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Back Right", SubsystemManager.getDrivebase().getSwerveDriveConfiguration().modules[3].getPosition().angle.getDegrees()));
 
         SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Elevator Raw", Elevator.getCurrentPosition()));
         SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Wrist Raw", Wrist.getCurrentPosition()));
-        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Tray Raw", Tray.getTrayPosition()));
-        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Climb Raw", Climb.getClimbPose()));
-        SmartDashboard.postListenerTask(() -> SmartDashboard.putBoolean("Coral IR", Handler.getCoralIr()));
-        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Algae IR (Processor)", Handler.getAlgaeProcIrValue()));
-        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Algae IR (Net)", Handler.getAlgaeNetIrValue()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Tray Raw", Tray.getCurrentPosition()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Climb Raw", Climb.getCurrentPosition()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putBoolean("Coral IR", Handler.getCoralIR()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Algae IR (Processor)", Handler.getAlgaeProcessorIR()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Algae IR (Net)", Handler.getAlgaeNetIR()));
 
         SmartDashboard.postListenerTask(() -> SmartDashboard.putString("Elevator State", SubsystemManager.getElevatorState().name()));
         SmartDashboard.postListenerTask(() -> SmartDashboard.putString("Chosen Algae ES", SubsystemManager.getChosenAlgaeElevatorState().name()));

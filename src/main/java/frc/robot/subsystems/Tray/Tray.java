@@ -1,15 +1,21 @@
 package frc.robot.subsystems.Tray;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import frc.robot.Robot;
+import frc.robot.subsystems.IO.TrayIO;
+import frc.robot.subsystems.IO.TrayIO.TrayIOInputs;
 
 public class Tray {
-    private static TalonFX trayMotor = new TalonFX(TrayConstants.TrayMotorID);
+    private static TrayIO io;
+    private static TrayIOInputs inputs = new TrayIOInputs();
+
+    // private static TalonFX trayMotor = new TalonFX(TrayConstants.TrayMotorID);
     private static double trayPosition = 0;
 
     // private static double startCounter = 0;
@@ -17,13 +23,21 @@ public class Tray {
 
     private static final MotionMagicVoltage motorRequest = new MotionMagicVoltage(0);
 
-    public static void init() {
-        trayMotor.setPosition(0);
+    public static void init(TrayIO _io) {
+        io = _io;
+
+        io.setPosition(0);
 
         setMotorConfigs();
+
+        io.updateInputs(inputs);
+        Logger.processInputs("Tray", inputs);
     }
 
     public static void operate(TrayState state) {
+        io.updateInputs(inputs);
+        Logger.processInputs("Tray", inputs);
+
         switch(state) {
             case BASE:
                 trayPosition = TrayConstants.TRAY_POS_BASE;
@@ -47,7 +61,7 @@ public class Tray {
             // }
         } else {
             // System.out.println(trayMotor.getPosition().getValueAsDouble());
-            trayMotor.setControl(motorRequest.withPosition(trayPosition));
+            io.setMotionMagic(motorRequest.withPosition(trayPosition));
 
         // }
         // if(SubsystemManager.getpsJoystick().getHID().getTouchpadButton() && state != TrayState.UP) {
@@ -79,10 +93,22 @@ public class Tray {
         talonFXConfigs.CurrentLimits.SupplyCurrentLimit = TrayConstants.SupplyCurrentLimit;
         talonFXConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-        trayMotor.getConfigurator().apply(talonFXConfigs);
+        io.applyTalonFXConfig(talonFXConfigs);
     }
 
-    public static double getTrayPosition(){
-        return trayMotor.getPosition().getValueAsDouble();
+    public static double getCurrentPosition(){
+        return inputs.position;
+    }
+
+    public static double getCurrentVelocity() {
+        return inputs.velocity;
+    }
+
+    public static double getCurrentVoltage() {
+        return inputs.appliedVolts;
+    }
+
+    public static void simulationPeriodic() {
+        io.simulationPeriodic();
     }
 }

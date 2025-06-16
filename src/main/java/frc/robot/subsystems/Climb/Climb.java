@@ -1,21 +1,35 @@
 package frc.robot.subsystems.Climb;
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import frc.robot.subsystems.IO.ClimbIO;
+import frc.robot.subsystems.IO.ClimbIO.ClimbIOInputs;
+
 public class Climb {
-    private static TalonFX climbMotor = new TalonFX(ClimbConstants.ClimbMotorID);
+    private static ClimbIO io;
+    private static ClimbIOInputs inputs = new ClimbIOInputs();
+
     private static double wantedPower = ClimbConstants.CLIMB_WANTED_POWER_STOP;
     // private static double wantedPose = 0;
 
-    public static void init() {
+    public static void init(ClimbIO _io) {
+        io = _io;
+
         setMotorConfigs();
-        climbMotor.setPosition(0);
+        io.setPosition(0);
+
+        io.updateInputs(inputs);
+        Logger.processInputs("Climb", inputs);
     }
 
     public static void operate(ClimbState state) {
+        io.updateInputs(inputs);
+        Logger.processInputs("Climb", inputs);
+
         switch (state) {
             case STOP:
                 wantedPower = ClimbConstants.CLIMB_WANTED_POWER_STOP;
@@ -36,10 +50,9 @@ public class Climb {
             case TRAVEL:
                 // wantedPose = ClimbConstants.CLIMB_TRAVEL_POSE;
                 break;
-
         }
         
-        climbMotor.setControl(new DutyCycleOut(wantedPower));
+        io.setMotionMagic(new DutyCycleOut(wantedPower));
     } 
 
     private static void setMotorConfigs() {
@@ -65,10 +78,22 @@ public class Climb {
         talonFXConfigs.CurrentLimits.SupplyCurrentLimit = ClimbConstants.SupplyCurrentLimit;
         talonFXConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-        climbMotor.getConfigurator().apply(talonFXConfigs);
+        io.applyTalonFXConfig(talonFXConfigs);
     }
 
-    public static double getClimbPose() {
-        return climbMotor.getPosition().getValueAsDouble();
+    public static double getCurrentPosition() {
+        return inputs.position;
+    }
+
+    public static double getCurrentVelocity() {
+        return inputs.velocity;
+    }
+
+    public static double getCurrentVoltage() {
+        return inputs.appliedVolts;
+    }
+
+    public static void simulationPeriodic() {
+        io.simulationPeriodic();
     }
 }

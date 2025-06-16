@@ -9,7 +9,7 @@
         "containers": [
           {
             "title": "Autos",
-            "x": 672.0,
+            "x": 704.0,
             "y": 0.0,
             "width": 576.0,
             "height": 128.0,
@@ -22,7 +22,7 @@
           },
           {
             "title": "Limelight",
-            "x": 672.0,
+            "x": 704.0,
             "y": 128.0,
             "width": 576.0,
             "height": 448.0,
@@ -37,7 +37,7 @@
             "title": "Climb Camera",
             "x": 0.0,
             "y": 0.0,
-            "width": 672.0,
+            "width": 704.0,
             "height": 576.0,
             "type": "Camera Stream",
             "properties": {
@@ -206,7 +206,7 @@
           },
           {
             "title": "Tray Raw",
-            "x": 1024.0,
+            "x": 1088.0,
             "y": 384.0,
             "width": 128.0,
             "height": 128.0,
@@ -222,7 +222,7 @@
             "title": "Climb Raw",
             "x": 896.0,
             "y": 384.0,
-            "width": 128.0,
+            "width": 192.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
@@ -234,9 +234,9 @@
           },
           {
             "title": "Elevator State",
-            "x": 512.0,
-            "y": 192.0,
-            "width": 192.0,
+            "x": 960.0,
+            "y": 64.0,
+            "width": 256.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
@@ -248,9 +248,9 @@
           },
           {
             "title": "Handler State",
-            "x": 832.0,
+            "x": 768.0,
             "y": 64.0,
-            "width": 320.0,
+            "width": 192.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
@@ -264,7 +264,7 @@
             "title": "Robot State",
             "x": 512.0,
             "y": 64.0,
-            "width": 320.0,
+            "width": 256.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
@@ -276,9 +276,9 @@
           },
           {
             "title": "Wrist State",
-            "x": 704.0,
+            "x": 896.0,
             "y": 192.0,
-            "width": 256.0,
+            "width": 192.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
@@ -290,9 +290,9 @@
           },
           {
             "title": "Climb State",
-            "x": 960.0,
+            "x": 1088.0,
             "y": 192.0,
-            "width": 192.0,
+            "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
@@ -397,6 +397,34 @@
               "data_type": "double",
               "show_submit_button": false
             }
+          },
+          {
+            "title": "Chosen Algae ES",
+            "x": 512.0,
+            "y": 192.0,
+            "width": 192.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Chosen Algae ES",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Current Algae ES",
+            "x": 704.0,
+            "y": 192.0,
+            "width": 192.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Current Algae ES",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": false
+            }
           }
         ]
       }
@@ -488,7 +516,7 @@
             "title": "Choose isAlgaeIn (Net)",
             "x": 384.0,
             "y": 192.0,
-            "width": 256.0,
+            "width": 320.0,
             "height": 128.0,
             "type": "Toggle Switch",
             "properties": {
@@ -499,7 +527,7 @@
           },
           {
             "title": "Choose isAlgaeIn (Processor)",
-            "x": 640.0,
+            "x": 704.0,
             "y": 192.0,
             "width": 256.0,
             "height": 128.0,
@@ -569,7 +597,7 @@
             "title": "Return Climb",
             "x": 640.0,
             "y": 64.0,
-            "width": 256.0,
+            "width": 320.0,
             "height": 128.0,
             "type": "Toggle Switch",
             "properties": {

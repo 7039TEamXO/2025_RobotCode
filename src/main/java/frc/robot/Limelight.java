@@ -7,6 +7,8 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.subsystems.SubsystemManager;
+import frc.robot.utils.LimelightHelpers;
+
 import org.opencv.core.Mat.Tuple2;
 
 public class Limelight {
@@ -41,13 +43,13 @@ public class Limelight {
 
         boolean doRejectUpdate = false;
 
-        double suppliedAngle = SubsystemManager.getDriveBase().getHeading().getDegrees();
+        double suppliedAngle = SubsystemManager.getDrivebase().getHeading().getDegrees();
         
         LimelightHelpers.SetRobotOrientation("limelight", suppliedAngle, 0, 0, 0, 0, 0);
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
       
         if (mt2 != null) {
-            if(Math.abs(SubsystemManager.getDriveBase().getRobotVelocity().omegaRadiansPerSecond) > 2 * Math.PI) // if our angular velocity is greater than 360 degrees per second, ignore vision updates
+            if(Math.abs(SubsystemManager.getDrivebase().getRobotVelocity().omegaRadiansPerSecond) > 2 * Math.PI) // if our angular velocity is greater than 360 degrees per second, ignore vision updates
                 doRejectUpdate = true;
         
             else if(mt2.tagCount == 0)
@@ -96,8 +98,8 @@ public class Limelight {
     }
 
     public static void printRobotPose() {
-        System.out.println("x: " +  SubsystemManager.getDriveBase().getPose().getX());
-        System.out.println("y: " +  SubsystemManager.getDriveBase().getPose().getY());
+        System.out.println("x: " +  SubsystemManager.getDrivebase().getPose().getX());
+        System.out.println("y: " +  SubsystemManager.getDrivebase().getPose().getY());
     }
 
     public static double getTx() {

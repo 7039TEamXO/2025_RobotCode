@@ -9,20 +9,28 @@ import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
+import frc.robot.Constants;
 import frc.robot.Dashboard;
 import frc.robot.Limelight;
 import frc.robot.RobotState;
+import frc.robot.Constants.Mode;
 import frc.robot.subsystems.Climb.Climb;
 import frc.robot.subsystems.Climb.ClimbState;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.Handler.HandlerState;
+import frc.robot.subsystems.IO.ClimbIO;
+import frc.robot.subsystems.IO.ElevatorIO;
+import frc.robot.subsystems.IO.HandlerIO;
+import frc.robot.subsystems.IO.TrayIO;
+import frc.robot.subsystems.IO.WristIO;
+import frc.robot.subsystems.SwerveDrive.ReefOrientation;
+import frc.robot.subsystems.SwerveDrive.SwerveSubsystem;
 import frc.robot.subsystems.Tray.Tray;
 import frc.robot.subsystems.Tray.TrayState;
+import frc.robot.subsystems.Wrist.Wrist;
 import frc.robot.subsystems.Handler.Handler;
-import frc.robot.subsystems.swervedrive.ReefOrientation;
-import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 public class SubsystemManager {
     private static final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
@@ -75,21 +83,23 @@ public class SubsystemManager {
     // public static Command selectLeftLimelight = Commands.runOnce(() -> Limelight.setPipeline(1));
     // public static Command selectMidLimelight = Commands.runOnce(() -> Limelight.setPipeline(2));
 
-    public static void init() {
+    public static void init(ElevatorIO elevatorIO, HandlerIO handlerIO, WristIO wristIO, ClimbIO climbIO, TrayIO trayIO) {
         state = RobotState.TRAVEL;
         lastState = state;
-        DeliveryManager.init();
-        Handler.init();
-        Climb.init();
-        Tray.init();
+        DeliveryManager.init(elevatorIO, wristIO);
+        Handler.init(handlerIO);
+        Climb.init(climbIO);
+        Tray.init(trayIO);
     }
 
     private static Command chooseFeeder;
     private static Command driveToReef;
 
     public static void operate(boolean onAuto) { 
+        if(Constants.CurrentMode != Mode.REAL) simulationPeriodic();
+
         if (ps4Joystick.getHID().getR3Button() || ps4Joystick.getHID().getR1Button() || ps4Joystick.getHID().getL1Button()) {
-            driveToReef = getDriveBase().driveToClosestReefPoint(ps4Joystick.getHID().getR1Button() ? ReefOrientation.RIGHT :
+            driveToReef = getDrivebase().driveToClosestReefPoint(ps4Joystick.getHID().getR1Button() ? ReefOrientation.RIGHT :
             ps4Joystick.getHID().getL1Button() ? ReefOrientation.LEFT : ReefOrientation.MIDDLE_FAR);
         } else if (driveToReef != null) {
             driveToReef.cancel();
@@ -97,7 +107,7 @@ public class SubsystemManager {
 
         if (ps4Joystick.R2().getAsBoolean()) {
             chooseFeeder = Handler.isAlgaeInNet() ?
-            chooseFeeder = getDriveBase().driveToNet(() -> SubsystemManager.getpsJoystick().getLeftX()) :
+            chooseFeeder = getDrivebase().driveToNet(() -> SubsystemManager.getpsJoystick().getLeftX()) :
                 drivebase.chooseFeeder(drivebase.getPose().getY());
             chooseFeeder.schedule();
         } else {
@@ -163,7 +173,7 @@ public class SubsystemManager {
                 chosenAlgaeElevatorState = ElevatorState.BASE;
             }
         }
-        Handler.updateHandlerIr(state, elevatorState, handlerState);
+        Handler.updateHandlerIR(state, elevatorState, handlerState);
         isPushClimb = false;
 
         isResetWrist = state != RobotState.CLIMB && psController_HID.getTouchpadButton();
@@ -288,9 +298,9 @@ public class SubsystemManager {
                         else handlerState = HandlerState.INTAKE_ALGAE;
                         // *****
                         elevatorState = chosenAlgaeElevatorState;
-                        driveToReef = getDriveBase().driveToClosestReefPoint(ReefOrientation.MIDDLE);
+                        driveToReef = getDrivebase().driveToClosestReefPoint(ReefOrientation.MIDDLE);
                     } else {
-                        driveToReef = getDriveBase().driveToClosestReefPoint(ReefOrientation.MIDDLE_VERY_FAR);
+                        driveToReef = getDrivebase().driveToClosestReefPoint(ReefOrientation.MIDDLE_VERY_FAR);
                     }
                 }
                 
@@ -342,8 +352,16 @@ public class SubsystemManager {
         elevatorState = choosenElevatorState == null ? elevatorState : choosenElevatorState;
         operate(true);
     }
+
+    private static void simulationPeriodic() {
+        Climb.simulationPeriodic();
+        Elevator.simulationPeriodic();
+        Handler.simulationPeriodic();
+        Tray.simulationPeriodic();
+        Wrist.simulationPeriodic();
+    }
     
-    // private static void waitForElevatorInAuto(boolean onAuto){
+    // private static void waitForElevatorInAuto(boolean onAuto) {
     //     isAutoElevatorCounting = onAuto && elevatorState != ElevatorState.LEVEL3 && lastElevatorState == ElevatorState.LEVEL3 ? true : isAutoElevatorCounting;
 
     //     if (isAutoElevatorCounting && onAuto) autoElevatorCounter++;
@@ -356,7 +374,7 @@ public class SubsystemManager {
     //     }
     // }
     
-    public static SwerveSubsystem getDriveBase() {
+    public static SwerveSubsystem getDrivebase() {
         return drivebase;
     }
 

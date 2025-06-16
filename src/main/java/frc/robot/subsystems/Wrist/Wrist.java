@@ -1,18 +1,23 @@
 package frc.robot.subsystems.Wrist;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import frc.robot.Dashboard;
 import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.Handler.Handler;
+import frc.robot.subsystems.IO.WristIO;
+import frc.robot.subsystems.IO.WristIO.WristIOInputs;
 
 public class Wrist {
-    private static TalonFX master = new TalonFX(WristConstants.WristMotorID);
+    private static WristIO io;
+    private static WristIOInputs inputs = new WristIOInputs();
+
     private static double wristPosition;
 
     private static int baseCounter = 0;
@@ -23,13 +28,21 @@ public class Wrist {
 
     private static final MotionMagicVoltage motorRequest = new MotionMagicVoltage(0);
     
-    public static void init() {
-        master.setPosition(0);
+    public static void init(WristIO _io) {
+        io = _io;
+
+        io.setPosition(0);
 
         setMotorConfigs();
+
+        io.updateInputs(inputs);
+        Logger.processInputs("Wrist", inputs);
     }
 
     public static void operate(WristState state) {
+        io.updateInputs(inputs);
+        Logger.processInputs("Wrist", inputs);
+
         switch (state) {
             case BASE:
                 wristPosition = WristConstants.WRIST_POS_BASE;
@@ -69,38 +82,42 @@ public class Wrist {
         } else {
             baseCounter = 0;
         }
-        if (master.getStatorCurrent().getValueAsDouble() > 27 && baseCounter > 10 && !Handler.isAlgaeInNet() && !Handler.isAlgaeInProcessor() && getWristVelocity() < 1) {
-            master.setPosition(0);
+        if (inputs.currentAmps > 27 && baseCounter > 10 && !Handler.isAlgaeInNet() && !Handler.isAlgaeInProcessor() && getCurrentVelocity() < 1) {
+            io.setPosition(0);
         }
 
-        if ((state == WristState.BASE && master.getStatorCurrent().getValueAsDouble() < 28 && isMoveWrist) && (!Handler.isAlgaeInProcessor() && !Handler.isAlgaeInNet())){
-            master.setControl(new DutyCycleOut(-0.2));
+        if ((state == WristState.BASE && inputs.currentAmps < 28 && isMoveWrist) && (!Handler.isAlgaeInProcessor() && !Handler.isAlgaeInNet())){
+            io.setMotionMagic(new DutyCycleOut(-0.2));
         } else {
             isMoveWrist = false;
-            master.setControl(motorRequest.withPosition(wristPosition + Dashboard.addValueToWrist()));
+            io.setMotionMagic(motorRequest.withPosition(wristPosition + Dashboard.addValueToWrist()));
         }
 
         lastState = state;
         if (SubsystemManager.getResetWrist()) {
-            master.setControl(new DutyCycleOut(-0.2));
-            master.setPosition(0);
+            io.setMotionMagic(new DutyCycleOut(-0.2));
+            io.setPosition(0);
         }
     }
-    
+
     public static double getCurrentPosition() {
-        return master.getPosition().getValueAsDouble();
+        return inputs.position;
     }
 
-    public static void resetEncoder(){
-        master.setPosition(0);
+    public static void resetEncoder() {
+        io.setPosition(0);
     }
 
-    public static boolean isWristAtSetPoint(){
-        return Math.abs(wristPosition - master.getPosition().getValueAsDouble()) < 1;
+    public static boolean isWristAtSetPoint() {
+        return Math.abs(wristPosition - inputs.position) < WristConstants.WRIST_POS_TOLERANCE;
     }
 
-    public static double getWristVelocity(){
-        return Math.abs(master.getVelocity().getValueAsDouble());
+    public static double getCurrentVelocity() {
+        return Math.abs(inputs.velocity);
+    }
+
+    public static double getCurrentVoltage() {
+        return Math.abs(inputs.appliedVolts);
     }
 
     private static void setMotorConfigs() {
@@ -126,6 +143,10 @@ public class Wrist {
         talonFXConfigs.CurrentLimits.SupplyCurrentLimit = WristConstants.SupplyCurrentLimit;
         talonFXConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-        master.getConfigurator().apply(talonFXConfigs);
+        io.applyTalonFXConfig(talonFXConfigs);
+    }
+
+    public static void simulationPeriodic() {
+        io.simulationPeriodic();
     }
 }

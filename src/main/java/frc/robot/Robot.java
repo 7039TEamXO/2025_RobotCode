@@ -9,7 +9,17 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants.Mode;
 import frc.robot.subsystems.SubsystemManager;
+import frc.robot.subsystems.IO.Real.ClimbReal;
+import frc.robot.subsystems.IO.Real.ElevatorReal;
+import frc.robot.subsystems.IO.Real.HandlerReal;
+import frc.robot.subsystems.IO.Real.TrayReal;
+import frc.robot.subsystems.IO.Real.WristReal;
+import frc.robot.subsystems.IO.Sim.ClimbSim;
+import frc.robot.subsystems.IO.Sim.HandlerSim;
+import frc.robot.subsystems.IO.Sim.TraySim;
+import frc.robot.subsystems.IO.Sim.WristSim;
 import edu.wpi.first.net.WebServer;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -46,12 +56,13 @@ public class Robot extends LoggedRobot {
     switch (Constants.CurrentMode) {
       case REAL:
         // Running on a real robot, log to a USB stick ("/U/logs")
-        Logger.addDataReceiver(new WPILOGWriter());
+        Logger.addDataReceiver(new WPILOGWriter("/home/lvuser/logs"));
         Logger.addDataReceiver(new NT4Publisher());
         break;
 
       case SIM:
         // Running a physics simulator, log to NT
+        Logger.addDataReceiver(new WPILOGWriter("logs"));
         Logger.addDataReceiver(new NT4Publisher());
         break;
 
@@ -78,7 +89,12 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotInit()
   {
-    SubsystemManager.init();
+    if(Constants.CurrentMode == Mode.REAL) {
+      SubsystemManager.init(new ElevatorReal(), new HandlerReal(), new WristReal(), new ClimbReal(), new TrayReal());
+    } else {
+      SubsystemManager.init(new frc.robot.subsystems.IO.Sim.ElevatorSim(0.02), new HandlerSim(0.02), 
+        new WristSim(0.02), new ClimbSim(0.02), new TraySim(0.02));
+    }
     
     Dashboard.init();
     // cameraSetup();
@@ -140,7 +156,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledPeriodic()
   {
-    SubsystemManager.getDriveBase().isAuto = false;
+    SubsystemManager.getDrivebase().isAuto = false;
   }
 
   /**
@@ -174,7 +190,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousPeriodic()
   { 
-    SubsystemManager.getDriveBase().isAuto = true;
+    SubsystemManager.getDrivebase().isAuto = true;
     SubsystemManager.operate(true);
   }
 
@@ -233,7 +249,7 @@ public class Robot extends LoggedRobot {
   }
 
   public static boolean isAuto() {
-    return SubsystemManager.getDriveBase().isAuto;
+    return SubsystemManager.getDrivebase().isAuto;
   }
 
   // LEGACY CODE

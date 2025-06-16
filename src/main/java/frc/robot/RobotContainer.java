@@ -57,7 +57,7 @@ public class RobotContainer
   // left stick controls translation
   // right stick controls the angular velocity of the robot
 
-  Command driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
+  Command driveFieldOrientedAngularVelocity = SubsystemManager.getDrivebase().driveCommand( // default
       () -> MathUtil.applyDeadband(-SubsystemManager.getpsJoystick().getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
       () -> MathUtil.applyDeadband(-SubsystemManager.getpsJoystick().getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
       () -> -SubsystemManager.getpsJoystick().getRightX());
@@ -95,20 +95,20 @@ public class RobotContainer
    */
   private void configureBindings()
   {    
-    SubsystemManager.getpsJoystick().PS().onTrue((Commands.runOnce(SubsystemManager.getDriveBase()::zeroGyroWithAlliance)));
+    SubsystemManager.getpsJoystick().PS().onTrue((Commands.runOnce(SubsystemManager.getDrivebase()::zeroGyroWithAlliance)));
       // we will use it in case our rotation is be messed up
   }
 
   private void configureDriveCommand() {
     if (teamColorIsBlue()) {
-      SubsystemManager.getDriveBase().zeroGyro();
-      SubsystemManager.getDriveBase().resetOdometry(new Pose2d(SubsystemManager.getDriveBase().getPose().getTranslation(), Rotation2d.fromDegrees(180)));
-      driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
+      SubsystemManager.getDrivebase().zeroGyro();
+      SubsystemManager.getDrivebase().resetOdometry(new Pose2d(SubsystemManager.getDrivebase().getPose().getTranslation(), Rotation2d.fromDegrees(180)));
+      driveFieldOrientedAngularVelocity = SubsystemManager.getDrivebase().driveCommand( // default
         () -> (modifyAxis(-SubsystemManager.getpsJoystick().getLeftY())),
         () -> (modifyAxis(-SubsystemManager.getpsJoystick().getLeftX())),
         () -> (modifyAxis(-SubsystemManager.getpsJoystick().getRightX())));
     } else {
-      driveFieldOrientedAngularVelocity = SubsystemManager.getDriveBase().driveCommand( // default
+      driveFieldOrientedAngularVelocity = SubsystemManager.getDrivebase().driveCommand( // default
         () -> (modifyAxis(SubsystemManager.getpsJoystick().getLeftY())),
         () -> (modifyAxis(SubsystemManager.getpsJoystick().getLeftX())),
         () -> (modifyAxis(-SubsystemManager.getpsJoystick().getRightX())));
@@ -126,7 +126,7 @@ public class RobotContainer
   public Command getAutonomousCommand()
   {
     // An example command will be run in autonomous
-    return SubsystemManager.getDriveBase().getAutonomousCommand(Dashboard.getSelectedAutonomy());
+    return SubsystemManager.getDrivebase().getAutonomousCommand(Dashboard.getSelectedAutonomy());
   }
 
   public void setDriveMode()
@@ -134,7 +134,7 @@ public class RobotContainer
 
   public void setMotorBrake(boolean brake)
   {
-    SubsystemManager.getDriveBase().setMotorBrake(brake);
+    SubsystemManager.getDrivebase().setMotorBrake(brake);
   }
 
   public static boolean teamColorIsBlue() {

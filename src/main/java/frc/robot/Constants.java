@@ -21,8 +21,7 @@ import swervelib.math.Matter;
  */
 public final class Constants
 {
-  public static final Mode SimMode = Mode.SIM;
-  public static final Mode CurrentMode = RobotBase.isReal() ? Mode.REAL : SimMode;
+  public static final Mode CurrentMode = RobotBase.isReal() ? Mode.REAL : (RobotBase.isSimulation() ? Mode.SIM : Mode.REPLAY);
 
   public static enum Mode {
     /** Running on a real robot. */

@@ -6,6 +6,8 @@ import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.Handler.Handler;
+import frc.robot.subsystems.IO.ElevatorIO;
+import frc.robot.subsystems.IO.WristIO;
 import frc.robot.subsystems.Wrist.Wrist;
 import frc.robot.subsystems.Wrist.WristState;
 
@@ -13,9 +15,9 @@ public class DeliveryManager {
     private static ElevatorState elevatorState = ElevatorState.BASE;
     private static WristState wristState = WristState.BASE;
 
-    public static void init() {
-        Wrist.init();
-        Elevator.init();
+    public static void init(ElevatorIO elevatorIO, WristIO wristIO) {
+        Wrist.init(wristIO);
+        Elevator.init(elevatorIO);
     }
 
     public static ElevatorState getElevatorState() {
