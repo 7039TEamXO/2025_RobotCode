@@ -94,11 +94,6 @@ public class HandlerSim implements HandlerIO {
     }
 
     @Override
-    public double getStatorCurrent() {
-        return master.getStatorCurrent().getValueAsDouble();
-    }
-
-    @Override
     public void simulationPeriodic() {
         masterSim.setSupplyVoltage(RobotController.getBatteryVoltage());
         

@@ -158,7 +158,7 @@ public class Handler {
 
         // ALGAE PROCESSOR
 
-        if ((algaeProcIRValue > HandlerConstants.ALGAE_PROC_IR_IN_VALUE || Math.abs(io.getStatorCurrent()) > 80) && state == RobotState.INTAKE 
+        if ((algaeProcIRValue > HandlerConstants.ALGAE_PROC_IR_IN_VALUE || Math.abs(inputs.currentAmps) > 80) && state == RobotState.INTAKE 
             && Wrist.isWristAtSetPoint() && (elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR || elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR) && !isCoralIn) {
             isAlgaeInProcessor = true;
         } else if (algaeDepleteCounter > 35) {
@@ -171,7 +171,7 @@ public class Handler {
 
         // ALGAE NET
 
-        if((algaeNetIRValue > HandlerConstants.ALGAE_NET_IR_IN_VALUE || Math.abs(io.getStatorCurrent()) > 80) && Wrist.isWristAtSetPoint()
+        if((algaeNetIRValue > HandlerConstants.ALGAE_NET_IR_IN_VALUE || Math.abs(inputs.currentAmps) > 80) && Wrist.isWristAtSetPoint()
             && state == RobotState.INTAKE && (elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET) && !isCoralIn) {
             isAlgaeInNet = true;
         } else if(algaeDepleteCounter > 35 || SubsystemManager.getpsJoystick().getHID().getCrossButton()) {

@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Constants.Mode;
 import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.IO.Real.ClimbReal;
 import frc.robot.subsystems.IO.Real.ElevatorReal;
@@ -20,9 +19,17 @@ import frc.robot.subsystems.IO.Sim.ClimbSim;
 import frc.robot.subsystems.IO.Sim.HandlerSim;
 import frc.robot.subsystems.IO.Sim.TraySim;
 import frc.robot.subsystems.IO.Sim.WristSim;
+import frc.robot.subsystems.IO.Stub.ClimbStub;
+import frc.robot.subsystems.IO.Stub.ElevatorStub;
+import frc.robot.subsystems.IO.Stub.HandlerStub;
+import frc.robot.subsystems.IO.Stub.TrayStub;
+import frc.robot.subsystems.IO.Stub.WristStub;
 import edu.wpi.first.net.WebServer;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
+
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -76,6 +83,9 @@ public class Robot extends LoggedRobot {
     }
 
     Logger.start();
+
+    DataLogManager.start();
+    DriverStation.startDataLog(DataLogManager.getLog());
   }
 
   public static Robot getInstance()
@@ -89,11 +99,17 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotInit()
   {
-    if(Constants.CurrentMode == Mode.REAL) {
-      SubsystemManager.init(new ElevatorReal(), new HandlerReal(), new WristReal(), new ClimbReal(), new TrayReal());
-    } else {
-      SubsystemManager.init(new frc.robot.subsystems.IO.Sim.ElevatorSim(0.02), new HandlerSim(0.02), 
-        new WristSim(0.02), new ClimbSim(0.02), new TraySim(0.02));
+    switch(Constants.CurrentMode) {
+      case REAL:
+        SubsystemManager.init(new ElevatorReal(), new HandlerReal(), new WristReal(), new ClimbReal(), new TrayReal());
+        break;
+      case REPLAY: 
+        SubsystemManager.init(new ElevatorStub(), new HandlerStub(), new WristStub(), new ClimbStub(), new TrayStub());
+        break;
+      case SIM:
+        SubsystemManager.init(new frc.robot.subsystems.IO.Sim.ElevatorSim(0.02), new HandlerSim(0.02), 
+          new WristSim(0.02), new ClimbSim(0.02), new TraySim(0.02));
+        break;
     }
     
     Dashboard.init();

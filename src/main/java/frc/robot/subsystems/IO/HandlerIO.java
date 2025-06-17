@@ -48,7 +48,5 @@ public interface HandlerIO extends AutoCloseable {
 
     public void setMotionMagic(DutyCycleOut request);
 
-    public double getStatorCurrent();
-
     public void simulationPeriodic();
 }
