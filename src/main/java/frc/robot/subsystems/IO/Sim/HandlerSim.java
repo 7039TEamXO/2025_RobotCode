@@ -45,7 +45,7 @@ public class HandlerSim implements HandlerIO {
         masterSim = master.getSimState();
         motorSimModel = new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
-                DCMotor.getKrakenX60Foc(1), 0.01, GearRatio
+                DCMotor.getKrakenX60Foc(1), 0.001, GearRatio
             ),
             DCMotor.getKrakenX60Foc(1)
         );

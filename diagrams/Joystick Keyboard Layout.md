@@ -23,6 +23,6 @@ Left joystick: l
 PS button: ;
 Right joystick: '
 
-wsadeq
+dasweq
 gbhyjkuio[l';p
 8?9?t?7?

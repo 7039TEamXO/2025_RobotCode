@@ -8,7 +8,9 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import frc.robot.Constants;
 import frc.robot.Dashboard;
+import frc.robot.Constants.Mode;
 import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.Handler.Handler;
 import frc.robot.subsystems.IO.WristIO;
@@ -86,7 +88,7 @@ public class Wrist {
             io.setPosition(0);
         }
 
-        if ((state == WristState.BASE && inputs.currentAmps < 28 && isMoveWrist) && (!Handler.isAlgaeInProcessor() && !Handler.isAlgaeInNet())){
+        if ((Constants.CurrentMode != Mode.SIM) && (state == WristState.BASE && inputs.currentAmps < 28 && isMoveWrist) && (!Handler.isAlgaeInProcessor() && !Handler.isAlgaeInNet())){
             io.setMotionMagic(new DutyCycleOut(-0.2));
         } else {
             isMoveWrist = false;
@@ -95,7 +97,7 @@ public class Wrist {
 
         lastState = state;
         if (SubsystemManager.getResetWrist()) {
-            io.setMotionMagic(new DutyCycleOut(-0.2));
+            if(Constants.CurrentMode != Mode.SIM) io.setMotionMagic(new DutyCycleOut(-0.2));
             io.setPosition(0);
         }
     }

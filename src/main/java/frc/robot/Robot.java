@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.subsystems.RobotModel;
 import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.IO.Real.ClimbReal;
 import frc.robot.subsystems.IO.Real.ElevatorReal;
@@ -141,6 +142,7 @@ public class Robot extends LoggedRobot {
     // System.out.println(RobotContainer.teamColorIsBlue());
     LED.setLedData();
     Dashboard.update();
+    RobotModel.periodic();
 
     // System.out.println(SubsystemManager.getDriveBase().getPose().getY());
 

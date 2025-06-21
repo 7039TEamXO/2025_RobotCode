@@ -21,12 +21,12 @@ public class ElevatorSim implements ElevatorIO {
 
     private final double periodicDt;
 
-    private class ElevatorSimConstants {
-        private static final double GearRatio = 10.0;
-        private static final double DrumRadius = 0.07;
-        private static final double ElevatorMass = 10.0;
-        private static final double MetersPerRotation = DrumRadius * 2 * Math.PI / GearRatio;
-        private static final double MaxHeight = 2 * ElevatorConstants.EncoderMaxPos * MetersPerRotation;
+    public class ElevatorSimConstants {
+        public static final double GearRatio = 8.954; // COMPUTED IN ORDER TO PRODUCE PROPER MaxHeight
+        public static final double DrumRadius = 0.1;
+        public static final double ElevatorMass = 10.0;
+        public static final double MetersPerRotation = DrumRadius * 2 * Math.PI / GearRatio;
+        public static final double MaxHeight = ElevatorConstants.ELEVATOR_POSE_LEVEL3 * MetersPerRotation;
     }
 
     public ElevatorSim(double _periodicDt) {
