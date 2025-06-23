@@ -97,18 +97,6 @@ public class Limelight {
         return pose;
     }
 
-    public static void printRobotPose() {
-        System.out.println("x: " +  SubsystemManager.getDrivebase().getPose().getX());
-        System.out.println("y: " +  SubsystemManager.getDrivebase().getPose().getY());
-    }
-
-    public static double getTx() {
-        return limelightTable.getEntry("tx").getNumber(0).doubleValue();
-    }
-    public static double getTy() {
-        return limelightTable.getEntry("ty").getNumber(0).doubleValue();
-    }
-
     public static void setPointOfInterest(double offsetX) {
         LimelightHelpers.setFiducial3DOffset("limelight", offsetX, 0, 0);
     }
@@ -129,11 +117,15 @@ public class Limelight {
         LimelightHelpers.setPriorityTagID("limelight", -1);    
     }
 
-    public static double getTa() {
+    public static double getTX() {
+        return LimelightHelpers.getTX("limelight");
+    }
+
+    public static double getTA() {
         return LimelightHelpers.getTA("limelight");
     }
 
-    public static boolean filterTargetByTa(boolean inAuto) {
-        return getTa() > 0.15 && hasTarget();
+    public static boolean filterTargetByTA() {
+        return getTA() > 0.15 && hasTarget();
     }
 }

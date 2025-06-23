@@ -53,6 +53,7 @@ public class Robot extends LoggedRobot {
   private boolean isFirstTimeAtDisabled = true;
 
   private RobotContainer robotContainer;
+  private static boolean onAuto;
 
   private Timer disabledTimer;
 
@@ -174,7 +175,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledPeriodic()
   {
-    SubsystemManager.getDrivebase().isAuto = false;
+    onAuto = false;
   }
 
   /**
@@ -208,7 +209,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousPeriodic()
   { 
-    SubsystemManager.getDrivebase().isAuto = true;
+    onAuto = true;
     SubsystemManager.operate(true);
   }
 
@@ -267,7 +268,7 @@ public class Robot extends LoggedRobot {
   }
 
   public static boolean isAuto() {
-    return SubsystemManager.getDrivebase().isAuto;
+    return onAuto;
   }
 
   // LEGACY CODE

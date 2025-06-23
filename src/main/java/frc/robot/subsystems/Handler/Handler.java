@@ -12,6 +12,7 @@ import frc.robot.subsystems.IO.HandlerIO;
 import frc.robot.subsystems.IO.HandlerIO.HandlerIOInputs;
 import frc.robot.subsystems.Wrist.Wrist;
 import frc.robot.Dashboard;
+import frc.robot.Robot;
 import frc.robot.RobotState;
 
 
@@ -81,7 +82,7 @@ public class Handler {
                 break;
 
             case INTAKE_CORAL:
-                if(SubsystemManager.getDrivebase().isAuto) {
+                if(Robot.isAuto()) {
                     power = HandlerConstants.HANDLER_POWER_INTAKE_CORAL_AUTO;
                 } else{
                     power = HandlerConstants.HANDLER_POWER_INTAKE_CORAL_TELEOP;
@@ -115,7 +116,7 @@ public class Handler {
             io.setMotionMagic(new DutyCycleOut(-HandlerConstants.HANDLER_POWER_PUSH_BACK_CORAL));
         }
         else if (state != HandlerState.DEPLETE_PROCESSOR && SubsystemManager.getElevatorState() == ElevatorState.LEVEL3 && 
-             Math.abs(getHandlerMotorDistance() - CurrentHandlerEncoderPosition) <= HandlerConstants.LEVEL4_CORAL_PUSH_DISTANCE) {
+             Math.abs(getHandlerMotorDistance() - CurrentHandlerEncoderPosition) <= HandlerTuning.LEVEL4_CORAL_PUSH_DISTANCE_get()) {
             io.setMotionMagic(new DutyCycleOut(-HandlerConstants.HANDLER_POWER_PUSH_BACK_CORAL));
         } 
         else {
@@ -138,7 +139,7 @@ public class Handler {
             coralIntakeCounter = 0;
         }
 
-        if (!coralIRValue && state != RobotState.DEPLETE && coralIntakeCounter > HandlerConstants.CORAL_IN_DEBOUNCE_COUNTER){ //16
+        if (!coralIRValue && state != RobotState.DEPLETE && coralIntakeCounter > HandlerTuning.CORAL_IN_DEBOUNCE_COUNTER_get()) {
             isCoralIn = true;
             CurrentHandlerEncoderPosition = getHandlerMotorDistance();
         }
@@ -158,29 +159,21 @@ public class Handler {
 
         // ALGAE PROCESSOR
 
-        if ((algaeProcIRValue > HandlerConstants.ALGAE_PROC_IR_IN_VALUE || Math.abs(inputs.currentAmps) > 80) && state == RobotState.INTAKE 
+        if ((algaeProcIRValue > HandlerTuning.ALGAE_PROC_IR_IN_VALUE_get() || Math.abs(inputs.currentAmps) > 80) && state == RobotState.INTAKE 
             && Wrist.isWristAtSetPoint() && (elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR || elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR) && !isCoralIn) {
             isAlgaeInProcessor = true;
         } else if (algaeDepleteCounter > 35) {
             isAlgaeInProcessor = false;
         }
 
-        // isAlgaeInProcessor = ((algaeProcIrValue > HandlerConstants.ALGAE_PROC_IR_IN_VALUE && state == RobotState.INTAKE && Wrist.isWristAtSetPoint()
-        //     && (elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR || elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR)) || lastIsAlgaeInProcessor) 
-        //     && algaeDepleteCounter < 35 && !isCoralIn;
-
         // ALGAE NET
 
-        if((algaeNetIRValue > HandlerConstants.ALGAE_NET_IR_IN_VALUE || Math.abs(inputs.currentAmps) > 80) && Wrist.isWristAtSetPoint()
+        if((algaeNetIRValue > HandlerTuning.ALGAE_NET_IR_IN_VALUE_get() || Math.abs(inputs.currentAmps) > 80) && Wrist.isWristAtSetPoint()
             && state == RobotState.INTAKE && (elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET) && !isCoralIn) {
             isAlgaeInNet = true;
-        } else if(algaeDepleteCounter > 35 || SubsystemManager.getpsJoystick().getHID().getCrossButton()) {
+        } else if(algaeDepleteCounter > 35 || SubsystemManager.getPSJoystick().getHID().getCrossButton()) {
             isAlgaeInNet = false;
         }
-
-        // isAlgaeInNet = ((algaeNetIrValue > HandlerConstants.ALGAE_NET_IR_IN_VALUE || Math.abs(master.getStatorCurrent().getValueAsDouble()) > 80) && state == RobotState.INTAKE
-        //     && Wrist.isWristAtSetPoint() && (elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET) || lastIsAlgaeInNet) 
-        //     && algaeDepleteCounter < 35 && !isCoralIn && !SubsystemManager.getpsJoystick().getHID().getCrossButton();
 
         isFinishedDepletingAlgae = (!isAlgaeInProcessor && lastIsAlgaeInProcessor) || (!isAlgaeInNet && lastIsAlgaeInNet);
 

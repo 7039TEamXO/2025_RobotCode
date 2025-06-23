@@ -7,7 +7,9 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import frc.robot.Constants;
 import frc.robot.Dashboard;
+import frc.robot.Constants.TuningMode;
 import frc.robot.subsystems.IO.ElevatorIO;
 import frc.robot.subsystems.IO.ElevatorIO.ElevatorIOInputs;
 
@@ -21,7 +23,7 @@ public class Elevator {
     public static void init(ElevatorIO _io) {
         io = _io;
 
-        io.setLeadMotorPosition(0); // we start our position from 0
+        io.setLeadMotorPosition(0);
         io.setFollowerMotorPosition(0);
 
         setMotorConfigs();
@@ -33,6 +35,8 @@ public class Elevator {
     public static void operate(ElevatorState state) {
         io.updateInputs(inputs);
         Logger.processInputs("Elevator", inputs);
+
+        if(Constants.CurrentTuningMode == TuningMode.TUNE) setMotorConfigs();
 
         switch (state) {
             case BASE: 
@@ -84,8 +88,8 @@ public class Elevator {
                 elevatorPosition = ElevatorConstants.ELEVATOR_POSE_ALGAE_LOW_NET;
                 break;
         }
+
         elevatorPosition = elevatorPosition + Dashboard.addValueToElevator();
-        
         io.setLeadMotionMagic(motorRequest.withPosition(elevatorPosition));
     }
 
@@ -106,18 +110,17 @@ public class Elevator {
 
         var rightTalonFXConfigs = new TalonFXConfiguration();
         var slot0Configs = rightTalonFXConfigs.Slot0;
-        slot0Configs.kS = ElevatorConstants.kS; // Add 0.25 V output to overcome static friction
-        slot0Configs.kV = ElevatorConstants.kV; // A velocity target of 1 rps results in 0.12 V output
-        slot0Configs.kA = ElevatorConstants.kA; // An acceleration of 1 rps/s requires 0.01 V output
-        slot0Configs.kP = ElevatorConstants.kP; // A position error of 2.5 rotations results in 12 V output
-        slot0Configs.kI = ElevatorConstants.kI; // no output for integrated error
-        slot0Configs.kD = ElevatorConstants.kD; // A velocity error of 1 rps results in 0.1 V output
+        slot0Configs.kS = ElevatorTuning.kS_get();
+        slot0Configs.kV = ElevatorTuning.kV_get();
+        slot0Configs.kA = ElevatorTuning.kA_get();
+        slot0Configs.kP = ElevatorTuning.kP_get();
+        slot0Configs.kI = ElevatorTuning.kI_get();
+        slot0Configs.kD = ElevatorTuning.kD_get();
 
-        // set Motion Magic settings
         var motionMagicConfigs = rightTalonFXConfigs.MotionMagic;
-        motionMagicConfigs.MotionMagicCruiseVelocity = ElevatorConstants.MotionMagicCruiseVelocity; // Target cruise velocity of 80 rps
-        motionMagicConfigs.MotionMagicAcceleration = ElevatorConstants.MotionMagicAcceleration; // Target acceleration of 160 rps/s (0.5 seconds)
-        motionMagicConfigs.MotionMagicJerk = ElevatorConstants.MotionMagicJerk; // Target jerk of 1600 rps/s/s (0.1 seconds)
+        motionMagicConfigs.MotionMagicCruiseVelocity = ElevatorTuning.MotionMagicCruiseVelocity_get();
+        motionMagicConfigs.MotionMagicAcceleration = ElevatorTuning.MotionMagicAcceleration_get();
+        motionMagicConfigs.MotionMagicJerk = ElevatorTuning.MotionMagicJerk_get();
         
         rightTalonFXConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         rightTalonFXConfigs.CurrentLimits.StatorCurrentLimit = ElevatorConstants.StatorCurrentLimit;

@@ -28,8 +28,6 @@ public class HandlerConstants {
     public static final int CORAL_IN_DEBOUNCE_COUNTER = 5;
     public static final double LEVEL4_CORAL_PUSH_DISTANCE = 1.5;
 
-    public static final double ALGAE_PROC_IR_IN_VALUE = 1300;// 237
+    public static final double ALGAE_PROC_IR_IN_VALUE = 1300; // 237
     public static final double ALGAE_NET_IR_IN_VALUE = 1400; // CHANGE [!]
-
-    public static final double ALGAE_IN_CURRENT = 50; // REMOVE [!]
 }

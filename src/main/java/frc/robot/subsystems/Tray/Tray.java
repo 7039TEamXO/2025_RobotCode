@@ -7,6 +7,8 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import frc.robot.Constants;
+import frc.robot.Constants.TuningMode;
 import frc.robot.Robot;
 import frc.robot.subsystems.IO.TrayIO;
 import frc.robot.subsystems.IO.TrayIO.TrayIOInputs;
@@ -37,6 +39,8 @@ public class Tray {
     public static void operate(TrayState state) {
         io.updateInputs(inputs);
         Logger.processInputs("Tray", inputs);
+
+        if(Constants.CurrentTuningMode == TuningMode.TUNE) setMotorConfigs();
 
         switch(state) {
             case BASE:
@@ -76,18 +80,18 @@ public class Tray {
         talonFXConfigs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         var slot0Configs = talonFXConfigs.Slot0;
-        slot0Configs.kS = TrayConstants.kS; // Add 0.25 V output to overcome static friction
-        slot0Configs.kV = TrayConstants.kV; // A velocity target of 1 rps results in 0.12 V output
-        slot0Configs.kA = TrayConstants.kA; // An acceleration of 1 rps/s requires 0.01 V output
-        slot0Configs.kP = TrayConstants.kP; // A position error of 2.5 rotations results in 12 V output
-        slot0Configs.kI = TrayConstants.kI; // no output for integrated error
-        slot0Configs.kD = TrayConstants.kD; // A velocity error of 1 rps results in 0.1 V output
+        slot0Configs.kS = TrayTuning.kS_get(); // Add 0.25 V output to overcome static friction
+        slot0Configs.kV = TrayTuning.kV_get(); // A velocity target of 1 rps results in 0.12 V output
+        slot0Configs.kA = TrayTuning.kA_get(); // An acceleration of 1 rps/s requires 0.01 V output
+        slot0Configs.kP = TrayTuning.kP_get(); // A position error of 2.5 rotations results in 12 V output
+        slot0Configs.kI = TrayTuning.kI_get(); // no output for integrated error
+        slot0Configs.kD = TrayTuning.kD_get(); // A velocity error of 1 rps results in 0.1 V output
 
         // set Motion Magic settings
         var motionMagicConfigs = talonFXConfigs.MotionMagic;
-        motionMagicConfigs.MotionMagicCruiseVelocity = TrayConstants.MotionMagicCruiseVelocity; // Target cruise velocity of 80 rps
-        motionMagicConfigs.MotionMagicAcceleration = TrayConstants.MotionMagicAcceleration; // Target acceleration of 160 rps/s (0.5 seconds)
-        motionMagicConfigs.MotionMagicJerk = TrayConstants.MotionMagicJerk; // Target jerk of 1600 rps/s/s (0.1 seconds)
+        motionMagicConfigs.MotionMagicCruiseVelocity = TrayTuning.MotionMagicCruiseVelocity_get(); // Target cruise velocity of 80 rps
+        motionMagicConfigs.MotionMagicAcceleration = TrayTuning.MotionMagicAcceleration_get(); // Target acceleration of 160 rps/s (0.5 seconds)
+        motionMagicConfigs.MotionMagicJerk = TrayTuning.MotionMagicJerk_get(); // Target jerk of 1600 rps/s/s (0.1 seconds)
         talonFXConfigs.CurrentLimits.StatorCurrentLimit = TrayConstants.StatorCurrentLimit;
         talonFXConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
         talonFXConfigs.CurrentLimits.SupplyCurrentLimit = TrayConstants.SupplyCurrentLimit;

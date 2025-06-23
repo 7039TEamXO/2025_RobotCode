@@ -5,17 +5,13 @@
   "pathFolders": [
     "DoubleAlgaeRight",
     "PushLeft",
-    "TripleCoralLeftBlue",
-    "TripleCoralLeftBlueCopy",
-    "TripleCoralLeftRed",
-    "TripleCoralRightBlue",
-    "TripleCoralRightRed"
+    "TripleCoralLeft",
+    "TripleCoralRight"
   ],
   "autoFolders": [
     "DoubleAlgae",
-    "SingleAlgae",
     "SafeCoral",
-    "Test",
+    "SingleAlgae",
     "TripleCoral"
   ],
   "defaultMaxVel": 3.6,
