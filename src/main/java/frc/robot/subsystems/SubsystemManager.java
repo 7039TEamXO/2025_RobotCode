@@ -95,12 +95,17 @@ public class SubsystemManager {
     private static Command driveToReef;
     private static Command testDrive;
 
+    private static boolean isDriveToPoseActive;
+
     public static void operate(boolean onAuto) { 
         if(Constants.CurrentMode != Mode.REAL) simulationPeriodic();
+
+        isDriveToPoseActive = false;
 
         if (psControllerHID.getR3Button() || psControllerHID.getR1Button() || psControllerHID.getL1Button()) {
             driveToReef = drivebase.driveToClosestReefPoint(psControllerHID.getR1Button() ? ReefOrientation.RIGHT :
             psControllerHID.getL1Button() ? ReefOrientation.LEFT : ReefOrientation.MIDDLE_FAR);
+            isDriveToPoseActive = true;
         } else if (driveToReef != null) {
             driveToReef.cancel();
         }
@@ -110,6 +115,7 @@ public class SubsystemManager {
             chooseFeeder = drivebase.driveToNet() :
                 drivebase.chooseFeeder(drivebase.getPose().getY());
             chooseFeeder.schedule();
+            isDriveToPoseActive = true;
         } else {
             if (chooseFeeder != null) {
                 chooseFeeder.cancel();
@@ -348,6 +354,7 @@ public class SubsystemManager {
              !psControllerHID.getL1Button() && !(psControllerHID.getPOV(0) == 90) && !(psControllerHID.getPOV(0) == 270))) {
             driveToReef.cancel();
         } else if(driveToReef != null) {
+            isDriveToPoseActive = true;
             driveToReef.schedule();
         }
 
@@ -443,6 +450,10 @@ public class SubsystemManager {
 
     public static boolean getIsPushClimb() {
         return isPushClimb;
+    }
+
+    public static boolean isDriveToPoseActive() {
+        return isDriveToPoseActive;
     }
 
     public static void setState(RobotState _state){

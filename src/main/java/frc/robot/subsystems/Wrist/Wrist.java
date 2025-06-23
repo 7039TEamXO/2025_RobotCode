@@ -46,7 +46,7 @@ public class Wrist {
         io.updateInputs(inputs);
         Logger.processInputs("Wrist", inputs);
 
-        if(Constants.CurrentTuningMode == TuningMode.TUNE) setMotorConfigs();
+        if(Constants.GetTuningMode() == TuningMode.ACTIVE) setMotorConfigs();
 
         switch (state) {
             case BASE:

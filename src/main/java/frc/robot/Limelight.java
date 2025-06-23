@@ -1,15 +1,17 @@
 package frc.robot;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.subsystems.SubsystemManager;
 import frc.robot.utils.LimelightHelpers;
-
-import org.opencv.core.Mat.Tuple2;
 
 public class Limelight {
     private static NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
@@ -37,19 +39,22 @@ public class Limelight {
         );
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    public static Tuple2<Pose2d> update() {
+    public static Object[] update() {
         angleFromMT1 = hasTargetFromReef() ? botPosWpiBlue.getDoubleArray(new Double[]{})[5] : angleFromMT1;
 
         boolean doRejectUpdate = false;
 
         double suppliedAngle = SubsystemManager.getDrivebase().getHeading().getDegrees();
+
+        // Temporary replacement due to Pigeon's unpredictability
+        if(Limelight.hasTargetFromReef()) suppliedAngle = angleFromMT1;
         
         LimelightHelpers.SetRobotOrientation("limelight", suppliedAngle, 0, 0, 0, 0, 0);
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+        double[] stdDevs = limelightTable.getEntry("stddevs").getDoubleArray(new double[12]);
       
-        if (mt2 != null) {
-            if(Math.abs(SubsystemManager.getDrivebase().getRobotVelocity().omegaRadiansPerSecond) > 2 * Math.PI) // if our angular velocity is greater than 360 degrees per second, ignore vision updates
+        if (mt2 != null) { // if our angular velocity is greater than 360 degrees per second, ignore vision updates
+            if(Math.abs(SubsystemManager.getDrivebase().getRobotVelocity().omegaRadiansPerSecond) > 2 * Math.PI)
                 doRejectUpdate = true;
         
             else if(mt2.tagCount == 0)
@@ -59,7 +64,7 @@ public class Limelight {
                 doRejectUpdate = true;
         
             if(!doRejectUpdate) {
-                return new Tuple2(mt2.pose, new Pose2d(mt2.timestampSeconds,0 ,new Rotation2d(0)));
+                return new Object[]{ mt2.pose, mt2.timestampSeconds, new Matrix<N3, N1>(Nat.N3(), Nat.N1(), new double[]{ stdDevs[6], stdDevs[7], stdDevs[10] }) };
             }
         }
         
@@ -71,18 +76,18 @@ public class Limelight {
     }
 
     public static boolean hasTargetFromReef(){
-        return getMainAprilTagId() == 6 ||
-        getMainAprilTagId() == 7 ||
-        getMainAprilTagId() == 8 ||
-        getMainAprilTagId() == 9 ||
-        getMainAprilTagId() == 10 ||
-        getMainAprilTagId() == 11 ||
-        getMainAprilTagId() == 17 ||
-        getMainAprilTagId() == 18 ||
-        getMainAprilTagId() == 19 ||
-        getMainAprilTagId() == 20 ||
-        getMainAprilTagId() == 21 ||
-        getMainAprilTagId() == 22;
+        return getMainAprilTagID() == 6 ||
+        getMainAprilTagID() == 7 ||
+        getMainAprilTagID() == 8 ||
+        getMainAprilTagID() == 9 ||
+        getMainAprilTagID() == 10 ||
+        getMainAprilTagID() == 11 ||
+        getMainAprilTagID() == 17 ||
+        getMainAprilTagID() == 18 ||
+        getMainAprilTagID() == 19 ||
+        getMainAprilTagID() == 20 ||
+        getMainAprilTagID() == 21 ||
+        getMainAprilTagID() == 22;
     }
 
     public static double getAngleFromMT1() {
@@ -97,24 +102,12 @@ public class Limelight {
         return pose;
     }
 
-    public static void setPointOfInterest(double offsetX) {
-        LimelightHelpers.setFiducial3DOffset("limelight", offsetX, 0, 0);
-    }
-
     public static void setPipeline(int pipeline) {
         limelightTable.getEntry("pipeline").setNumber(pipeline);
     }
 
-    public static int getMainAprilTagId() {
-        return (int) LimelightHelpers.getFiducialID("limelight");
-    }
-
-    public static void setPriorityTagId(int tagId) {
-        LimelightHelpers.setPriorityTagID("limelight", tagId);
-    }
-
-    public static void resetPriorityTagId() {
-        LimelightHelpers.setPriorityTagID("limelight", -1);    
+    public static int getMainAprilTagID() {
+        return (int)LimelightHelpers.getFiducialID("limelight");
     }
 
     public static double getTX() {

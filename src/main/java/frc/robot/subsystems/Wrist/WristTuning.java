@@ -14,43 +14,43 @@ public class WristTuning {
     private static final LoggedNetworkNumber kI = new LoggedNetworkNumber("/Tuning/Wrist/kI", WristConstants.kI);
     private static final LoggedNetworkNumber kD = new LoggedNetworkNumber("/Tuning/Wrist/kD", WristConstants.kD);
 
-    private static final LoggedNetworkNumber MotionMagicCruiseVelocity = new LoggedNetworkNumber("/Tuning/Wrist/MotionMagicCruiseVelocity", WristConstants.MotionMagicCruiseVelocity);
-    private static final LoggedNetworkNumber MotionMagicAcceleration = new LoggedNetworkNumber("/Tuning/Wrist/MotionMagicAcceleration", WristConstants.MotionMagicAcceleration);
-    private static final LoggedNetworkNumber MotionMagicJerk = new LoggedNetworkNumber("/Tuning/Wrist/MotionMagicJerk", WristConstants.MotionMagicJerk);
+    private static final LoggedNetworkNumber MotionMagicCruiseVelocity = new LoggedNetworkNumber("/Tuning/Wrist/(Motion Magic) Cruise Velocity", WristConstants.MotionMagicCruiseVelocity);
+    private static final LoggedNetworkNumber MotionMagicAcceleration = new LoggedNetworkNumber("/Tuning/Wrist/(Motion Magic) Acceleration", WristConstants.MotionMagicAcceleration);
+    private static final LoggedNetworkNumber MotionMagicJerk = new LoggedNetworkNumber("/Tuning/Wrist/(Motion Magic) Jerk", WristConstants.MotionMagicJerk);
 
     public static final double kS_get() {
-        return Constants.CurrentTuningMode == TuningMode.TUNE ? kS.get() : WristConstants.kS;
+        return Constants.GetTuningMode() != TuningMode.IGNORE ? kS.get() : WristConstants.kS;
     }
 
     public static final double kV_get() {
-        return Constants.CurrentTuningMode == TuningMode.TUNE ? kV.get() : WristConstants.kV;
+        return Constants.GetTuningMode() != TuningMode.IGNORE ? kV.get() : WristConstants.kV;
     }
 
     public static final double kA_get() {
-        return Constants.CurrentTuningMode == TuningMode.TUNE ? kA.get() : WristConstants.kA;
+        return Constants.GetTuningMode() != TuningMode.IGNORE ? kA.get() : WristConstants.kA;
     }
 
     public static final double kP_get() {
-        return Constants.CurrentTuningMode == TuningMode.TUNE ? kP.get() : WristConstants.kP;
+        return Constants.GetTuningMode() != TuningMode.IGNORE ? kP.get() : WristConstants.kP;
     }
 
     public static final double kI_get() {
-        return Constants.CurrentTuningMode == TuningMode.TUNE ? kI.get() : WristConstants.kI;
+        return Constants.GetTuningMode() != TuningMode.IGNORE ? kI.get() : WristConstants.kI;
     }
 
     public static final double kD_get() {
-        return Constants.CurrentTuningMode == TuningMode.TUNE ? kD.get() : WristConstants.kD;
+        return Constants.GetTuningMode() != TuningMode.IGNORE ? kD.get() : WristConstants.kD;
     }
 
     public static final double MotionMagicCruiseVelocity_get() {
-        return Constants.CurrentTuningMode == TuningMode.TUNE ? MotionMagicCruiseVelocity.get() : WristConstants.MotionMagicCruiseVelocity;
+        return Constants.GetTuningMode() != TuningMode.IGNORE ? MotionMagicCruiseVelocity.get() : WristConstants.MotionMagicCruiseVelocity;
     }
 
     public static final double MotionMagicAcceleration_get() {
-        return Constants.CurrentTuningMode == TuningMode.TUNE ? MotionMagicAcceleration.get() : WristConstants.MotionMagicAcceleration;
+        return Constants.GetTuningMode() != TuningMode.IGNORE ? MotionMagicAcceleration.get() : WristConstants.MotionMagicAcceleration;
     }
 
     public static final double MotionMagicJerk_get() {
-        return Constants.CurrentTuningMode == TuningMode.TUNE ? MotionMagicJerk.get() : WristConstants.MotionMagicJerk;
+        return Constants.GetTuningMode() != TuningMode.IGNORE ? MotionMagicJerk.get() : WristConstants.MotionMagicJerk;
     }
 }

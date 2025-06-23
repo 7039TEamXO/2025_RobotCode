@@ -1,7 +1,5 @@
 package frc.robot.subsystems.SwerveDrive;
 
-import com.pathplanner.lib.config.PIDConstants;
-
 import edu.wpi.first.math.util.Units;
 
 /*
@@ -30,14 +28,21 @@ public class SwerveDriveConstants {
     public static final double MIN_ROTATION_V = 2; // Non-restrictive
 
     // Autonomy PIDs
-    public static final PIDConstants TRANSLATION_PID = new PIDConstants(1, 0.0, 0);
-    public static final PIDConstants ANGLE_PID       = new PIDConstants(2.5, 0, 0);
+    public static final double AUTO_KP = 1;
+    public static final double AUTO_KI = 0;
+    public static final double AUTO_KD = 0;
+
+    public static final double AUTO_KP_ANGULAR = 2.5;
+    public static final double AUTO_KI_ANGULAR = 0;
+    public static final double AUTO_KD_ANGULAR = 0;
 
     // DriveToPose PIDs
     public static final double KP = 2;
+    public static final double KI = 0;
     public static final double KD = 0.3;
 
     public static final double KP_ANGULAR = 2.7;
+    public static final double KI_ANGULAR = 0;
     public static final double KD_ANGULAR = 0;
 
     // PROXIMITY TOLERANCE

@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
+
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -25,11 +27,20 @@ public final class Constants
     REPLAY
   }
 
-  public static final TuningMode CurrentTuningMode = TuningMode.TUNE;
+  private static final TuningMode StartingTuningMode = TuningMode.IGNORE;
+  private static final LoggedNetworkBoolean IsActiveTuning = 
+    new LoggedNetworkBoolean("/Tuning/[!] Is Active Tuning", StartingTuningMode == TuningMode.ACTIVE ? true : false);
+
+  public static TuningMode GetTuningMode() {
+    return StartingTuningMode == TuningMode.IGNORE ? TuningMode.IGNORE : IsActiveTuning.get() ? TuningMode.ACTIVE : TuningMode.INACTIVE;
+  }
 
   public static enum TuningMode {
-    /** Use the constants from the Tuning panel. */
-    TUNE,
+    /** Use the constants from the Tuning panel, update. */
+    ACTIVE,
+
+    /** Use the constants from the Tuning panel, not update. */
+    INACTIVE,
 
     /** Ignore the tuned constants. */
     IGNORE

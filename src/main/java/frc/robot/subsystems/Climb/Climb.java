@@ -32,7 +32,7 @@ public class Climb {
         io.updateInputs(inputs);
         Logger.processInputs("Climb", inputs);
 
-        if(Constants.CurrentTuningMode == TuningMode.TUNE) setMotorConfigs();
+        if(Constants.GetTuningMode() == TuningMode.ACTIVE) setMotorConfigs();
 
         switch (state) {
             case STOP:

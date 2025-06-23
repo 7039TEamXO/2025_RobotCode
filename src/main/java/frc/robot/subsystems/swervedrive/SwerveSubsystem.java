@@ -8,17 +8,21 @@ import static edu.wpi.first.units.Units.Meter;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -36,7 +40,6 @@ import org.littletonrobotics.junction.Logger;
 
 import org.dyn4j.geometry.Vector2;
 import org.littletonrobotics.junction.AutoLogOutput;
-import org.opencv.core.Mat.Tuple2;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.math.SwerveMath;
@@ -52,8 +55,6 @@ public class SwerveSubsystem extends SubsystemBase {
   private static SwerveDrive swerveDrive;
   private static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
   private static boolean isCloseEnoughToReef = false;
-  static Pose2d currentLeftReefPos = new Pose2d(0, 0, new Rotation2d(0));
-  static Pose2d currentRightReefPos = new Pose2d(0, 0, new Rotation2d(0));
 
   public SwerveSubsystem(File directory) {
     // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
@@ -95,6 +96,7 @@ public class SwerveSubsystem extends SubsystemBase {
   // private int counter = 0;
   // public boolean isAuto = false;
 
+  @SuppressWarnings("unchecked")
   @Override
   public void periodic() {
     isCloseEnoughToReef = Math.abs(driveXPID.getError()) < SwerveDriveTuning.CLOSE_DISTANCE_ERROR_CAP_get() &&
@@ -113,10 +115,12 @@ public class SwerveSubsystem extends SubsystemBase {
         calculateSpeedAccordingToElevator(SwerveDriveTuning.MAX_ROTATION_V_get(), SwerveDriveTuning.MIN_ROTATION_V_get()));
     }
 
-    if(Constants.CurrentTuningMode == TuningMode.TUNE) {
+    if(Constants.GetTuningMode() == TuningMode.ACTIVE) {
       driveXPID.setPID(SwerveDriveTuning.KP_get(), 0, SwerveDriveTuning.KD_get());
       driveYPID.setPID(SwerveDriveTuning.KP_get(), 0, SwerveDriveTuning.KD_get());
       rotationPID.setPID(SwerveDriveTuning.KP_ANGULAR_get(), 0, SwerveDriveTuning.KD_ANGULAR_get());
+
+      setupPathPlanner();
     }
 
     // if (isAuto) {
@@ -130,14 +134,10 @@ public class SwerveSubsystem extends SubsystemBase {
     // }
     // else {
     //   counter = 0;
-    Tuple2<Pose2d> tuple = Limelight.update();
+    Object[] tuple = Limelight.update();
     if (tuple != null && Limelight.filterTargetByTA()) {
-      Pose2d pos = new Pose2d(tuple.get_0().getX(), tuple.get_0().getY(), getHeading());
-      double timestampSeconds = tuple.get_1().getX();
-
       // Temporary replacement due to Pigeon's unpredictability
-      if(Limelight.hasTargetFromReef()) pos = new Pose2d(pos.getX(), pos.getY(), new Rotation2d(Math.toRadians(Limelight.getAngleFromMT1())));
-      swerveDrive.addVisionMeasurement(pos, timestampSeconds);
+      swerveDrive.addVisionMeasurement((Pose2d)tuple[0], (double)tuple[1], (Matrix<N3, N1>)tuple[2]);
     }
     // }
 
@@ -145,7 +145,7 @@ public class SwerveSubsystem extends SubsystemBase {
     updateClosestReefFace(getPose());
 
     Logger.recordOutput("Odometry/Pose", getPose());
-    Logger.recordOutput("Odometry/RequestedPose", requestedPose);
+    if(!SubsystemManager.isDriveToPoseActive()) Logger.recordOutput("Odometry/RequestedPose", new Pose2d(999, 999, new Rotation2d()));
   }
 
   @Override
@@ -156,8 +156,6 @@ public class SwerveSubsystem extends SubsystemBase {
     try {
       config = RobotConfig.fromGUISettings();
 
-      // final boolean enableFeedforward = true;
-
       AutoBuilder.configure(
           this::getPose,
           // Robot pose supplier
@@ -166,19 +164,15 @@ public class SwerveSubsystem extends SubsystemBase {
           this::getRobotVelocity,
           // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
           (speedsRobotRelative, moduleFeedForwards) -> {
-            // if (enableFeedforward) {
             swerveDrive.drive(
                 speedsRobotRelative,
                 swerveDrive.kinematics.toSwerveModuleStates(speedsRobotRelative),
                 moduleFeedForwards.linearForces());
-            // } else {
-              // swerveDrive.setChassisSpeeds(speedsRobotRelative);
-            // }
           },
 
           new PPHolonomicDriveController(
-              SwerveDriveConstants.TRANSLATION_PID,
-              SwerveDriveConstants.ANGLE_PID
+              new PIDConstants(SwerveDriveTuning.AUTO_KP_get(), SwerveDriveTuning.AUTO_KI_get(), SwerveDriveTuning.AUTO_KD_get()),
+              new PIDConstants(SwerveDriveTuning.AUTO_KP_ANGULAR_get(), SwerveDriveTuning.AUTO_KI_ANGULAR_get(), SwerveDriveTuning.AUTO_KD_ANGULAR_get())
           ),
           config,
           () -> isRedAlliance(),
@@ -235,11 +229,9 @@ public class SwerveSubsystem extends SubsystemBase {
   private PIDController driveYPID = new PIDController(SwerveDriveConstants.KP, 0, SwerveDriveConstants.KD);
   private PIDController rotationPID = new PIDController(SwerveDriveConstants.KP_ANGULAR, 0, SwerveDriveConstants.KD_ANGULAR);
 
-  private Pose2d requestedPose;
-
   public Command driveToPose(Pose2d pose) {
     return run(() -> {
-      requestedPose = pose;
+      Logger.recordOutput("Odometry/RequestedPose", pose);
 
       driveXPID.setSetpoint(pose.getX());
       driveYPID.setSetpoint(pose.getY());
@@ -488,7 +480,7 @@ public class SwerveSubsystem extends SubsystemBase {
     return swerveDrive.getPitch();
   }
 
-  private static int selected_face = -1;
+  private static int selectedFace = -1;
   private static Pose2d closestReefFace = new Pose2d();
   private static Pose2d closestReefFaceRobotPos = new Pose2d();
 
@@ -517,7 +509,7 @@ public class SwerveSubsystem extends SubsystemBase {
                   
             if (dist < minDist){
               minDist = dist;
-              selected_face = reefFace;
+              selectedFace = reefFace;
               closestReefFace = reefFacePose; 
             }
           }
@@ -535,7 +527,7 @@ public class SwerveSubsystem extends SubsystemBase {
               
               if (dist < minDist) {
                   minDist = dist;
-                  selected_face = reefFace;
+                  selectedFace = reefFace;
                   closestReefFace = reefFacePose;
               }
             }
@@ -556,7 +548,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public static int getClosestReefTag() {
-    return selected_face;
+    return selectedFace;
   }
   
   private static Pose2d[] calculateLeftAndRightReefPointsFromTag(double x, double y, double deg){

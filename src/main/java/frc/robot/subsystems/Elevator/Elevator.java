@@ -36,7 +36,7 @@ public class Elevator {
         io.updateInputs(inputs);
         Logger.processInputs("Elevator", inputs);
 
-        if(Constants.CurrentTuningMode == TuningMode.TUNE) setMotorConfigs();
+        if(Constants.GetTuningMode() == TuningMode.ACTIVE) setMotorConfigs();
 
         switch (state) {
             case BASE: 
