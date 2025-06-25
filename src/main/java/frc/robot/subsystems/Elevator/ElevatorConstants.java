@@ -10,6 +10,7 @@ public class ElevatorConstants {
     public static final double kP = 2;
     public static final double kI = 0.7;
     public static final double kD = 0.1;
+    public static final double kG = 0;
 
     public static final double MotionMagicCruiseVelocity = 180;
     public static final double MotionMagicAcceleration = 95;

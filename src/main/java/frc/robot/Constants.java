@@ -6,7 +6,16 @@ package frc.robot;
 
 import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import swervelib.math.Matter;
@@ -39,18 +48,39 @@ public final class Constants
     /** Use the constants from the Tuning panel, update. */
     ACTIVE,
 
-    /** Use the constants from the Tuning panel, not update. */
+    /** Use the constants from the Tuning panel, don't update. */
     INACTIVE,
 
     /** Ignore the tuned constants. */
     IGNORE
   }
 
+  public static final AprilTagFieldLayout FIELD_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
+
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
   public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
   public static final double LOOP_TIME  = 0.13; // 1s, 20ms + 110ms due to SPARK MAX velocity lag
 
-  public static class OperatorConstants
+  public static class Limelight
+  {
+    public static final Transform3d RobotToCamera = new Transform3d(new Translation3d(0.4, 0.0, 0.2), new Rotation3d(0, Math.toRadians(-20), 0));
+    
+    public static class CameraProperties {
+      public static final int resWidth = 1280;
+      public static final int resHeight = 960;
+      public static final Rotation2d fovDiag = Rotation2d.fromDegrees(100);
+      public static final double avgErrorPx = 0.007;
+      public static final double errorStdDevPx = 0.0005;
+      public static final double fps = 30;
+      public static final double avgLatencyMs = 35;
+      public static final double latencyStdDevMs = 5;
+
+      public static final Matrix<N3, N1> singleTagStdDevs =  VecBuilder.fill(0.3, 0.3, 4);
+      public static final Matrix<N3, N1> multiTagStdDevs = VecBuilder.fill(0.5, 0.5, 2);
+    }
+  }
+
+  public static class Operator
   {
     // Joystick Deadbands
     public static final double LEFT_X_DEADBAND  = 0.1;
@@ -59,7 +89,7 @@ public final class Constants
     public static final double TURN_CONSTANT    = 2; 
   }
 
-  public static class ReefConstants {
+  public static class Reef {
     public static final double M_FROM_TAG_TO_POLES = 0.165;
     public static final double M_FROM_TAG_TO_ROBOT = 0.51;
 
@@ -97,7 +127,7 @@ public final class Constants
                                                     RED_REEF_POS_FACE_SIX_ID};
   }
 
-  public static class FieldConstants {
+  public static class Field {
     // NET LOCATIONS
     public static final double WANTED_X_NET_ALGAE_POS_BLUE = 7.25;
     public static final double WANTED_ROTATION_ANGLE_NET_ALGAE_POS_BLUE = 0;

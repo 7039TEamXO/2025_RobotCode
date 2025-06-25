@@ -12,6 +12,7 @@ public class ElevatorTuning {
     private static final LoggedNetworkNumber kP = new LoggedNetworkNumber("/Tuning/Elevator/kP", ElevatorConstants.kP);
     private static final LoggedNetworkNumber kI = new LoggedNetworkNumber("/Tuning/Elevator/kI", ElevatorConstants.kI);
     private static final LoggedNetworkNumber kD = new LoggedNetworkNumber("/Tuning/Elevator/kD", ElevatorConstants.kD);
+    private static final LoggedNetworkNumber kG = new LoggedNetworkNumber("/Tuning/Elevator/kG", ElevatorConstants.kG);
 
     private static final LoggedNetworkNumber MotionMagicCruiseVelocity = new LoggedNetworkNumber("/Tuning/Elevator/(Motion Magic) Cruise Velocity", ElevatorConstants.MotionMagicCruiseVelocity);
     private static final LoggedNetworkNumber MotionMagicAcceleration = new LoggedNetworkNumber("/Tuning/Elevator/(Motion Magic) Acceleration", ElevatorConstants.MotionMagicAcceleration);
@@ -39,6 +40,10 @@ public class ElevatorTuning {
 
     public static final double kD_get() {
         return Constants.GetTuningMode() != TuningMode.IGNORE ? kD.get() : ElevatorConstants.kD;
+    }
+
+    public static final double kG_get() {
+        return Constants.GetTuningMode() != TuningMode.IGNORE ? kG.get() : ElevatorConstants.kG;
     }
 
     public static final double MotionMagicCruiseVelocity_get() {

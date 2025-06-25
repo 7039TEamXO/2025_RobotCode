@@ -4,6 +4,7 @@ import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -116,6 +117,9 @@ public class Elevator {
         slot0Configs.kP = ElevatorTuning.kP_get();
         slot0Configs.kI = ElevatorTuning.kI_get();
         slot0Configs.kD = ElevatorTuning.kD_get();
+
+        slot0Configs.GravityType = GravityTypeValue.Elevator_Static;
+        slot0Configs.kG = ElevatorTuning.kG_get();
 
         var motionMagicConfigs = rightTalonFXConfigs.MotionMagic;
         motionMagicConfigs.MotionMagicCruiseVelocity = ElevatorTuning.MotionMagicCruiseVelocity_get();

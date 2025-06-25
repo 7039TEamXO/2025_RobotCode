@@ -7,6 +7,7 @@ import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.Handler.Handler;
 
 public class LED {
+    // No simulation
     private static AddressableLEDBuffer buffer = new AddressableLEDBuffer(2000);
     private static Color color = Color.kOrangeRed;
     private static AddressableLED midChannel = new AddressableLED(1);

@@ -4,16 +4,12 @@
 
 package frc.robot.subsystems.SwerveDrive;
 
-import static edu.wpi.first.units.Units.Meter;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -34,12 +30,13 @@ import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorConstants;
 
+import static edu.wpi.first.units.Units.Meter;
+
 import java.io.File;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 import org.dyn4j.geometry.Vector2;
-import org.littletonrobotics.junction.AutoLogOutput;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.math.SwerveMath;
@@ -53,7 +50,6 @@ import frc.robot.subsystems.Tray.TrayState;
 
 public class SwerveSubsystem extends SubsystemBase {
   private static SwerveDrive swerveDrive;
-  private static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
   private static boolean isCloseEnoughToReef = false;
 
   public SwerveSubsystem(File directory) {
@@ -84,7 +80,7 @@ public class SwerveSubsystem extends SubsystemBase {
                                              // simulations since it causes discrepancies not seen in real life.
     swerveDrive.setAngularVelocityCompensation(true, true, 0.1);
     swerveDrive.setModuleEncoderAutoSynchronize(false, 1);
-
+    
     setupPathPlanner();
   }
 
@@ -136,7 +132,6 @@ public class SwerveSubsystem extends SubsystemBase {
     //   counter = 0;
     Object[] tuple = Limelight.update();
     if (tuple != null && Limelight.filterTargetByTA()) {
-      // Temporary replacement due to Pigeon's unpredictability
       swerveDrive.addVisionMeasurement((Pose2d)tuple[0], (double)tuple[1], (Matrix<N3, N1>)tuple[2]);
     }
     // }
@@ -145,7 +140,8 @@ public class SwerveSubsystem extends SubsystemBase {
     updateClosestReefFace(getPose());
 
     Logger.recordOutput("Odometry/Pose", getPose());
-    if(!SubsystemManager.isDriveToPoseActive()) Logger.recordOutput("Odometry/RequestedPose", new Pose2d(999, 999, new Rotation2d()));
+    if(Constants.CurrentMode != frc.robot.Constants.Mode.REAL) Logger.recordOutput("Odometry/RealPose", getSimulationPose());
+    if(!SubsystemManager.isDriveToPoseActive()) Logger.recordOutput("Odometry/RequestedPose", new Pose2d(Double.MAX_VALUE, Double.MAX_VALUE, new Rotation2d()));
   }
 
   @Override
@@ -204,8 +200,8 @@ public class SwerveSubsystem extends SubsystemBase {
   // }
 
   private Vector2 getReefCenter() {
-    if(isRedAlliance()) return new Vector2(Constants.ReefConstants.REEF_CENTER_X_RED, Constants.ReefConstants.REEF_CENTER_Y_RED);
-    else return new Vector2(Constants.ReefConstants.REEF_CENTER_X_BLUE, Constants.ReefConstants.REEF_CENTER_Y_BLUE);
+    if(isRedAlliance()) return new Vector2(Constants.Reef.REEF_CENTER_X_RED, Constants.Reef.REEF_CENTER_Y_RED);
+    else return new Vector2(Constants.Reef.REEF_CENTER_X_BLUE, Constants.Reef.REEF_CENTER_Y_BLUE);
   }
 
   public boolean isCloseEnoughToReef() {
@@ -273,16 +269,16 @@ public class SwerveSubsystem extends SubsystemBase {
   public Command driveToNet() {
     if (isRedAlliance()) {
       return driveToPose(new Pose2d(
-        Constants.FieldConstants.WANTED_X_NET_ALGAE_POS_RED, 
+        Constants.Field.WANTED_X_NET_ALGAE_POS_RED, 
         getPose().getY(), 
-        new Rotation2d(Math.toRadians(Constants.FieldConstants.WANTED_ROTATION_ANGLE_NET_ALGAE_POS_RED))
+        new Rotation2d(Math.toRadians(Constants.Field.WANTED_ROTATION_ANGLE_NET_ALGAE_POS_RED))
       ));
     }
     else {
       return driveToPose(new Pose2d(
-        Constants.FieldConstants.WANTED_X_NET_ALGAE_POS_BLUE, 
+        Constants.Field.WANTED_X_NET_ALGAE_POS_BLUE, 
         getPose().getY(), 
-        new Rotation2d(Math.toRadians(Constants.FieldConstants.WANTED_ROTATION_ANGLE_NET_ALGAE_POS_BLUE))
+        new Rotation2d(Math.toRadians(Constants.Field.WANTED_ROTATION_ANGLE_NET_ALGAE_POS_BLUE))
       ));
     }
   }
@@ -298,23 +294,23 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   private Command driveToRedRightFeeder() {
-    return driveToFeeder(Constants.FieldConstants.WANTED_X_FEEDER_RIGHT_RED, 
-      Constants.FieldConstants.WANTED_Y_FEEDER_RIGHT_RED, Constants.FieldConstants.WANTED_ROTATION_ANGLE_FEEDER_RIGHT_RED);
+    return driveToFeeder(Constants.Field.WANTED_X_FEEDER_RIGHT_RED, 
+      Constants.Field.WANTED_Y_FEEDER_RIGHT_RED, Constants.Field.WANTED_ROTATION_ANGLE_FEEDER_RIGHT_RED);
   }
 
   private Command driveToRedLeftFeeder() {
-    return driveToFeeder(Constants.FieldConstants.WANTED_X_FEEDER_LEFT_RED, 
-      Constants.FieldConstants.WANTED_Y_FEEDER_LEFT_RED, Constants.FieldConstants.WANTED_ROTATION_ANGLE_FEEDER_LEFT_RED);
+    return driveToFeeder(Constants.Field.WANTED_X_FEEDER_LEFT_RED, 
+      Constants.Field.WANTED_Y_FEEDER_LEFT_RED, Constants.Field.WANTED_ROTATION_ANGLE_FEEDER_LEFT_RED);
   }
 
   private Command driveToBlueRightFeeder() {
-    return driveToFeeder(Constants.FieldConstants.WANTED_X_FEEDER_RIGHT_BLUE, 
-      Constants.FieldConstants.WANTED_Y_FEEDER_RIGHT_BLUE, Constants.FieldConstants.WANTED_ROTATION_ANGLE_FEEDER_RIGHT_BLUE);
+    return driveToFeeder(Constants.Field.WANTED_X_FEEDER_RIGHT_BLUE, 
+      Constants.Field.WANTED_Y_FEEDER_RIGHT_BLUE, Constants.Field.WANTED_ROTATION_ANGLE_FEEDER_RIGHT_BLUE);
   }
 
   private Command driveToBlueLeftFeeder() {
-    return driveToFeeder(Constants.FieldConstants.WANTED_X_FEEDER_LEFT_BLUE, 
-      Constants.FieldConstants.WANTED_Y_FEEDER_LEFT_BLUE, Constants.FieldConstants.WANTED_ROTATION_ANGLE_FEEDER_LEFT_BLUE);
+    return driveToFeeder(Constants.Field.WANTED_X_FEEDER_LEFT_BLUE, 
+      Constants.Field.WANTED_Y_FEEDER_LEFT_BLUE, Constants.Field.WANTED_ROTATION_ANGLE_FEEDER_LEFT_BLUE);
   }
 
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX,
@@ -378,10 +374,12 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.resetOdometry(initialHolonomicPose);
   }
 
-  @AutoLogOutput(key = "Odometry/Robot")
-  public Pose2d getPose()
-  {
+  public Pose2d getPose() {
     return swerveDrive.getPose();
+  }
+
+  public Pose2d getSimulationPose() {
+    return swerveDrive.getSimulationDriveTrainPose().get();
   }
 
   public void setChassisSpeeds(ChassisSpeeds chassisSpeeds)
@@ -480,11 +478,11 @@ public class SwerveSubsystem extends SubsystemBase {
     return swerveDrive.getPitch();
   }
 
-  private static int selectedFace = -1;
-  private static Pose2d closestReefFace = new Pose2d();
-  private static Pose2d closestReefFaceRobotPos = new Pose2d();
+  private int selectedFace = -1;
+  private Pose2d closestReefFace = new Pose2d();
+  private Pose2d closestReefFaceRobotPos = new Pose2d();
 
-  private static void updateClosestReefFace(Pose2d currentRobotPose2d) {
+  private void updateClosestReefFace(Pose2d currentRobotPose2d) {
     double minDist = Double.MAX_VALUE;
     try {
       var currentAllianceOptional = DriverStation.getAlliance();
@@ -497,10 +495,10 @@ public class SwerveSubsystem extends SubsystemBase {
         var currentAlliance = currentAllianceOptional.get();
   
         if (currentAlliance == DriverStation.Alliance.Blue) {
-          for (int i = 0; i < Constants.ReefConstants.BLUE_REEF_TAGS_ARRAY.length; i++) {
-            int reefFace = Constants.ReefConstants.BLUE_REEF_TAGS_ARRAY[i];
+          for (int i = 0; i < Constants.Reef.BLUE_REEF_TAGS_ARRAY.length; i++) {
+            int reefFace = Constants.Reef.BLUE_REEF_TAGS_ARRAY[i];
             
-            var reefFacePose = fieldLayout.getTagPose(reefFace).get().toPose2d();
+            var reefFacePose = Constants.FIELD_LAYOUT.getTagPose(reefFace).get().toPose2d();
             double reefFaceX = reefFacePose.getTranslation().getX();
             double reefFaceY = reefFacePose.getTranslation().getY();
             
@@ -515,9 +513,9 @@ public class SwerveSubsystem extends SubsystemBase {
           }
         }
         else if (currentAlliance == DriverStation.Alliance.Red) {
-          for (int i = 0; i < Constants.ReefConstants.RED_REEF_TAGS_ARRAY.length; i++) {
-            var reefFace = Constants.ReefConstants.RED_REEF_TAGS_ARRAY[i];
-            var reefFacePoseOptional = fieldLayout.getTagPose(reefFace);
+          for (int i = 0; i < Constants.Reef.RED_REEF_TAGS_ARRAY.length; i++) {
+            var reefFace = Constants.Reef.RED_REEF_TAGS_ARRAY[i];
+            var reefFacePoseOptional = Constants.FIELD_LAYOUT.getTagPose(reefFace);
             
             if (reefFacePoseOptional.isPresent()) {
               var reefFacePose = reefFacePoseOptional.get().toPose2d();
@@ -537,25 +535,25 @@ public class SwerveSubsystem extends SubsystemBase {
     } catch (Exception e) {}
 
     closestReefFaceRobotPos = new Pose2d(
-      closestReefFace.getX() + Constants.ReefConstants.M_FROM_TAG_TO_ROBOT * Math.cos(closestReefFace.getRotation().getRadians()),
-      closestReefFace.getY() + Constants.ReefConstants.M_FROM_TAG_TO_ROBOT * Math.sin(closestReefFace.getRotation().getRadians()),
+      closestReefFace.getX() + Constants.Reef.M_FROM_TAG_TO_ROBOT * Math.cos(closestReefFace.getRotation().getRadians()),
+      closestReefFace.getY() + Constants.Reef.M_FROM_TAG_TO_ROBOT * Math.sin(closestReefFace.getRotation().getRadians()),
       new Rotation2d(closestReefFace.getRotation().getRadians() + Math.PI)
     );
   }
 
-  private static Pose2d getClosestReefFaceRobotPos(){
+  private Pose2d getClosestReefFaceRobotPos() {
     return closestReefFaceRobotPos;
   }
 
-  public static int getClosestReefTag() {
+  public int getClosestReefTag() {
     return selectedFace;
   }
   
-  private static Pose2d[] calculateLeftAndRightReefPointsFromTag(double x, double y, double deg){
-    double xR = x + Constants.ReefConstants.M_FROM_TAG_TO_POLES * Math.sin(deg);
-    double yR = y - Constants.ReefConstants.M_FROM_TAG_TO_POLES * Math.cos(deg);
-    double xL = x - Constants.ReefConstants.M_FROM_TAG_TO_POLES * Math.sin(deg);
-    double yL = y + Constants.ReefConstants.M_FROM_TAG_TO_POLES * Math.cos(deg);
+  private Pose2d[] calculateLeftAndRightReefPointsFromTag(double x, double y, double deg){
+    double xR = x + Constants.Reef.M_FROM_TAG_TO_POLES * Math.sin(deg);
+    double yR = y - Constants.Reef.M_FROM_TAG_TO_POLES * Math.cos(deg);
+    double xL = x - Constants.Reef.M_FROM_TAG_TO_POLES * Math.sin(deg);
+    double yL = y + Constants.Reef.M_FROM_TAG_TO_POLES * Math.cos(deg);
     double xM = x - 0.2 * Math.cos(deg);
     double yM = y - 0.2 * Math.sin(deg);
     double xVM = x - 1 * Math.cos(deg);
@@ -569,7 +567,7 @@ public class SwerveSubsystem extends SubsystemBase {
     };
   }
 
-  public static double calculateSpeedAccordingToElevator(double maxV, double minV) {
+  public double calculateSpeedAccordingToElevator(double maxV, double minV) {
     if (Elevator.getCurrentPosition() <= ElevatorConstants.ELEVATOR_POSE_SAFE_TO_ROTATE) {
       return maxV;
     }

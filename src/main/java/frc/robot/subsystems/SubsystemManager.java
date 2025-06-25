@@ -160,12 +160,12 @@ public class SubsystemManager {
             
             if(Handler.isAlgaeInProcessor() || Handler.isAlgaeInNet()) elevatorState = lastElevatorState;
             
-            if(SwerveSubsystem.getClosestReefTag() == highAlgaeTags[0] ||
-                SwerveSubsystem.getClosestReefTag() == highAlgaeTags[1] ||
-                SwerveSubsystem.getClosestReefTag() == highAlgaeTags[2] ||
-                SwerveSubsystem.getClosestReefTag() == highAlgaeTags[3] ||
-                SwerveSubsystem.getClosestReefTag() == highAlgaeTags[4] ||
-                SwerveSubsystem.getClosestReefTag() == highAlgaeTags[5]) {
+            if(drivebase.getClosestReefTag() == highAlgaeTags[0] ||
+                drivebase.getClosestReefTag() == highAlgaeTags[1] ||
+                drivebase.getClosestReefTag() == highAlgaeTags[2] ||
+                drivebase.getClosestReefTag() == highAlgaeTags[3] ||
+                drivebase.getClosestReefTag() == highAlgaeTags[4] ||
+                drivebase.getClosestReefTag() == highAlgaeTags[5]) {
                 currentAlgaeElevatorState = ElevatorState.ALGAE_HIGH_NET;
             } else {
                 currentAlgaeElevatorState = ElevatorState.ALGAE_LOW_NET;

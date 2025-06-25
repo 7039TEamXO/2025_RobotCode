@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.Operator;
 import frc.robot.subsystems.SubsystemManager;
 
 import java.util.Optional;
@@ -16,8 +16,8 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 public class RobotContainer {
   Command driveFieldOrientedAngularVelocity = SubsystemManager.getDrivebase().driveCommand( // default
-      () -> MathUtil.applyDeadband(-SubsystemManager.getPSJoystick().getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-      () -> MathUtil.applyDeadband(-SubsystemManager.getPSJoystick().getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+      () -> MathUtil.applyDeadband(-SubsystemManager.getPSJoystick().getLeftY(), Operator.LEFT_Y_DEADBAND),
+      () -> MathUtil.applyDeadband(-SubsystemManager.getPSJoystick().getLeftX(), Operator.LEFT_X_DEADBAND),
       () -> -SubsystemManager.getPSJoystick().getRightX());
       
   SlewRateLimiter joystickSlewRateLimiter = new SlewRateLimiter(4);
@@ -48,14 +48,14 @@ public class RobotContainer {
       SubsystemManager.getDrivebase().zeroGyro();
       SubsystemManager.getDrivebase().resetOdometry(new Pose2d(SubsystemManager.getDrivebase().getPose().getTranslation(), Rotation2d.fromDegrees(180)));
       driveFieldOrientedAngularVelocity = SubsystemManager.getDrivebase().driveCommand( // default
-        () -> (modifyAxis(SubsystemManager.getPSJoystick().getLeftY(), Constants.OperatorConstants.LEFT_Y_DEADBAND)),
-        () -> (modifyAxis(SubsystemManager.getPSJoystick().getLeftX(), Constants.OperatorConstants.LEFT_X_DEADBAND)),
-        () -> (modifyAxis(-SubsystemManager.getPSJoystick().getRightX(), Constants.OperatorConstants.RIGHT_X_DEADBAND)));
+        () -> (modifyAxis(SubsystemManager.getPSJoystick().getLeftY(), Constants.Operator.LEFT_Y_DEADBAND)),
+        () -> (modifyAxis(SubsystemManager.getPSJoystick().getLeftX(), Constants.Operator.LEFT_X_DEADBAND)),
+        () -> (modifyAxis(-SubsystemManager.getPSJoystick().getRightX(), Constants.Operator.RIGHT_X_DEADBAND)));
     } else {
       driveFieldOrientedAngularVelocity = SubsystemManager.getDrivebase().driveCommand( // default
-        () -> (modifyAxis(-SubsystemManager.getPSJoystick().getLeftY(), Constants.OperatorConstants.LEFT_Y_DEADBAND)),
-        () -> (modifyAxis(-SubsystemManager.getPSJoystick().getLeftX(), Constants.OperatorConstants.LEFT_X_DEADBAND)),
-        () -> (modifyAxis(-SubsystemManager.getPSJoystick().getRightX(), Constants.OperatorConstants.RIGHT_X_DEADBAND)));
+        () -> (modifyAxis(-SubsystemManager.getPSJoystick().getLeftY(), Constants.Operator.LEFT_Y_DEADBAND)),
+        () -> (modifyAxis(-SubsystemManager.getPSJoystick().getLeftX(), Constants.Operator.LEFT_X_DEADBAND)),
+        () -> (modifyAxis(-SubsystemManager.getPSJoystick().getRightX(), Constants.Operator.RIGHT_X_DEADBAND)));
     }
     
     SubsystemManager.setDefaultCommand(driveFieldOrientedAngularVelocity);

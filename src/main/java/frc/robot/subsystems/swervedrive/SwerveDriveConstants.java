@@ -37,11 +37,11 @@ public class SwerveDriveConstants {
     public static final double AUTO_KD_ANGULAR = 0;
 
     // DriveToPose PIDs
-    public static final double KP = 2;
+    public static final double KP = 5;
     public static final double KI = 0;
     public static final double KD = 0.3;
 
-    public static final double KP_ANGULAR = 2.7;
+    public static final double KP_ANGULAR = 5;
     public static final double KI_ANGULAR = 0;
     public static final double KD_ANGULAR = 0;
 

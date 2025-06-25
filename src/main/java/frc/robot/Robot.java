@@ -11,15 +11,18 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.RobotModel;
 import frc.robot.subsystems.SubsystemManager;
+import frc.robot.subsystems.IO.Real.CameraReal;
 import frc.robot.subsystems.IO.Real.ClimbReal;
 import frc.robot.subsystems.IO.Real.ElevatorReal;
 import frc.robot.subsystems.IO.Real.HandlerReal;
 import frc.robot.subsystems.IO.Real.TrayReal;
 import frc.robot.subsystems.IO.Real.WristReal;
+import frc.robot.subsystems.IO.Sim.CameraSim;
 import frc.robot.subsystems.IO.Sim.ClimbSim;
 import frc.robot.subsystems.IO.Sim.HandlerSim;
 import frc.robot.subsystems.IO.Sim.TraySim;
 import frc.robot.subsystems.IO.Sim.WristSim;
+import frc.robot.subsystems.IO.Stub.CameraStub;
 import frc.robot.subsystems.IO.Stub.ClimbStub;
 import frc.robot.subsystems.IO.Stub.ElevatorStub;
 import frc.robot.subsystems.IO.Stub.HandlerStub;
@@ -104,19 +107,21 @@ public class Robot extends LoggedRobot {
     switch(Constants.CurrentMode) {
       case REAL:
         SubsystemManager.init(new ElevatorReal(), new HandlerReal(), new WristReal(), new ClimbReal(), new TrayReal());
+        Limelight.init(new CameraReal());
         break;
       case REPLAY: 
         SubsystemManager.init(new ElevatorStub(), new HandlerStub(), new WristStub(), new ClimbStub(), new TrayStub());
+        Limelight.init(new CameraStub());
         break;
       case SIM:
         SubsystemManager.init(new frc.robot.subsystems.IO.Sim.ElevatorSim(0.02), new HandlerSim(0.02), 
           new WristSim(0.02), new ClimbSim(0.02), new TraySim(0.02));
+        Limelight.init(new CameraSim());
         break;
     }
     
     Dashboard.init();
     // cameraSetup();
-    Limelight.init();
     LED.init();
 
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
