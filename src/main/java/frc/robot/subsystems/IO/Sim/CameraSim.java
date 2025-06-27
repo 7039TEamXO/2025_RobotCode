@@ -81,7 +81,7 @@ public class CameraSim implements CameraIO {
         inputs.hasTarget = currentTarget != null;
         inputs.mainAprilTagID = currentTarget != null ? currentTarget.getFiducialId() : -1;
         inputs.TX = currentTarget != null ? currentTarget.getYaw() : -1;
-        inputs.TA = currentTarget != null ? currentTarget.getArea() : 0;
+        inputs.TA = currentTarget != null ? currentTarget.getArea() / 100.0 : 0;
     }
 
     @Override

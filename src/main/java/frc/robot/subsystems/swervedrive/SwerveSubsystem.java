@@ -10,15 +10,12 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
-import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -92,7 +89,6 @@ public class SwerveSubsystem extends SubsystemBase {
   // private int counter = 0;
   // public boolean isAuto = false;
 
-  @SuppressWarnings("unchecked")
   @Override
   public void periodic() {
     isCloseEnoughToReef = Math.abs(driveXPID.getError()) < SwerveDriveTuning.CLOSE_DISTANCE_ERROR_CAP_get() &&
@@ -112,29 +108,18 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     if(Constants.GetTuningMode() == TuningMode.ACTIVE) {
-      driveXPID.setPID(SwerveDriveTuning.KP_get(), 0, SwerveDriveTuning.KD_get());
-      driveYPID.setPID(SwerveDriveTuning.KP_get(), 0, SwerveDriveTuning.KD_get());
-      rotationPID.setPID(SwerveDriveTuning.KP_ANGULAR_get(), 0, SwerveDriveTuning.KD_ANGULAR_get());
+      driveXPID.setPID(SwerveDriveTuning.KP_get(), SwerveDriveTuning.KI_get(), SwerveDriveTuning.KD_get());
+      driveYPID.setPID(SwerveDriveTuning.KP_get(), SwerveDriveTuning.KI_get(), SwerveDriveTuning.KD_get());
+      rotationPID.setPID(SwerveDriveTuning.KP_ANGULAR_get(), SwerveDriveTuning.KI_ANGULAR_get(), SwerveDriveTuning.KD_ANGULAR_get());
 
       setupPathPlanner();
     }
 
-    // if (isAuto) {
-    //   counter++;
-    //   Tuple2<Pose2d> tuple = Limelight.update();
-    //   if (tuple != null && isRobotVBelowOne(true) && counter > 10) {
-    //     Pose2d pos = new Pose2d(tuple.get_0().getX(), tuple.get_0().getY(), getHeading());
-    //     double timestampSeconds = tuple.get_1().getX();
-    //     swerveDrive.addVisionMeasurement(pos, timestampSeconds);
-    //   }
-    // }
-    // else {
-    //   counter = 0;
+    // if(isAuto) filter by isRobotVBelowOne too
     Object[] tuple = Limelight.update();
-    if (tuple != null && Limelight.filterTargetByTA()) {
-      swerveDrive.addVisionMeasurement((Pose2d)tuple[0], (double)tuple[1], (Matrix<N3, N1>)tuple[2]);
+    if (tuple != null) { // filterTargetByTA only worsens it
+      swerveDrive.addVisionMeasurement((Pose2d)tuple[0], (double)tuple[1]);
     }
-    // }
 
     swerveDrive.updateOdometry();
     updateClosestReefFace(getPose());
