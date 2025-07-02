@@ -45,6 +45,9 @@ public class SwerveDriveConstants {
     public static final double KI_ANGULAR = 0;
     public static final double KD_ANGULAR = 0;
 
+    // Used solely in avoidToPose
+    public static final double FILTER_TIME_CONSTANT = 4;
+
     // PROXIMITY TOLERANCE
     public static final double CLOSE_DISTANCE_ERROR_CAP = 0.15;
     public static final double CLOSE_ANGLE_ERROR_CAP = 5;

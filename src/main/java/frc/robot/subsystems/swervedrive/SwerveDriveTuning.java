@@ -18,6 +18,8 @@ public class SwerveDriveTuning {
     private static final LoggedNetworkNumber KI_ANGULAR = new LoggedNetworkNumber("/Tuning/Swerve/(DTP) Angle kI", SwerveDriveConstants.KI_ANGULAR);
     private static final LoggedNetworkNumber KD_ANGULAR = new LoggedNetworkNumber("/Tuning/Swerve/(DTP) Angle kD", SwerveDriveConstants.KD_ANGULAR);
 
+    private static final LoggedNetworkNumber FILTER_TIME_CONSTANT = new LoggedNetworkNumber("/Tuning/Swerve/Filter Time Constant", SwerveDriveConstants.FILTER_TIME_CONSTANT);
+
     private static final LoggedNetworkNumber AUTO_KP = new LoggedNetworkNumber("/Tuning/Swerve/(Auto) kP", SwerveDriveConstants.AUTO_KP);
     private static final LoggedNetworkNumber AUTO_KI = new LoggedNetworkNumber("/Tuning/Swerve/(Auto) kI", SwerveDriveConstants.AUTO_KI);
     private static final LoggedNetworkNumber AUTO_KD = new LoggedNetworkNumber("/Tuning/Swerve/(Auto) kD", SwerveDriveConstants.AUTO_KD);
@@ -30,9 +32,9 @@ public class SwerveDriveTuning {
     private static final LoggedNetworkNumber FAR_DISTANCE = new LoggedNetworkNumber("/Tuning/Swerve/Far Distance", SwerveDriveConstants.FAR_DISTANCE);
     private static final LoggedNetworkNumber VERY_FAR_DISTANCE = new LoggedNetworkNumber("/Tuning/Swerve/Very Far Distance", SwerveDriveConstants.VERY_FAR_DISTANCE);
 
-    private static final LoggedNetworkNumber TEST_DRIVE_X = new LoggedNetworkNumber("/Tuning/Swerve/(Test L3) X", 0);
-    private static final LoggedNetworkNumber TEST_DRIVE_Y = new LoggedNetworkNumber("/Tuning/Swerve/(Test L3) Y", 0);
-    private static final LoggedNetworkNumber TEST_DRIVE_ANGLE = new LoggedNetworkNumber("/Tuning/Swerve/(Test L3) Angle", 0);
+    private static final LoggedNetworkNumber TEST_DRIVE_X = new LoggedNetworkNumber("/Tuning/Swerve/(Test L3) X", 12.25);
+    private static final LoggedNetworkNumber TEST_DRIVE_Y = new LoggedNetworkNumber("/Tuning/Swerve/(Test L3) Y", 5.1);
+    private static final LoggedNetworkNumber TEST_DRIVE_ANGLE = new LoggedNetworkNumber("/Tuning/Swerve/(Test L3) Angle", -60);
 
     public static final double MIN_SPEED_get() {
         return Constants.GetTuningMode() != TuningMode.IGNORE ? MIN_SPEED.get() : SwerveDriveConstants.MIN_SPEED;
@@ -72,6 +74,10 @@ public class SwerveDriveTuning {
 
     public static final double KD_ANGULAR_get() {
         return Constants.GetTuningMode() != TuningMode.IGNORE ? KD_ANGULAR.get() : SwerveDriveConstants.KD_ANGULAR;
+    }
+
+    public static final double FILTER_TIME_CONSTANT_get() { 
+        return Constants.GetTuningMode() != TuningMode.IGNORE ? FILTER_TIME_CONSTANT.get() : SwerveDriveConstants.FILTER_TIME_CONSTANT;
     }
 
     public static final double AUTO_KP_get() {
