@@ -7,7 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import frc.robot.Constants;
 import frc.robot.Dashboard;
@@ -70,17 +70,6 @@ public class SubsystemManager {
 
     private static final int[] highAlgaeTags = {7, 9, 11, 18, 20, 22};
 
-    public static Command travelCommand = Commands.run(() -> operateAuto(RobotState.TRAVEL, null));
-    public static Command intakeCoralCommand = Commands.run(() -> operateAuto(RobotState.INTAKE, ElevatorState.BASE));
-    public static Command intakeAlgaeLowCommand = Commands.run(() -> operateAuto(RobotState.INTAKE, ElevatorState.ALGAE_LOW_PROCESSOR));
-    public static Command intakeAlgaeHighCommand = Commands.run(() -> operateAuto(RobotState.INTAKE, ElevatorState.ALGAE_HIGH_PROCESSOR));
-    public static Command baseCommand = Commands.run(() -> operateAuto(null, ElevatorState.BASE));
-    public static Command level0Command = Commands.run(() -> operateAuto(null, ElevatorState.LEVEL0));
-    public static Command level1Command = Commands.run(() -> operateAuto(null, ElevatorState.LEVEL1));
-    public static Command level2Command = Commands.run(() -> operateAuto(null, ElevatorState.LEVEL2));
-    public static Command level3Command = Commands.run(() -> operateAuto(null, ElevatorState.LEVEL3));
-    public static Command depleteCommand = Commands.run(() -> operateAuto(RobotState.DEPLETE, null));
-
     public static void init(ElevatorIO elevatorIO, HandlerIO handlerIO, WristIO wristIO, ClimbIO climbIO, TrayIO trayIO) {
         state = RobotState.TRAVEL;
         lastState = state;
@@ -97,11 +86,7 @@ public class SubsystemManager {
 
     private static boolean isDriveToPoseActive;
 
-    public static void operate(boolean onAuto) { 
-        if(Constants.CurrentMode != Mode.REAL) simulationPeriodic();
-
-        isDriveToPoseActive = false;
-
+    private static void scheduleDriveCommands() {
         if (psControllerHID.getR3Button() || psControllerHID.getR1Button() || psControllerHID.getL1Button()) {
             driveToReef = drivebase.driveToClosestReefPoint(psControllerHID.getR1Button() ? ReefOrientation.RIGHT :
             psControllerHID.getL1Button() ? ReefOrientation.LEFT : ReefOrientation.MIDDLE_FAR);
@@ -132,64 +117,93 @@ public class SubsystemManager {
                 testDrive.cancel();
             }
         }
+    }
+
+    private static void operateDriveToReef() {
+        if (driveToReef != null && (!psControllerHID.getR3Button() && !psControllerHID.getR1Button() && 
+             !psControllerHID.getL1Button() && !(psControllerHID.getPOV(0) == 90) && !(psControllerHID.getPOV(0) == 270))) {
+            driveToReef.cancel();
+        } else if(driveToReef != null) {
+            isDriveToPoseActive = true;
+            driveToReef.schedule();
+        }
+    }
+
+    private static void getButtonStates() {
+        state = psControllerHID.getPOV(0) == 0 ? RobotState.TRAVEL : 
+            state == RobotState.CLIMB ? RobotState.CLIMB :
+            psControllerHID.getL2Button() ? RobotState.DEPLETE :
+            psControllerHID.getShareButton() ? RobotState.CLIMB :
+            lastState;
+
+        // Ensures that we don't switch to intake when algae's within
+        if(!Handler.isAlgaeInProcessor() && !Handler.isAlgaeInNet()) {
+            state = psControllerHID.getPOV(0) == 90 ? RobotState.INTAKE :
+                psControllerHID.getPOV(0) == 270 ? RobotState.INTAKE :
+                psControllerHID.getCrossButton() ?
+                    RobotState.INTAKE : state;
+        }
+
+        elevatorState = state == RobotState.CLIMB ? ElevatorState.BASE :
+            psControllerHID.getCrossButton() ? ElevatorState.BASE :
+            psControllerHID.getSquareButton() ? ElevatorState.LEVEL1 :
+            psControllerHID.getTriangleButton() ? ElevatorState.LEVEL3 :
+            psControllerHID.getCircleButton() ? ElevatorState.LEVEL2 :
+            psControllerHID.getPOV(0) == 90 ? ElevatorState.ALGAE_LOW_NET :        // right
+            psControllerHID.getPOV(0) == 180 ? ElevatorState.LEVEL0 :              // down
+            psControllerHID.getPOV(0) == 270 ? ElevatorState.ALGAE_LOW_PROCESSOR : // left
+            lastElevatorState;
+
+        if(Handler.isAlgaeInProcessor() || Handler.isAlgaeInNet()) elevatorState = lastElevatorState;
+    }
+
+    private static void determineAlgaeStates() {
+        if(drivebase.getClosestReefTag() == highAlgaeTags[0] ||
+            drivebase.getClosestReefTag() == highAlgaeTags[1] ||
+            drivebase.getClosestReefTag() == highAlgaeTags[2] ||
+            drivebase.getClosestReefTag() == highAlgaeTags[3] ||
+            drivebase.getClosestReefTag() == highAlgaeTags[4] ||
+            drivebase.getClosestReefTag() == highAlgaeTags[5]) {
+            currentAlgaeElevatorState = ElevatorState.ALGAE_HIGH_NET;
+        } else {
+            currentAlgaeElevatorState = ElevatorState.ALGAE_LOW_NET;
+        }
+
+        if ((elevatorState == ElevatorState.ALGAE_LOW_NET || elevatorState == ElevatorState.ALGAE_HIGH_NET ||
+            elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR || elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR) && !Handler.isAlgaeInNet() && !Handler.isAlgaeInProcessor()) {
+            chosenAlgaeElevatorState = currentAlgaeElevatorState;
+            if(elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR || elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR) {
+                if(currentAlgaeElevatorState == ElevatorState.ALGAE_HIGH_NET) {
+                    chosenAlgaeElevatorState = ElevatorState.ALGAE_HIGH_PROCESSOR;
+                } else {
+                    chosenAlgaeElevatorState = ElevatorState.ALGAE_LOW_PROCESSOR;
+                }
+            }
+            if(drivebase.isFarFromReef()) {
+                elevatorState = chosenAlgaeElevatorState;
+            } else {
+                elevatorState = lastElevatorState;
+            }
+        } else {
+            chosenAlgaeElevatorState = ElevatorState.BASE;
+        }
+    }
+
+    /* ************************* */
+
+    public static void operate(boolean onAuto) { 
+        if(Constants.CurrentMode != Mode.REAL) simulationPeriodic();
+
+        isDriveToPoseActive = false;
         
         if (!onAuto) {
-            state = psControllerHID.getPOV(0) == 0 ? RobotState.TRAVEL : 
-                state == RobotState.CLIMB ? RobotState.CLIMB :
-                psControllerHID.getL2Button() ? RobotState.DEPLETE :
-                psControllerHID.getShareButton() ? RobotState.CLIMB :
-                    lastState;
+            scheduleDriveCommands();
 
-            // Ensures that we don't switch to intake when algae's within
-            if(!Handler.isAlgaeInProcessor() && !Handler.isAlgaeInNet()) {
-                state = psControllerHID.getPOV(0) == 90 ? RobotState.INTAKE :
-                    psControllerHID.getPOV(0) == 270 ? RobotState.INTAKE :
-                    psControllerHID.getCrossButton() ?
-                        RobotState.INTAKE : state;
-            }
-
-            elevatorState = state == RobotState.CLIMB ? ElevatorState.BASE :
-                psControllerHID.getCrossButton() ? ElevatorState.BASE :
-                psControllerHID.getSquareButton() ? ElevatorState.LEVEL1 :
-                psControllerHID.getTriangleButton() ? ElevatorState.LEVEL3 :
-                psControllerHID.getCircleButton() ? ElevatorState.LEVEL2 :
-                psControllerHID.getPOV(0) == 90 ? ElevatorState.ALGAE_LOW_NET :        // right
-                psControllerHID.getPOV(0) == 180 ? ElevatorState.LEVEL0 :              // down
-                psControllerHID.getPOV(0) == 270 ? ElevatorState.ALGAE_LOW_PROCESSOR : // left
-                lastElevatorState;
+            getButtonStates(); 
             
-            if(Handler.isAlgaeInProcessor() || Handler.isAlgaeInNet()) elevatorState = lastElevatorState;
-            
-            if(drivebase.getClosestReefTag() == highAlgaeTags[0] ||
-                drivebase.getClosestReefTag() == highAlgaeTags[1] ||
-                drivebase.getClosestReefTag() == highAlgaeTags[2] ||
-                drivebase.getClosestReefTag() == highAlgaeTags[3] ||
-                drivebase.getClosestReefTag() == highAlgaeTags[4] ||
-                drivebase.getClosestReefTag() == highAlgaeTags[5]) {
-                currentAlgaeElevatorState = ElevatorState.ALGAE_HIGH_NET;
-            } else {
-                currentAlgaeElevatorState = ElevatorState.ALGAE_LOW_NET;
-            }
-
-            if ((elevatorState == ElevatorState.ALGAE_LOW_NET || elevatorState == ElevatorState.ALGAE_HIGH_NET ||
-                 elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR || elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR) && !Handler.isAlgaeInNet() && !Handler.isAlgaeInProcessor()) {
-                chosenAlgaeElevatorState = currentAlgaeElevatorState;
-                if(elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR || elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR) {
-                    if(currentAlgaeElevatorState == ElevatorState.ALGAE_HIGH_NET) {
-                        chosenAlgaeElevatorState = ElevatorState.ALGAE_HIGH_PROCESSOR;
-                    } else {
-                        chosenAlgaeElevatorState = ElevatorState.ALGAE_LOW_PROCESSOR;
-                    }
-                }
-                if(drivebase.isFarFromReef()) {
-                    elevatorState = chosenAlgaeElevatorState;
-                } else {
-                    elevatorState = lastElevatorState;
-                }
-            } else {
-                chosenAlgaeElevatorState = ElevatorState.BASE;
-            }
+            determineAlgaeStates();
         }
+
         Handler.updateHandlerIR(state, elevatorState, handlerState);
         isPushClimb = false;
 
@@ -350,13 +364,7 @@ public class SubsystemManager {
         Tray.operate(trayState);
 
         // Operate on the automatic drive to reef
-        if (driveToReef != null && (!psControllerHID.getR3Button() && !psControllerHID.getR1Button() && 
-             !psControllerHID.getL1Button() && !(psControllerHID.getPOV(0) == 90) && !(psControllerHID.getPOV(0) == 270))) {
-            driveToReef.cancel();
-        } else if(driveToReef != null) {
-            isDriveToPoseActive = true;
-            driveToReef.schedule();
-        }
+        operateDriveToReef();
 
         // if (isLocked) drivebase.lock();
 
@@ -365,10 +373,11 @@ public class SubsystemManager {
     }
     
     
-    private static void operateAuto(RobotState chosenState, ElevatorState chosenElevatorState) {
-        state = chosenState == null ? state : chosenState;
-        elevatorState = chosenElevatorState == null ? elevatorState : chosenElevatorState;
-        operate(true);
+    public static Command operateAuto(RobotState chosenState, ElevatorState chosenElevatorState) {
+        return new InstantCommand(() -> {
+            state = chosenState == null ? state : chosenState;
+            elevatorState = chosenElevatorState == null ? elevatorState : chosenElevatorState;
+        });
     }
 
     private static void simulationPeriodic() {
@@ -456,11 +465,7 @@ public class SubsystemManager {
         return isDriveToPoseActive;
     }
 
-    public static void setState(RobotState _state){
-        state = _state;
-    }
-
-    public static void setElevatorState(ElevatorState _state){
-        elevatorState = _state;
+    public static void setStateToDefault() {
+        state = RobotState.TRAVEL;
     }
 }

@@ -5,7 +5,6 @@
 package frc.robot.subsystems.SwerveDrive;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -28,6 +27,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Limelight;
 import frc.robot.Constants.TuningMode;
+import frc.robot.commands.RedLeftCoralAuto;
+import frc.robot.commands.RedRightCoralAuto;
+import frc.robot.commands.BlueLeftCoralAuto;
+import frc.robot.commands.BlueRightCoralAuto;
 import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorConstants;
@@ -107,6 +110,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // EDIT TO WORK WITH avoidToPose !!!
     isCloseEnoughToReef = Math.abs(driveXPID.getError()) < SwerveDriveTuning.CLOSE_DISTANCE_ERROR_CAP_get() &&
         Math.abs(driveYPID.getError()) < SwerveDriveTuning.CLOSE_DISTANCE_ERROR_CAP_get() &&
         Math.abs(rotationPID.getError()) < Math.toRadians(SwerveDriveTuning.CLOSE_ANGLE_ERROR_CAP_get()) && 
@@ -185,9 +189,24 @@ public class SwerveSubsystem extends SubsystemBase {
     }
   }
 
-  public Command getAutonomousCommand(String pathName) {
-    return new PathPlannerAuto(pathName);
+  public boolean isCloseEnoughToPose(Pose2d pose) {
+    return Math.abs(getPose().getX() - pose.getX()) < SwerveDriveTuning.CLOSE_DISTANCE_ERROR_CAP_get() &&
+      Math.abs(getPose().getY() - pose.getY()) < SwerveDriveTuning.CLOSE_DISTANCE_ERROR_CAP_get();
   }
+
+  public Command getAutonomousCommand(String pathName) {
+    switch(pathName) {
+      default:
+      case "Blue Right Coral":
+        return new RedRightCoralAuto();
+      case "Blue Left Coral":
+        return new RedLeftCoralAuto();
+      case "Red Right Coral":
+        return new BlueRightCoralAuto();
+      case "Red Left Coral":
+        return new BlueLeftCoralAuto();
+    }
+}
 
   PathPlannerTrajectory currentTrajectory = null;
   LinearFilter xFilter = LinearFilter.singlePoleIIR(SwerveDriveConstants.FILTER_TIME_CONSTANT, 1);
@@ -229,6 +248,7 @@ public class SwerveSubsystem extends SubsystemBase {
         double yValue = yFilter.calculate(targetPose.getY() - getPose().getY());
 
         // Cancel smoothing if close enough to the target
+        // isCloseEnoughToPose eliminates bounces when we disable and turn the command back on
         if(slowdownCoefficient < 0.5) { 
           xValue = pose.getX() - getPose().getX();
           yValue = pose.getY() - getPose().getY();

@@ -209,7 +209,7 @@ public class Robot extends LoggedRobot {
       autoCommand.schedule();
     }
 
-    SubsystemManager.setState(RobotState.TRAVEL);
+    SubsystemManager.setStateToDefault();;
   }
 
   /**
@@ -225,7 +225,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopInit()
   {
-    SubsystemManager.setState(RobotState.TRAVEL);
+    SubsystemManager.setStateToDefault();;
 
     if (autoInitCommand != null) {
       autoInitCommand.cancel();

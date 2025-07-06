@@ -12,7 +12,6 @@ import frc.robot.subsystems.SubsystemManager;
 
 import java.util.Optional;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import com.pathplanner.lib.auto.NamedCommands;
 
 public class RobotContainer {
   Command driveFieldOrientedAngularVelocity = SubsystemManager.getDrivebase().driveCommand( // default
@@ -25,17 +24,6 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
     configureDriveCommand();
-
-    NamedCommands.registerCommand("Travel", SubsystemManager.travelCommand);
-    NamedCommands.registerCommand("IntakeCoral", SubsystemManager.intakeCoralCommand);
-    NamedCommands.registerCommand("IntakeAlgaeLow", SubsystemManager.intakeAlgaeLowCommand);
-    NamedCommands.registerCommand("IntakeAlgaeHigh", SubsystemManager.intakeAlgaeHighCommand);
-    NamedCommands.registerCommand("Base", SubsystemManager.baseCommand);
-    NamedCommands.registerCommand("Level_0", SubsystemManager.level0Command);
-    NamedCommands.registerCommand("Level_1", SubsystemManager.level1Command);
-    NamedCommands.registerCommand("Level_2", SubsystemManager.level2Command);
-    NamedCommands.registerCommand("Level_3", SubsystemManager.level3Command);
-    NamedCommands.registerCommand("Deplete", SubsystemManager.depleteCommand);
   }
 
   private void configureBindings() {    

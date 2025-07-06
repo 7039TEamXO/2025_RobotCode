@@ -27,7 +27,7 @@ public class SwerveDriveConstants {
     public static final double MAX_ROTATION_V = 4;
     public static final double MIN_ROTATION_V = 2; // Non-restrictive
 
-    // Autonomy PIDs
+    // Autonomy PIDs (unused)
     public static final double AUTO_KP = 1;
     public static final double AUTO_KI = 0;
     public static final double AUTO_KD = 0;
@@ -39,7 +39,7 @@ public class SwerveDriveConstants {
     // DriveToPose PIDs
     public static final double KP = 6;
     public static final double KI = 0;
-    public static final double KD = 0.8;
+    public static final double KD = 1;
 
     public static final double KP_ANGULAR = 5;
     public static final double KI_ANGULAR = 0;
@@ -49,8 +49,8 @@ public class SwerveDriveConstants {
     public static final double FILTER_TIME_CONSTANT = 4;
 
     // PROXIMITY TOLERANCE
-    public static final double CLOSE_DISTANCE_ERROR_CAP = 0.15;
-    public static final double CLOSE_ANGLE_ERROR_CAP = 5;
+    public static final double CLOSE_DISTANCE_ERROR_CAP = 0.1;
+    public static final double CLOSE_ANGLE_ERROR_CAP = Math.toRadians(5);
 
     public static final double FAR_DISTANCE = 1.7;
     public static final double VERY_FAR_DISTANCE = 1.8;

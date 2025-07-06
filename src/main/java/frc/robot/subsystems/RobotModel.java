@@ -8,7 +8,9 @@ import org.littletonrobotics.junction.mechanism.LoggedMechanismRoot2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import frc.robot.RobotState;
 import frc.robot.subsystems.Elevator.Elevator;
+import frc.robot.subsystems.Handler.Handler;
 import frc.robot.subsystems.IO.Sim.ElevatorSim.ElevatorSimConstants;
 import frc.robot.subsystems.Wrist.Wrist;
 
@@ -119,6 +121,29 @@ public class RobotModel {
         wrist_root.setPosition(RobotModelConstants.FrameWidth / 2.0 + RobotModelConstants.WristShift, framePosition + RobotModelConstants.WristRootElevation);
         wrist_backroot.setPosition(RobotModelConstants.FrameWidth / 2.0 + RobotModelConstants.WristShift + Math.cos(angle) * RobotModelConstants.WristBackLength, 
             framePosition + RobotModelConstants.WristRootElevation + Math.sin(angle) * RobotModelConstants.WristBackLength);
+
+        Color8Bit wrist_color = new Color8Bit(Color.kRed);
+
+        switch(SubsystemManager.getRobotState()) {
+            case TRAVEL:
+                wrist_color = new Color8Bit(Color.kRed);
+                break;
+            case INTAKE:
+                wrist_color = new Color8Bit(Color.kYellow);
+                break;
+            case DEPLETE:
+                wrist_color = new Color8Bit(Color.kWhite);
+                break;
+            case CLIMB:
+                wrist_color = new Color8Bit(Color.kRed);
+                break;
+        }
+
+        if(Handler.isCoralIn() && SubsystemManager.getRobotState() == RobotState.TRAVEL) wrist_color = new Color8Bit(Color.kViolet);
+
+        wrist_back_ligament.setColor(wrist_color);
+        wrist_front_ligament.setColor(wrist_color);
+        wrist_coral_ligament.setColor(wrist_color);
 
         Logger.recordOutput("Elevator", m_elevator);
         Logger.recordOutput("Wrist", m_wrist);
