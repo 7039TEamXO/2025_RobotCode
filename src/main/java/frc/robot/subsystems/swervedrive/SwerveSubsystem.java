@@ -446,10 +446,6 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.resetOdometry(initialHolonomicPose);
   }
 
-  public Pose2d getPose() {
-    return swerveDrive.getPose();
-  }
-
   public Pose2d getSimulationPose() {
     return swerveDrive.getSimulationDriveTrainPose().get();
   }
@@ -491,6 +487,10 @@ public class SwerveSubsystem extends SubsystemBase {
   public void setMotorBrake(boolean brake)
   {
     swerveDrive.setMotorIdleMode(brake);
+  }
+
+  public Pose2d getPose() {
+    return swerveDrive.getPose();
   }
 
   public Rotation2d getHeading()
