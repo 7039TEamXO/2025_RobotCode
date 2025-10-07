@@ -36,7 +36,7 @@ public final class Constants
     REPLAY
   }
 
-  private static final TuningMode StartingTuningMode = TuningMode.IGNORE;
+  private static final TuningMode StartingTuningMode = TuningMode.INACTIVE;
   private static final LoggedNetworkBoolean IsActiveTuning = 
     new LoggedNetworkBoolean("/Tuning/[!] Is Active Tuning", StartingTuningMode == TuningMode.ACTIVE ? true : false);
 
@@ -130,10 +130,21 @@ public final class Constants
   public static class Field {
     // NET LOCATIONS
     public static final double WANTED_X_NET_ALGAE_POS_BLUE = 7.25;
+    public static final double WANTED_Y_NET_ALGAE_POS_BLUE = 6;
     public static final double WANTED_ROTATION_ANGLE_NET_ALGAE_POS_BLUE = 0;
 
     public static final double WANTED_X_NET_ALGAE_POS_RED = 10.6; //10.4
+    public static final double WANTED_Y_NET_ALGAE_POS_RED = 2; //10.4
     public static final double WANTED_ROTATION_ANGLE_NET_ALGAE_POS_RED = 180;
+
+    // PROCESSOR LOCATIONS
+    public static final double WANTED_X_PROCESSOR_ALGAE_POS_BLUE = 6;
+    public static final double WANTED_Y_PROCESSOR_ALGAE_POS_BLUE = 0.2;
+    public static final double WANTED_ROTATION_ANGLE_PROCESSOR_ALGAE_POS_BLUE = -90;
+
+    public static final double WANTED_X_PROCESSOR_ALGAE_POS_RED = 11.5; //10.4
+    public static final double WANTED_Y_PROCESSOR_ALGAE_POS_RED = 7.8;
+    public static final double WANTED_ROTATION_ANGLE_PROCESSOR_ALGAE_POS_RED = 90;
 
     // FEEDER LOCATIONS
     public static final double WANTED_X_FEEDER_LEFT_RED = 16.5; // 16.241

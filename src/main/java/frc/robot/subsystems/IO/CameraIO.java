@@ -15,6 +15,7 @@ public interface CameraIO extends AutoCloseable {
         public int mainAprilTagID = -1;
         public double TX = -1;
         public double TA = 0;
+        public double MT1 = 0;
 
         public void toLog(LogTable table) {
             table.put("DoRejectUpdate", doRejectUpdate);
@@ -26,6 +27,7 @@ public interface CameraIO extends AutoCloseable {
             table.put("MainAprilTagID", mainAprilTagID);
             table.put("TX", TX);
             table.put("TA", TA);
+            table.put("MT1", MT1);
         }
 
         public void fromLog(LogTable table) {
@@ -38,6 +40,7 @@ public interface CameraIO extends AutoCloseable {
             mainAprilTagID = table.get("MainAprilTagID", -1);
             TX = table.get("TX", -1);
             TA = table.get("TA", 0);
+            MT1 = table.get("MT1", 0);
         }
     }
 

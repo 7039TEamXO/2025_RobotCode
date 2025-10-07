@@ -21,13 +21,15 @@ public class HandlerConstants {
     public static final double HANDLER_POWER_FEED_CORAL = -0.05;
     public static final double HANDLER_POWER_PUSH_BACK_CORAL = -0.05;
 
-    public static final double HANDLER_POWER_HOLD_NET = -0.30;
+    public static final double HANDLER_POWER_HOLD_NET = -0.20;
     public static final double HANDLER_POWER_INTAKE_NET = -0.55;
     public static final double HANDLER_POWER_DEPLETE_NET = 1;
 
     public static final int CORAL_IN_DEBOUNCE_COUNTER = 5;
+    public static final int CORAL_IN_DEBOUNCE_COUNTER_AUTO = 5;
     public static final double LEVEL4_CORAL_PUSH_DISTANCE = 1.5;
 
     public static final double ALGAE_PROC_IR_IN_VALUE = 1300; // 237
-    public static final double ALGAE_NET_IR_IN_VALUE = 1400; // CHANGE [!]
+    public static final double ALGAE_NET_IR_IN_VALUE = 1000;
+    public static final double ALGAE_NET_IR_NOT_IN_VALUE = 2000;
 }

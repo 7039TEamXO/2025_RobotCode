@@ -11,8 +11,7 @@ public class RedLeftCoralAuto extends SequentialCommandGroup {
             new Pose2d(12.53, 8 - 5.27, new Rotation2d(Math.toRadians(60))),
             new Pose2d(13.59, 8 - 5.27, new Rotation2d(Math.toRadians(120))),
             new Pose2d(13.87, 8 - 5.10, new Rotation2d(Math.toRadians(120))),
-            new Pose2d(14.40, 8 - 4.19, new Rotation2d(Math.toRadians(180))),
-            new Pose2d(16.20, 8 - 7.30, new Rotation2d(Math.toRadians(125)))
+            new Pose2d(14.40, 8 - 4.19, new Rotation2d(Math.toRadians(180)))
         ));
     }
 }

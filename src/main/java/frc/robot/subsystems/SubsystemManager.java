@@ -97,7 +97,9 @@ public class SubsystemManager {
 
         if (psControllerHID.getR2Button()) {
             chooseFeeder = Handler.isAlgaeInNet() ?
-            chooseFeeder = drivebase.driveToNet() :
+                drivebase.driveToNet() :
+                Handler.isAlgaeInProcessor() ?
+                drivebase.driveToProcessor() :
                 drivebase.chooseFeeder(drivebase.getPose().getY());
             chooseFeeder.schedule();
             isDriveToPoseActive = true;

@@ -15,7 +15,6 @@ import frc.robot.Dashboard;
 import frc.robot.Robot;
 import frc.robot.RobotState;
 
-
 public class Handler {
     private static HandlerIO io;
     private static HandlerIOInputs inputs = new HandlerIOInputs();
@@ -83,8 +82,8 @@ public class Handler {
 
             case INTAKE_CORAL:
                 if(Robot.isAuto()) {
-                    power = HandlerConstants.HANDLER_POWER_INTAKE_CORAL_AUTO;
-                } else{
+                    power = HandlerConstants.HANDLER_POWER_INTAKE_CORAL_TELEOP;
+                } else {
                     power = HandlerConstants.HANDLER_POWER_INTAKE_CORAL_TELEOP;
                 }
                 break;
@@ -138,8 +137,12 @@ public class Handler {
         else if(!lastCoralIRValue) {
             coralIntakeCounter = 0;
         }
-
-        if (!coralIRValue && state != RobotState.DEPLETE && coralIntakeCounter > HandlerTuning.CORAL_IN_DEBOUNCE_COUNTER_get()) {
+        /*
+         * (coralIntakeCounter > HandlerTuning.CORAL_IN_DEBOUNCE_COUNTER_get() && !Robot.isAuto()) ||
+            (coralIntakeCounter > HandlerTuning.CORAL_IN_DEBOUNCE_COUNTER_AUTO_get() && Robot.isAuto())
+         */
+        if (!coralIRValue && state != RobotState.DEPLETE && 
+            coralIntakeCounter > HandlerTuning.CORAL_IN_DEBOUNCE_COUNTER_get()) {
             isCoralIn = true;
             CurrentHandlerEncoderPosition = getHandlerMotorDistance();
         }
@@ -158,8 +161,8 @@ public class Handler {
         }
 
         // ALGAE PROCESSOR
-
-        if ((algaeProcIRValue > HandlerTuning.ALGAE_PROC_IR_IN_VALUE_get() || Math.abs(inputs.currentAmps) > 80) && state == RobotState.INTAKE 
+        // || Math.abs(inputs.currentAmps) > 80
+        if ((algaeProcIRValue > HandlerTuning.ALGAE_PROC_IR_IN_VALUE_get()) && state == RobotState.INTAKE 
             && Wrist.isWristAtSetPoint() && (elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR || elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR) && !isCoralIn) {
             isAlgaeInProcessor = true;
         } else if (algaeDepleteCounter > 35) {
@@ -167,8 +170,8 @@ public class Handler {
         }
 
         // ALGAE NET
-
-        if((algaeNetIRValue > HandlerTuning.ALGAE_NET_IR_IN_VALUE_get() || Math.abs(inputs.currentAmps) > 80) && Wrist.isWristAtSetPoint()
+        // || Math.abs(inputs.currentAmps) > 80
+        if((algaeNetIRValue > HandlerTuning.ALGAE_NET_IR_IN_VALUE_get() && algaeNetIRValue < HandlerTuning.ALGAE_NET_IR_NOT_IN_VALUE_get()) && Wrist.isWristAtSetPoint()
             && state == RobotState.INTAKE && (elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET) && !isCoralIn) {
             isAlgaeInNet = true;
         } else if(algaeDepleteCounter > 35 || SubsystemManager.getPSJoystick().getHID().getCrossButton()) {

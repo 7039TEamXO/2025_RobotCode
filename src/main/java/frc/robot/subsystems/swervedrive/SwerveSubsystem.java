@@ -60,7 +60,7 @@ import frc.robot.utils.LocalADStarAK;
 
 public class SwerveSubsystem extends SubsystemBase {
   private static SwerveDrive swerveDrive;
-  private static boolean isCloseEnoughToReef = false;
+  // private static boolean isCloseEnoughToReef = false;
 
   private static LocalADStarAK localADStarAK = new LocalADStarAK();
 
@@ -110,14 +110,13 @@ public class SwerveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // EDIT TO WORK WITH avoidToPose !!!
-    isCloseEnoughToReef = Math.abs(driveXPID.getError()) < SwerveDriveTuning.CLOSE_DISTANCE_ERROR_CAP_get() &&
-        Math.abs(driveYPID.getError()) < SwerveDriveTuning.CLOSE_DISTANCE_ERROR_CAP_get() &&
-        Math.abs(rotationPID.getError()) < Math.toRadians(SwerveDriveTuning.CLOSE_ANGLE_ERROR_CAP_get()) && 
-        !isFarFromReef() &&
-        (SubsystemManager.getPSJoystick().L1().getAsBoolean() || 
-        SubsystemManager.getPSJoystick().R1().getAsBoolean() ||
-        SubsystemManager.getPSJoystick().R3().getAsBoolean());
+    // isCloseEnoughToReef = Math.abs(driveXPID.getError()) < SwerveDriveTuning.CLOSE_DISTANCE_ERROR_CAP_get() &&
+    //     Math.abs(driveYPID.getError()) < SwerveDriveTuning.CLOSE_DISTANCE_ERROR_CAP_get() &&
+    //     Math.abs(rotationPID.getError()) < Math.toRadians(SwerveDriveTuning.CLOSE_ANGLE_ERROR_CAP_get()) && 
+    //     !isFarFromReef() &&
+    //     (SubsystemManager.getPSJoystick().L1().getAsBoolean() || 
+    //     SubsystemManager.getPSJoystick().R1().getAsBoolean() ||
+    //     SubsystemManager.getPSJoystick().R3().getAsBoolean());
 
     if (SubsystemManager.getTrayState() == TrayState.UP) {
       swerveDrive.setMaximumAllowableSpeeds(SwerveDriveTuning.CLIMB_SPEED_get(), SwerveDriveTuning.MIN_ROTATION_V_get());
@@ -128,11 +127,13 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     if(Constants.GetTuningMode() == TuningMode.ACTIVE) {
-      driveXPID.setPID(SwerveDriveTuning.KP_get(), SwerveDriveTuning.KI_get(), SwerveDriveTuning.KD_get());
-      driveYPID.setPID(SwerveDriveTuning.KP_get(), SwerveDriveTuning.KI_get(), SwerveDriveTuning.KD_get());
-      rotationPID.setPID(SwerveDriveTuning.KP_ANGULAR_get(), SwerveDriveTuning.KI_ANGULAR_get(), SwerveDriveTuning.KD_ANGULAR_get());
+      driveXPID.setPID(SwerveDriveTuning.KP_get(), 0, SwerveDriveTuning.KD_get());
+      driveYPID.setPID(SwerveDriveTuning.KP_get(), 0, SwerveDriveTuning.KD_get());
+      rotationPID.setPID(SwerveDriveTuning.KP_ANGULAR_get(), 0, SwerveDriveTuning.KD_ANGULAR_get());
 
-      setupPathPlanner();
+      driveToFeederXPID.setPID(SwerveDriveTuning.KP_FEEDER_get(), 0, SwerveDriveTuning.KD_FEEDER_get());
+      driveToFeederYPID.setPID(SwerveDriveTuning.KP_FEEDER_get(), 0, SwerveDriveTuning.KD_FEEDER_get());
+      rotationToFeederPID.setPID(SwerveDriveTuning.KP_FEEDER_ANGULAR_get(), 0, SwerveDriveTuning.KD_FEEDER_ANGULAR_get());
 
       xFilter = LinearFilter.singlePoleIIR(SwerveDriveTuning.FILTER_TIME_CONSTANT_get(), 1);
       yFilter = LinearFilter.singlePoleIIR(SwerveDriveTuning.FILTER_TIME_CONSTANT_get(), 1);
@@ -140,7 +141,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     // if(isAuto) filter by isRobotVBelowOne too
     Object[] tuple = Limelight.update();
-    if (tuple != null) { // filterTargetByTA only worsens it
+    if (tuple != null && (double)tuple[3] > 0.2) {
       swerveDrive.addVisionMeasurement((Pose2d)tuple[0], (double)tuple[1]);
     }
 
@@ -177,8 +178,8 @@ public class SwerveSubsystem extends SubsystemBase {
           },
 
           new PPHolonomicDriveController(
-              new PIDConstants(SwerveDriveTuning.AUTO_KP_get(), SwerveDriveTuning.AUTO_KI_get(), SwerveDriveTuning.AUTO_KD_get()),
-              new PIDConstants(SwerveDriveTuning.AUTO_KP_ANGULAR_get(), SwerveDriveTuning.AUTO_KI_ANGULAR_get(), SwerveDriveTuning.AUTO_KD_ANGULAR_get())
+              new PIDConstants(SwerveDriveTuning.KP_get(), 0, SwerveDriveTuning.KD_get()),
+              new PIDConstants(SwerveDriveTuning.KP_ANGULAR_get(), 0, SwerveDriveTuning.KD_ANGULAR_get())
           ),
           config,
           () -> isRedAlliance(),
@@ -198,13 +199,13 @@ public class SwerveSubsystem extends SubsystemBase {
     switch(pathName) {
       default:
       case "Blue Right Coral":
-        return new RedRightCoralAuto();
-      case "Blue Left Coral":
-        return new RedLeftCoralAuto();
-      case "Red Right Coral":
         return new BlueRightCoralAuto();
-      case "Red Left Coral":
+      case "Blue Left Coral":
         return new BlueLeftCoralAuto();
+      case "Red Right Coral":
+        return new RedRightCoralAuto();
+      case "Red Left Coral":
+        return new RedLeftCoralAuto();
     }
 }
 
@@ -212,6 +213,7 @@ public class SwerveSubsystem extends SubsystemBase {
   LinearFilter xFilter = LinearFilter.singlePoleIIR(SwerveDriveConstants.FILTER_TIME_CONSTANT, 1);
   LinearFilter yFilter = LinearFilter.singlePoleIIR(SwerveDriveConstants.FILTER_TIME_CONSTANT, 1);
   
+  // TOO UNSTABLE FOR USE [5TH OCT 2025]
   public Command avoidToPose(Pose2d pose) {
     return run(() -> {
       localADStarAK.setStartPosition(getPose().getTranslation());
@@ -271,13 +273,9 @@ public class SwerveSubsystem extends SubsystemBase {
     });
   }
 
-  private Vector2 getReefCenter() {
+  public static Vector2 getReefCenter() {
     if(isRedAlliance()) return new Vector2(Constants.Reef.REEF_CENTER_X_RED, Constants.Reef.REEF_CENTER_Y_RED);
     else return new Vector2(Constants.Reef.REEF_CENTER_X_BLUE, Constants.Reef.REEF_CENTER_Y_BLUE);
-  }
-
-  public boolean isCloseEnoughToReef() {
-    return isCloseEnoughToReef;
   }
 
   public boolean isFarFromReef() {
@@ -287,8 +285,12 @@ public class SwerveSubsystem extends SubsystemBase {
   public boolean isVeryFarFromReef() {
     return getReefCenter().distance(new Vector2(getPose().getX(), getPose().getY())) > SwerveDriveTuning.VERY_FAR_DISTANCE_get();
   }
+  
+  public double getDistanceFromReef() {
+    return getReefCenter().distance(new Vector2(getPose().getX(), getPose().getY()));
+  }
 
-  private static double getRotationFactorFromElevator() {
+  public static double getRotationFactorFromElevator() {
     return Elevator.getCurrentPosition() > 14 ? 0.8 :
       Elevator.getCurrentPosition() > 5 ? 0.8 : 1;
   }
@@ -297,28 +299,45 @@ public class SwerveSubsystem extends SubsystemBase {
   private PIDController driveYPID = new PIDController(SwerveDriveConstants.KP, 0, SwerveDriveConstants.KD);
   private PIDController rotationPID = new PIDController(SwerveDriveConstants.KP_ANGULAR, 0, SwerveDriveConstants.KD_ANGULAR);
 
-  public Command driveToPose(Pose2d pose) {
+  private PIDController driveToFeederXPID = new PIDController(SwerveDriveConstants.KP_FEEDER, 0, SwerveDriveConstants.KD_FEEDER);
+  private PIDController driveToFeederYPID = new PIDController(SwerveDriveConstants.KP_FEEDER, 0, SwerveDriveConstants.KD_FEEDER);
+  private PIDController rotationToFeederPID = new PIDController(SwerveDriveConstants.KP_FEEDER_ANGULAR, 0, SwerveDriveConstants.KD_FEEDER_ANGULAR);
+
+  public Command driveToPose(Pose2d pose, boolean useFeederPID) {
     return run(() -> {
       Logger.recordOutput("Odometry/RequestedPose", pose);
 
-      driveXPID.setSetpoint(pose.getX());
-      driveYPID.setSetpoint(pose.getY());
-      rotationPID.setSetpoint(pose.getRotation().getRadians());
+      PIDController X = driveXPID;
+      PIDController Y = driveYPID;
+      PIDController R = rotationPID;
+      if(useFeederPID) {
+        X = driveToFeederXPID;
+        Y = driveToFeederYPID;
+        R = rotationToFeederPID;
+      }
+
+      X.setSetpoint(pose.getX());
+      Y.setSetpoint(pose.getY());
+      R.setSetpoint(pose.getRotation().getRadians());
     
-      Translation2d freshTranslation = new Translation2d(driveXPID.calculate(getPose().getX()), 
-        driveYPID.calculate(getPose().getY()));
+      Translation2d freshTranslation = new Translation2d(X.calculate(getPose().getX()), 
+        Y.calculate(getPose().getY()));
       Translation2d scaledTranslation = freshTranslation.times(Math.min(1, 
         swerveDrive.getMaximumChassisVelocity() / freshTranslation.getDistance(Translation2d.kZero)));
 
       // Ensuring that the error is in the -180 ... +180 degree range
       double robotAngle = getPose().getRotation().getRadians();
 
-      double angleError = robotAngle - rotationPID.getSetpoint();
+      double angleError = robotAngle - R.getSetpoint();
       if(angleError > Math.PI) robotAngle -= 2 * Math.PI;
       if(angleError < -Math.PI) robotAngle += 2 * Math.PI;
 
-      swerveDrive.drive(scaledTranslation, rotationPID.calculate(robotAngle) * getRotationFactorFromElevator(), true, false);
+      swerveDrive.drive(scaledTranslation, R.calculate(robotAngle) * getRotationFactorFromElevator(), true, false);
     });
+  }
+
+  public Command driveToPose(Pose2d pose) {
+    return driveToPose(pose, false);
   }
 
   public Command driveToClosestReefPoint(ReefOrientation orientation) {
@@ -341,16 +360,29 @@ public class SwerveSubsystem extends SubsystemBase {
   public Command driveToNet() {
     if (isRedAlliance()) {
       return driveToPose(new Pose2d(
-        Constants.Field.WANTED_X_NET_ALGAE_POS_RED, 
-        getPose().getY(), 
+        Constants.Field.WANTED_X_NET_ALGAE_POS_RED, Constants.Field.WANTED_Y_NET_ALGAE_POS_RED, 
         new Rotation2d(Math.toRadians(Constants.Field.WANTED_ROTATION_ANGLE_NET_ALGAE_POS_RED))
       ));
     }
     else {
       return driveToPose(new Pose2d(
-        Constants.Field.WANTED_X_NET_ALGAE_POS_BLUE, 
-        getPose().getY(), 
+        Constants.Field.WANTED_X_NET_ALGAE_POS_BLUE, Constants.Field.WANTED_Y_NET_ALGAE_POS_BLUE, 
         new Rotation2d(Math.toRadians(Constants.Field.WANTED_ROTATION_ANGLE_NET_ALGAE_POS_BLUE))
+      ));
+    }
+  }
+
+  public Command driveToProcessor() {
+    if (isRedAlliance()) {
+      return driveToPose(new Pose2d(
+        Constants.Field.WANTED_X_PROCESSOR_ALGAE_POS_RED, Constants.Field.WANTED_Y_PROCESSOR_ALGAE_POS_RED, 
+        new Rotation2d(Math.toRadians(Constants.Field.WANTED_ROTATION_ANGLE_PROCESSOR_ALGAE_POS_RED))
+      ));
+    }
+    else {
+      return driveToPose(new Pose2d(
+        Constants.Field.WANTED_X_PROCESSOR_ALGAE_POS_BLUE, Constants.Field.WANTED_Y_PROCESSOR_ALGAE_POS_BLUE, 
+        new Rotation2d(Math.toRadians(Constants.Field.WANTED_ROTATION_ANGLE_PROCESSOR_ALGAE_POS_BLUE))
       ));
     }
   }
@@ -362,7 +394,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public Command driveToFeeder(final double wantedX, final double wantedY, final double wantedAngle) {
-    return driveToPose(new Pose2d(wantedX, wantedY, new Rotation2d(Math.toRadians(wantedAngle))));
+    return driveToPose(new Pose2d(wantedX, wantedY, new Rotation2d(Math.toRadians(wantedAngle))), true);
   }
 
   private Command driveToRedRightFeeder() {
@@ -465,7 +497,7 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.zeroGyro();
   }
 
-  private boolean isRedAlliance()
+  private static boolean isRedAlliance()
   {
     var alliance = DriverStation.getAlliance();
     return alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
@@ -475,6 +507,7 @@ public class SwerveSubsystem extends SubsystemBase {
   {
     if (isRedAlliance())
     {
+      System.out.println("Hello!");
       zeroGyro();
       // Set the pose 180 degrees
       resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
@@ -613,7 +646,7 @@ public class SwerveSubsystem extends SubsystemBase {
     );
   }
 
-  private Pose2d getClosestReefFaceRobotPos() {
+  public Pose2d getClosestReefFaceRobotPos() {
     return closestReefFaceRobotPos;
   }
 

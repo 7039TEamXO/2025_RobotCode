@@ -65,18 +65,23 @@ public class CameraReal implements CameraIO {
         inputs.mainAprilTagID = getMainAprilTagID();
         inputs.TX = LimelightHelpers.getTX("limelight");
         inputs.TA = LimelightHelpers.getTA("limelight");
+        inputs.MT1 = angleFromMT1;
     }
 
     @Override
     public void periodic() {
-        angleFromMT1 = hasTargetFromReef() ? limelightTable.getEntry("botpose_wpiblue").getDoubleArray(new Double[]{})[5] : angleFromMT1;
-
         doRejectUpdate = false;
 
         double suppliedAngle = SubsystemManager.getDrivebase().getHeading().getDegrees();
 
         // Temporary replacement due to Pigeon's unpredictability
-        if(hasTargetFromReef()) suppliedAngle = angleFromMT1;
+        if(hasTargetFromReef()) { 
+            Double[] inputArray = limelightTable.getEntry("botpose_wpiblue").getDoubleArray(new Double[]{});
+            if(inputArray.length > 5) {
+                angleFromMT1 = limelightTable.getEntry("botpose_wpiblue").getDoubleArray(new Double[]{})[5];
+                suppliedAngle = angleFromMT1;
+            }
+        }
         
         LimelightHelpers.SetRobotOrientation("limelight", suppliedAngle, 0, 0, 0, 0, 0);
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
@@ -95,7 +100,7 @@ public class CameraReal implements CameraIO {
             if(!doRejectUpdate) {
                 estimatedPose = mt2.pose;
                 timestampSeconds = mt2.timestampSeconds;
-                stdDevs = VecBuilder.fill(currentStdDevs[6], currentStdDevs[7], currentStdDevs[10]);
+                stdDevs = VecBuilder.fill(currentStdDevs[6], currentStdDevs[7], currentStdDevs[5]);
             }
         } 
     }

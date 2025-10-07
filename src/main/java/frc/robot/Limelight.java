@@ -24,7 +24,7 @@ public class Limelight {
         Logger.processInputs("Limelight", inputs);
 
         if(!inputs.doRejectUpdate) {
-            return new Object[]{ inputs.estimatedPose, inputs.timestampSeconds, VecBuilder.fill(inputs.stdDevs[0], inputs.stdDevs[1], inputs.stdDevs[2]) };
+            return new Object[]{ inputs.estimatedPose, inputs.timestampSeconds, VecBuilder.fill(inputs.stdDevs[0], inputs.stdDevs[1], inputs.stdDevs[2]), inputs.TA };
         }
         
         return null;  

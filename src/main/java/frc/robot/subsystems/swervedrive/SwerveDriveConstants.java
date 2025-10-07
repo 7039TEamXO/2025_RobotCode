@@ -27,23 +27,24 @@ public class SwerveDriveConstants {
     public static final double MAX_ROTATION_V = 4;
     public static final double MIN_ROTATION_V = 2; // Non-restrictive
 
-    // Autonomy PIDs (unused)
-    public static final double AUTO_KP = 1;
-    public static final double AUTO_KI = 0;
-    public static final double AUTO_KD = 0;
+    // DriveToPose PIDs (DTP-General)
+    public static final double KP = 3; // 2.5
+    public static final double KD = 0.1; // 0.2
 
-    public static final double AUTO_KP_ANGULAR = 2.5;
-    public static final double AUTO_KI_ANGULAR = 0;
-    public static final double AUTO_KD_ANGULAR = 0;
+    public static final double KP_ANGULAR = 3;
+    public static final double KD_ANGULAR = 0.1;
 
-    // DriveToPose PIDs
-    public static final double KP = 6;
-    public static final double KI = 0;
-    public static final double KD = 1;
+    // DTP-Feeder PIDs
+    public static final double KP_FEEDER = 3.5;
+    public static final double KD_FEEDER = 0;
 
-    public static final double KP_ANGULAR = 5;
-    public static final double KI_ANGULAR = 0;
-    public static final double KD_ANGULAR = 0;
+    public static final double KP_FEEDER_ANGULAR = 3;
+    public static final double KD_FEEDER_ANGULAR = 0.1;
+
+    // Align-at-reef PIDs
+
+    public static final double KP_ALIGN = 1.4;
+    public static final double KD_ALIGN = 0.15;
 
     // Used solely in avoidToPose
     public static final double FILTER_TIME_CONSTANT = 4;

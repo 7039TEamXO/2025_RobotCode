@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants.TuningMode;
 import frc.robot.subsystems.RobotModel;
 import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.IO.Real.CameraReal;
@@ -29,8 +30,6 @@ import frc.robot.subsystems.IO.Stub.HandlerStub;
 import frc.robot.subsystems.IO.Stub.TrayStub;
 import frc.robot.subsystems.IO.Stub.WristStub;
 import edu.wpi.first.net.WebServer;
-
-import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -126,7 +125,7 @@ public class Robot extends LoggedRobot {
     // cameraSetup();
     LED.init();
 
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
+    // Instantiate our RobotContainer. This will perform all our button bindings, and put our [piska pashalko]
     robotContainer = new RobotContainer();
 
     // Activate Elastic layout
@@ -149,12 +148,13 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotPeriodic()
   {
-    // System.out.println(RobotContainer.teamColorIsBlue());
     LED.setLedData();
     Dashboard.update();
     RobotModel.periodic();
 
-    // System.out.println(SubsystemManager.getDriveBase().getPose().getY());
+    if(Constants.GetTuningMode() == TuningMode.ACTIVE || !robotContainer.driveCommandConfigured) {
+      robotContainer.updateDriveCommand();
+    }
 
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
@@ -170,7 +170,7 @@ public class Robot extends LoggedRobot {
   public void disabledInit()
   {
     if (isFirstTimeAtDisabled) {
-      autoInitCommand = new PathPlannerAuto(robotContainer.getAutonomousCommand()).ignoringDisable(true);
+      // autoInitCommand = new PathPlannerAuto(robotContainer.getAutonomousCommand()).ignoringDisable(true);
       // autoInitCommand.schedule();
       isFirstTimeAtDisabled = false;
       System.out.println("First time at disabled!");
