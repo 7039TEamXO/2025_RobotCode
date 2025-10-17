@@ -3,9 +3,10 @@ package frc.robot.commands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Commands;
-// import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Limelight;
 import frc.robot.RobotState;
 import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.Elevator.ElevatorState;
@@ -40,12 +41,11 @@ public class RedRightCoralAuto extends SequentialCommandGroup {
 
     private void setup() {
         addCommands(
-            // new InstantCommand(() -> {
-            //     SubsystemManager.getDrivebase().resetOdometry(START);
-            // }),
+            new InstantCommand(() -> {
+                if(!Limelight.hasTarget()) SubsystemManager.getDrivebase().resetOdometry(START);
+            }),
             SubsystemManager.operateAuto(RobotState.TRAVEL, ElevatorState.BASE),
-            new ParallelRaceGroup(
-                SubsystemManager.getDrivebase().driveToPose(REEF_1),
+            new ParallelDeadlineGroup(
                 new SequentialCommandGroup(
                     SubsystemManager.operateAuto(RobotState.TRAVEL, ElevatorState.LEVEL3)
                         .onlyIf(() -> SubsystemManager.getDrivebase().getDistanceFromReef() < 3.5).repeatedly()
@@ -53,17 +53,17 @@ public class RedRightCoralAuto extends SequentialCommandGroup {
                     Commands.waitSeconds(0.1), // 0.3
                     SubsystemManager.operateAuto(RobotState.DEPLETE, null),
                     Commands.waitSeconds(0.2) // 0.3
-                )
+                ),
+                SubsystemManager.getDrivebase().driveToPose(REEF_1)
             ),
 
             SubsystemManager.getDrivebase().driveToPose(FEEDER)
                 .until(() -> SubsystemManager.getDrivebase().isCloseEnoughToPose(FEEDER)),
-            new ParallelRaceGroup(
-                SubsystemManager.getDrivebase().driveToPose(FEEDER),
-                Commands.waitSeconds(1) // 0.3
+            new ParallelDeadlineGroup(
+                Commands.waitSeconds(1),
+                SubsystemManager.getDrivebase().driveToPose(FEEDER)
             ),
-            new ParallelRaceGroup(
-                SubsystemManager.getDrivebase().driveToPose(REEF_2),
+            new ParallelDeadlineGroup(
                 new SequentialCommandGroup(
                     SubsystemManager.operateAuto(RobotState.TRAVEL, ElevatorState.LEVEL3)
                         .onlyIf(() -> SubsystemManager.getDrivebase().getDistanceFromReef() < 4 && Handler.isCoralIn()).repeatedly()
@@ -71,17 +71,17 @@ public class RedRightCoralAuto extends SequentialCommandGroup {
                     Commands.waitSeconds(0.1), // 0.3
                     SubsystemManager.operateAuto(RobotState.DEPLETE, null),
                     Commands.waitSeconds(0.2) // 0.3
-                )
+                ),
+                SubsystemManager.getDrivebase().driveToPose(REEF_2)
             ),
 
             SubsystemManager.getDrivebase().driveToPose(FEEDER)
                 .until(() -> SubsystemManager.getDrivebase().isCloseEnoughToPose(FEEDER)),
-            new ParallelRaceGroup(
-                SubsystemManager.getDrivebase().driveToPose(FEEDER),
-                Commands.waitSeconds(1)
+            new ParallelDeadlineGroup(
+                Commands.waitSeconds(1),
+                SubsystemManager.getDrivebase().driveToPose(FEEDER)
             ),
-            new ParallelRaceGroup(
-                SubsystemManager.getDrivebase().driveToPose(REEF_3),
+            new ParallelDeadlineGroup(
                 new SequentialCommandGroup(
                     SubsystemManager.operateAuto(RobotState.TRAVEL, ElevatorState.LEVEL3)
                         .onlyIf(() -> SubsystemManager.getDrivebase().getDistanceFromReef() < 4 && Handler.isCoralIn()).repeatedly()
@@ -89,7 +89,8 @@ public class RedRightCoralAuto extends SequentialCommandGroup {
                     Commands.waitSeconds(0.1),
                     SubsystemManager.operateAuto(RobotState.DEPLETE, null),
                     Commands.waitSeconds(0.2)
-                )
+                ),
+                SubsystemManager.getDrivebase().driveToPose(REEF_3)
             ),
 
             SubsystemManager.getDrivebase().driveToPose(FEEDER)

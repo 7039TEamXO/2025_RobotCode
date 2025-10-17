@@ -60,6 +60,7 @@ import frc.robot.utils.LocalADStarAK;
 
 public class SwerveSubsystem extends SubsystemBase {
   private static SwerveDrive swerveDrive;
+  private static SwerveDrive swerveDriveOdometry; // Tuning
   // private static boolean isCloseEnoughToReef = false;
 
   private static LocalADStarAK localADStarAK = new LocalADStarAK();
@@ -82,6 +83,7 @@ public class SwerveSubsystem extends SubsystemBase {
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try {
       swerveDrive = new SwerveParser(directory).createSwerveDrive(SwerveDriveConstants.MAX_SPEED);
+      swerveDriveOdometry = new SwerveParser(directory).createSwerveDrive(SwerveDriveConstants.MAX_SPEED);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -146,6 +148,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     swerveDrive.updateOdometry();
+    swerveDriveOdometry.updateOdometry(); // Tuning
     updateClosestReefFace(getPose());
 
     Logger.recordOutput("Odometry/Pose", getPose());
@@ -153,11 +156,13 @@ public class SwerveSubsystem extends SubsystemBase {
     if(!SubsystemManager.isDriveToPoseActive()) {
       Logger.recordOutput("Odometry/RequestedPose", new Pose2d(Double.MAX_VALUE, Double.MAX_VALUE, new Rotation2d()));
     }
+    Logger.recordOutput("Odometry/BasicPose", swerveDriveOdometry.getPose()); // Tuning
   }
 
   @Override
   public void simulationPeriodic() {}
 
+  // UNUSED
   public void setupPathPlanner() {
     RobotConfig config;
     try {
@@ -191,8 +196,8 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public boolean isCloseEnoughToPose(Pose2d pose) {
-    return Math.abs(getPose().getX() - pose.getX()) < SwerveDriveTuning.CLOSE_DISTANCE_ERROR_CAP_get() &&
-      Math.abs(getPose().getY() - pose.getY()) < SwerveDriveTuning.CLOSE_DISTANCE_ERROR_CAP_get();
+    return Math.pow(getPose().getX() - pose.getX(), 2) + Math.pow(getPose().getY() - pose.getY(), 2) < Math.pow(SwerveDriveTuning.CLOSE_DISTANCE_ERROR_CAP_get(), 2) &&
+      Math.abs(getPose().getRotation().getDegrees() - pose.getRotation().getDegrees()) < SwerveDriveTuning.CLOSE_ANGLE_ERROR_CAP_get();
   }
 
   public Command getAutonomousCommand(String pathName) {
@@ -507,7 +512,6 @@ public class SwerveSubsystem extends SubsystemBase {
   {
     if (isRedAlliance())
     {
-      System.out.println("Hello!");
       zeroGyro();
       // Set the pose 180 degrees
       resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(180)));

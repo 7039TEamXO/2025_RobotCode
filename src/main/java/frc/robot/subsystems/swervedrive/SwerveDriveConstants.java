@@ -28,15 +28,15 @@ public class SwerveDriveConstants {
     public static final double MIN_ROTATION_V = 2; // Non-restrictive
 
     // DriveToPose PIDs (DTP-General)
-    public static final double KP = 3; // 2.5
+    public static final double KP = 2; // 2.5
     public static final double KD = 0.1; // 0.2
 
     public static final double KP_ANGULAR = 3;
     public static final double KD_ANGULAR = 0.1;
 
     // DTP-Feeder PIDs
-    public static final double KP_FEEDER = 3.5;
-    public static final double KD_FEEDER = 0;
+    public static final double KP_FEEDER = 2;
+    public static final double KD_FEEDER = 0.1;
 
     public static final double KP_FEEDER_ANGULAR = 3;
     public static final double KD_FEEDER_ANGULAR = 0.1;
