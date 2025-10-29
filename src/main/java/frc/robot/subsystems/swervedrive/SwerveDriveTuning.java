@@ -12,13 +12,17 @@ public class SwerveDriveTuning {
     private static final LoggedNetworkNumber MIN_ROTATION_V = new LoggedNetworkNumber("/Tuning/Swerve/Minimum Rotation Velocity", SwerveDriveConstants.MIN_ROTATION_V);
     
     private static final LoggedNetworkNumber KP = new LoggedNetworkNumber("/Tuning/Swerve/(DTP) kP", SwerveDriveConstants.KP);
+    private static final LoggedNetworkNumber KI = new LoggedNetworkNumber("/Tuning/Swerve/(DTP) kI", SwerveDriveConstants.KI);
     private static final LoggedNetworkNumber KD = new LoggedNetworkNumber("/Tuning/Swerve/(DTP) kD", SwerveDriveConstants.KD);
     private static final LoggedNetworkNumber KP_ANGULAR = new LoggedNetworkNumber("/Tuning/Swerve/(DTP) Angle kP", SwerveDriveConstants.KP_ANGULAR);
+    private static final LoggedNetworkNumber KI_ANGULAR = new LoggedNetworkNumber("/Tuning/Swerve/(DTP) Angle kI", SwerveDriveConstants.KI_ANGULAR);
     private static final LoggedNetworkNumber KD_ANGULAR = new LoggedNetworkNumber("/Tuning/Swerve/(DTP) Angle kD", SwerveDriveConstants.KD_ANGULAR);
 
     private static final LoggedNetworkNumber KP_FEEDER = new LoggedNetworkNumber("/Tuning/Swerve/(DTP-Feeder) kP", SwerveDriveConstants.KP_FEEDER);
+    private static final LoggedNetworkNumber KI_FEEDER = new LoggedNetworkNumber("/Tuning/Swerve/(DTP-Feeder) kI", SwerveDriveConstants.KI_FEEDER);
     private static final LoggedNetworkNumber KD_FEEDER = new LoggedNetworkNumber("/Tuning/Swerve/(DTP-Feeder) kD", SwerveDriveConstants.KD_FEEDER);
     private static final LoggedNetworkNumber KP_FEEDER_ANGULAR = new LoggedNetworkNumber("/Tuning/Swerve/(DTP-Feeder) Angle kP", SwerveDriveConstants.KP_FEEDER_ANGULAR);
+    private static final LoggedNetworkNumber KI_FEEDER_ANGULAR = new LoggedNetworkNumber("/Tuning/Swerve/(DTP-Feeder) Angle kI", SwerveDriveConstants.KI_FEEDER_ANGULAR);
     private static final LoggedNetworkNumber KD_FEEDER_ANGULAR = new LoggedNetworkNumber("/Tuning/Swerve/(DTP-Feeder) Angle kD", SwerveDriveConstants.KD_FEEDER_ANGULAR);
 
     private static final LoggedNetworkNumber KP_ALIGN = new LoggedNetworkNumber("/Tuning/Swerve/(Align) Angle kP", SwerveDriveConstants.KP_ALIGN);
@@ -55,12 +59,20 @@ public class SwerveDriveTuning {
         return Constants.GetTuningMode() != TuningMode.IGNORE ? KP.get() : SwerveDriveConstants.KP;
     }
 
+    public static final double KI_get() {
+        return Constants.GetTuningMode() != TuningMode.IGNORE ? KI.get() : SwerveDriveConstants.KI;
+    }
+
     public static final double KD_get() {
         return Constants.GetTuningMode() != TuningMode.IGNORE ? KD.get() : SwerveDriveConstants.KD;
     }
 
     public static final double KP_ANGULAR_get() {
         return Constants.GetTuningMode() != TuningMode.IGNORE ? KP_ANGULAR.get() : SwerveDriveConstants.KP_ANGULAR;
+    }
+
+    public static final double KI_ANGULAR_get() {
+        return Constants.GetTuningMode() != TuningMode.IGNORE ? KI_ANGULAR.get() : SwerveDriveConstants.KI_ANGULAR;
     }
 
     public static final double KD_ANGULAR_get() {
@@ -71,12 +83,20 @@ public class SwerveDriveTuning {
         return Constants.GetTuningMode() != TuningMode.IGNORE ? KP_FEEDER.get() : SwerveDriveConstants.KP_FEEDER;
     }
 
+    public static final double KI_FEEDER_get() {
+        return Constants.GetTuningMode() != TuningMode.IGNORE ? KI_FEEDER.get() : SwerveDriveConstants.KI_FEEDER;
+    }
+
     public static final double KD_FEEDER_get() {
         return Constants.GetTuningMode() != TuningMode.IGNORE ? KD_FEEDER.get() : SwerveDriveConstants.KD_FEEDER;
     }
 
     public static final double KP_FEEDER_ANGULAR_get() {
         return Constants.GetTuningMode() != TuningMode.IGNORE ? KP_FEEDER_ANGULAR.get() : SwerveDriveConstants.KP_FEEDER_ANGULAR;
+    }
+
+    public static final double KI_FEEDER_ANGULAR_get() {
+        return Constants.GetTuningMode() != TuningMode.IGNORE ? KI_FEEDER_ANGULAR.get() : SwerveDriveConstants.KI_FEEDER_ANGULAR;
     }
 
     public static final double KD_FEEDER_ANGULAR_get() {

@@ -59,12 +59,11 @@ public final class Constants
 
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
   public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
-  public static final double LOOP_TIME  = 0.13; // 1s, 20ms + 110ms due to SPARK MAX velocity lag
+  public static final double LOOP_TIME  = 0.13; // 100ms due to SPARK MAX velocity lag + 20ms loop time + 10ms for safety
 
   public static class Limelight
   {
     public static final Transform3d RobotToCamera = new Transform3d(new Translation3d(0.4, 0.0, 0.2), new Rotation3d(0, Math.toRadians(-20), 0));
-    
     public static class CameraProperties {
       public static final int resWidth = 1280;
       public static final int resHeight = 960;
@@ -86,7 +85,7 @@ public final class Constants
     public static final double LEFT_X_DEADBAND  = 0.1;
     public static final double LEFT_Y_DEADBAND  = 0.1;
     public static final double RIGHT_X_DEADBAND = 0.1;
-    public static final double TURN_CONSTANT    = 2; 
+    // public static final double TURN_CONSTANT    = 2; 
   }
 
   public static class Reef {

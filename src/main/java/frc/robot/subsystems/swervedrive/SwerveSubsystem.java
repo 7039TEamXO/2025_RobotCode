@@ -129,13 +129,18 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     if(Constants.GetTuningMode() == TuningMode.ACTIVE) {
-      driveXPID.setPID(SwerveDriveTuning.KP_get(), 0, SwerveDriveTuning.KD_get());
-      driveYPID.setPID(SwerveDriveTuning.KP_get(), 0, SwerveDriveTuning.KD_get());
-      rotationPID.setPID(SwerveDriveTuning.KP_ANGULAR_get(), 0, SwerveDriveTuning.KD_ANGULAR_get());
+      driveXPID.setPID(SwerveDriveTuning.KP_get(), SwerveDriveTuning.KI_get(), SwerveDriveTuning.KD_get());
+      driveYPID.setPID(SwerveDriveTuning.KP_get(), SwerveDriveTuning.KI_get(), SwerveDriveTuning.KD_get());
+      rotationPID.setPID(SwerveDriveTuning.KP_ANGULAR_get(), SwerveDriveTuning.KI_ANGULAR_get(), SwerveDriveTuning.KD_ANGULAR_get());
 
-      driveToFeederXPID.setPID(SwerveDriveTuning.KP_FEEDER_get(), 0, SwerveDriveTuning.KD_FEEDER_get());
-      driveToFeederYPID.setPID(SwerveDriveTuning.KP_FEEDER_get(), 0, SwerveDriveTuning.KD_FEEDER_get());
-      rotationToFeederPID.setPID(SwerveDriveTuning.KP_FEEDER_ANGULAR_get(), 0, SwerveDriveTuning.KD_FEEDER_ANGULAR_get());
+      // ACTIVATE IN CASE OF EMERGENCY
+      // driveToFeederXPID.setPID(SwerveDriveTuning.KP_FEEDER_get(), 0, SwerveDriveTuning.KD_FEEDER_get());
+      // driveToFeederYPID.setPID(SwerveDriveTuning.KP_FEEDER_get(), 0, SwerveDriveTuning.KD_FEEDER_get());
+      // rotationToFeederPID.setPID(SwerveDriveTuning.KP_FEEDER_ANGULAR_get(), 0, SwerveDriveTuning.KD_FEEDER_ANGULAR_get());
+
+      driveToFeederXPID.setPID(SwerveDriveTuning.KP_get(), SwerveDriveTuning.KI_get(), SwerveDriveTuning.KD_get());
+      driveToFeederYPID.setPID(SwerveDriveTuning.KP_get(), SwerveDriveTuning.KI_get(), SwerveDriveTuning.KD_get());
+      rotationToFeederPID.setPID(SwerveDriveTuning.KP_ANGULAR_get(), SwerveDriveTuning.KI_ANGULAR_get(), SwerveDriveTuning.KD_ANGULAR_get());
 
       xFilter = LinearFilter.singlePoleIIR(SwerveDriveTuning.FILTER_TIME_CONSTANT_get(), 1);
       yFilter = LinearFilter.singlePoleIIR(SwerveDriveTuning.FILTER_TIME_CONSTANT_get(), 1);
