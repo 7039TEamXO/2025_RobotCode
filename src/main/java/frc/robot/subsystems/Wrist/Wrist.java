@@ -1,37 +1,44 @@
 package frc.robot.subsystems.Wrist;
 
+// import static edu.wpi.first.units.Units.Second;
+// import static edu.wpi.first.units.Units.Volts;
+
 import org.littletonrobotics.junction.Logger;
 
+// import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+// import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+// import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Dashboard;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.Mode;
 import frc.robot.Constants.TuningMode;
 import frc.robot.subsystems.SubsystemManager;
-import frc.robot.subsystems.Handler.Handler;
 import frc.robot.subsystems.IO.WristIO;
 import frc.robot.subsystems.IO.WristIO.WristIOInputs;
 
-public class Wrist {
-    private static WristIO io;
-    private static WristIOInputs inputs = new WristIOInputs();
+public class Wrist implements Subsystem {
+    private WristIO io;
+    private WristIOInputs inputs = new WristIOInputs();
 
-    private static double wristPosition;
+    private double wristPosition;
 
-    private static int baseCounter = 0;
+    private int baseCounter = 0;
 
-    private static boolean isMoveWrist = false;
+    private boolean isMoveWrist = false;
 
-    private static WristState lastState = WristState.BASE;
+    private WristState lastState = WristState.BASE;
 
-    private static final MotionMagicVoltage motorRequest = new MotionMagicVoltage(0);
+    private final MotionMagicVoltage motorRequest = new MotionMagicVoltage(0);
     
-    public static void init(WristIO _io) {
+    public Wrist(WristIO _io) {
         io = _io;
 
         io.setPosition(0);
@@ -40,9 +47,17 @@ public class Wrist {
 
         io.updateInputs(inputs);
         Logger.processInputs("Wrist", inputs);
+
+        // sysIdRoutine = new SysIdRoutine(
+        //     new SysIdRoutine.Config(
+        //         Volts.per(Second).of(WristConstants.SysIdQuasistatic), 
+        //         Volts.of(WristConstants.SysIdDynamic), null, state -> {
+        //             SignalLogger.writeString("state", state.toString());
+        //     }),
+        //     new SysIdRoutine.Mechanism(v -> io.setVoltage(v), null, this));
     }
 
-    public static void operate(WristState state) {
+    public void operate(WristState state) {
         io.updateInputs(inputs);
         Logger.processInputs("Wrist", inputs);
 
@@ -87,11 +102,11 @@ public class Wrist {
         } else {
             baseCounter = 0;
         }
-        if (inputs.currentAmps > 27 && baseCounter > 10 && !Handler.isAlgaeInNet() && !Handler.isAlgaeInProcessor() && getCurrentVelocity() < 1) {
+        if (inputs.currentAmps > 27 && baseCounter > 10 && !RobotContainer.handler.isAlgaeInNet() && !RobotContainer.handler.isAlgaeInProcessor() && getCurrentVelocity() < 1) {
             io.setPosition(0);
         }
 
-        if ((Constants.CurrentMode != Mode.SIM) && (state == WristState.BASE && inputs.currentAmps < 28 && isMoveWrist) && (!Handler.isAlgaeInProcessor() && !Handler.isAlgaeInNet())){
+        if ((Constants.CurrentMode != Mode.SIM) && (state == WristState.BASE && inputs.currentAmps < 28 && isMoveWrist) && (!RobotContainer.handler.isAlgaeInProcessor() && !RobotContainer.handler.isAlgaeInNet())){
             io.setMotionMagic(new DutyCycleOut(-0.2));
         } else {
             isMoveWrist = false;
@@ -105,33 +120,33 @@ public class Wrist {
         }
     }
 
-    public static double getCurrentPosition() {
+    public double getCurrentPosition() {
         return inputs.position;
     }
 
-    public static void resetEncoder() {
+    public void resetEncoder() {
         io.setPosition(0);
     }
 
-    public static boolean isWristAtSetPoint() {
+    public boolean isWristAtSetPoint() {
         return Math.abs(wristPosition - inputs.position) < WristConstants.WRIST_POS_TOLERANCE;
     }
 
-    public static double getCurrentVelocity() {
+    public double getCurrentVelocity() {
         return Math.abs(inputs.velocity);
     }
 
-    public static double getCurrentVoltage() {
+    public double getCurrentVoltage() {
         return Math.abs(inputs.appliedVolts);
     }
 
-    private static void setMotorConfigs() {
+    private void setMotorConfigs() {
         var talonFXConfigs = new TalonFXConfiguration();
         talonFXConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         talonFXConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         var slot0Configs = talonFXConfigs.Slot0;
-        slot0Configs.kS = WristTuning.kS_get(); // Add 0.25 V output to overcome static friction
+        slot0Configs.kS = WristTuning.kS_get(); // Add 0.25 V output to overcome friction
         slot0Configs.kV = WristTuning.kV_get(); // A velocity target of 1 rps results in 0.12 V output
         slot0Configs.kA = WristTuning.kA_get(); // An acceleration of 1 rps/s requires 0.01 V output
         slot0Configs.kP = WristTuning.kP_get(); // A position error of 2.5 rotations results in 12 V output
@@ -151,7 +166,19 @@ public class Wrist {
         io.applyTalonFXConfig(talonFXConfigs);
     }
 
-    public static void simulationPeriodic() {
+    public void simulationPeriodic() {
         io.simulationPeriodic();
     }
+
+    // SysId routines //
+
+    // private SysIdRoutine sysIdRoutine;    
+
+    // public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    //     return sysIdRoutine.quasistatic(direction);
+    // }
+
+    // public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    //     return sysIdRoutine.dynamic(direction);
+    // }
 }

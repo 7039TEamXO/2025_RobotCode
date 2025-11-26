@@ -5,7 +5,10 @@ import org.littletonrobotics.junction.inputs.LoggableInputs;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
+// import com.ctre.phoenix6.controls.MotionMagicVoltage;
+
+import edu.wpi.first.units.measure.Voltage;
 
 public interface ElevatorIO extends AutoCloseable {
     public static class ElevatorIOInputs implements LoggableInputs {
@@ -54,9 +57,11 @@ public interface ElevatorIO extends AutoCloseable {
 
     public void setFollowerMotorPosition(double newValue);
 
-    public void setLeadMotionMagic(MotionMagicVoltage request);
+    public void setLeadMotionMagic(MotionMagicExpoVoltage request);
 
     public void setFollowerMotionMagic(Follower request);
+
+    public void setVoltage(Voltage voltage);
 
     public void simulationPeriodic();
 }

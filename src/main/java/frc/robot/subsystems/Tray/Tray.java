@@ -1,31 +1,38 @@
 package frc.robot.subsystems.Tray;
 
+// import static edu.wpi.first.units.Units.Second;
+// import static edu.wpi.first.units.Units.Volts;
+
 import org.littletonrobotics.junction.Logger;
 
+// import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+// import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+// import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.TuningMode;
 import frc.robot.Robot;
 import frc.robot.subsystems.IO.TrayIO;
 import frc.robot.subsystems.IO.TrayIO.TrayIOInputs;
 
-public class Tray {
-    private static TrayIO io;
-    private static TrayIOInputs inputs = new TrayIOInputs();
+public class Tray implements Subsystem {
+    private TrayIO io;
+    private TrayIOInputs inputs = new TrayIOInputs();
 
-    // private static TalonFX trayMotor = new TalonFX(TrayConstants.TrayMotorID);
-    private static double trayPosition = 0;
+    // private TalonFX trayMotor = new TalonFX(TrayConstants.TrayMotorID);
+    private double trayPosition = 0;
 
-    // private static double startCounter = 0;
-    // private static boolean isStartGame = true;
+    // private double startCounter = 0;
+    // private boolean isStartGame = true;
 
-    private static final MotionMagicVoltage motorRequest = new MotionMagicVoltage(0);
+    private final MotionMagicVoltage motorRequest = new MotionMagicVoltage(0);
 
-    public static void init(TrayIO _io) {
+    public Tray(TrayIO _io) {
         io = _io;
 
         io.setPosition(0);
@@ -34,9 +41,17 @@ public class Tray {
 
         io.updateInputs(inputs);
         Logger.processInputs("Tray", inputs);
+
+        // sysIdRoutine = new SysIdRoutine(
+        //     new SysIdRoutine.Config(
+        //         Volts.per(Second).of(TrayConstants.SysIdQuasistatic), 
+        //         Volts.of(TrayConstants.SysIdDynamic), null, state -> {
+        //             SignalLogger.writeString("state", state.toString());
+        //     }),
+        //     new SysIdRoutine.Mechanism(v -> io.setVoltage(v), null, this));
     }
 
-    public static void operate(TrayState state) {
+    public void operate(TrayState state) {
         io.updateInputs(inputs);
         Logger.processInputs("Tray", inputs);
 
@@ -74,13 +89,13 @@ public class Tray {
         }
     }
 
-    private static void setMotorConfigs() {
+    private void setMotorConfigs() {
         var talonFXConfigs = new TalonFXConfiguration();
         talonFXConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         talonFXConfigs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         var slot0Configs = talonFXConfigs.Slot0;
-        slot0Configs.kS = TrayTuning.kS_get(); // Add 0.25 V output to overcome static friction
+        slot0Configs.kS = TrayTuning.kS_get(); // Add 0.25 V output to overcome friction
         slot0Configs.kV = TrayTuning.kV_get(); // A velocity target of 1 rps results in 0.12 V output
         slot0Configs.kA = TrayTuning.kA_get(); // An acceleration of 1 rps/s requires 0.01 V output
         slot0Configs.kP = TrayTuning.kP_get(); // A position error of 2.5 rotations results in 12 V output
@@ -100,19 +115,31 @@ public class Tray {
         io.applyTalonFXConfig(talonFXConfigs);
     }
 
-    public static double getCurrentPosition(){
+    public double getCurrentPosition(){
         return inputs.position;
     }
 
-    public static double getCurrentVelocity() {
+    public double getCurrentVelocity() {
         return inputs.velocity;
     }
 
-    public static double getCurrentVoltage() {
+    public double getCurrentVoltage() {
         return inputs.appliedVolts;
     }
 
-    public static void simulationPeriodic() {
+    public void simulationPeriodic() {
         io.simulationPeriodic();
     }
+
+    // SysId routines [Unused] //
+
+    // private SysIdRoutine sysIdRoutine;    
+
+    // public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    //     return sysIdRoutine.quasistatic(direction);
+    // }
+
+    // public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    //     return sysIdRoutine.dynamic(direction);
+    // }
 }

@@ -1,24 +1,31 @@
 package frc.robot.subsystems.Climb;
+// import static edu.wpi.first.units.Units.Second;
+// import static edu.wpi.first.units.Units.Volts;
+
 import org.littletonrobotics.junction.Logger;
 
+// import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+// import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+// import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.TuningMode;
 import frc.robot.subsystems.IO.ClimbIO;
 import frc.robot.subsystems.IO.ClimbIO.ClimbIOInputs;
 
-public class Climb {
-    private static ClimbIO io;
-    private static ClimbIOInputs inputs = new ClimbIOInputs();
+public class Climb implements Subsystem {
+    private ClimbIO io;
+    private ClimbIOInputs inputs = new ClimbIOInputs();
 
-    private static double wantedPower = ClimbConstants.CLIMB_WANTED_POWER_STOP;
-    // private static double wantedPose = 0;
+    private double wantedPower = ClimbConstants.CLIMB_WANTED_POWER_STOP;
+    // private double wantedPose = 0;
 
-    public static void init(ClimbIO _io) {
+    public Climb(ClimbIO _io) {
         io = _io;
 
         setMotorConfigs();
@@ -26,9 +33,17 @@ public class Climb {
 
         io.updateInputs(inputs);
         Logger.processInputs("Climb", inputs);
+
+        // sysIdRoutine = new SysIdRoutine(
+        //     new SysIdRoutine.Config(
+        //         Volts.per(Second).of(ClimbConstants.SysIdQuasistatic), 
+        //         Volts.of(ClimbConstants.SysIdDynamic), null, state -> {
+        //              SignalLogger.writeString("state", state.toString());
+        //     }),
+        //     new SysIdRoutine.Mechanism(v -> io.setVoltage(v), null, this));
     }
 
-    public static void operate(ClimbState state) {
+    public void operate(ClimbState state) {
         io.updateInputs(inputs);
         Logger.processInputs("Climb", inputs);
 
@@ -59,13 +74,13 @@ public class Climb {
         io.setMotionMagic(new DutyCycleOut(wantedPower));
     } 
 
-    private static void setMotorConfigs() {
+    private void setMotorConfigs() {
         var talonFXConfigs = new TalonFXConfiguration();
         talonFXConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         talonFXConfigs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         var slot0Configs = talonFXConfigs.Slot0;
-        slot0Configs.kS = ClimbTuning.kS_get(); // Add 0.25 V output to overcome static friction
+        slot0Configs.kS = ClimbTuning.kS_get(); // Add 0.25 V output to overcome friction
         slot0Configs.kV = ClimbTuning.kV_get(); // A velocity target of 1 rps results in 0.12 V output
         slot0Configs.kA = ClimbTuning.kA_get(); // An acceleration of 1 rps/s requires 0.01 V output
         slot0Configs.kP = ClimbTuning.kP_get(); // A position error of 2.5 rotations results in 12 V output
@@ -85,19 +100,31 @@ public class Climb {
         io.applyTalonFXConfig(talonFXConfigs);
     }
 
-    public static double getCurrentPosition() {
+    public double getCurrentPosition() {
         return inputs.position;
     }
 
-    public static double getCurrentVelocity() {
+    public double getCurrentVelocity() {
         return inputs.velocity;
     }
 
-    public static double getCurrentVoltage() {
+    public double getCurrentVoltage() {
         return inputs.appliedVolts;
     }
 
-    public static void simulationPeriodic() {
+    public void simulationPeriodic() {
         io.simulationPeriodic();
     }
+
+    // SysId routines //
+
+    // private SysIdRoutine sysIdRoutine;    
+
+    // public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    //     return sysIdRoutine.quasistatic(direction);
+    // }
+
+    // public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    //     return sysIdRoutine.dynamic(direction);
+    // }
 }

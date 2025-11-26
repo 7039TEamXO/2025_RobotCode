@@ -6,7 +6,7 @@ import edu.wpi.first.math.util.Units;
       -----------DRIVER STATION-----------
 
  *                  FACE ONE
- *                -----------
+ *               -----------
  *              /             \ 
  *   FACE SIX  /               \  FACE TWO
  *            /                 \
@@ -19,13 +19,19 @@ import edu.wpi.first.math.util.Units;
  */                   
 public class SwerveDriveConstants {
     // SPEED LIMITATIONS
-    public static final double MAX_SPEED  = Units.feetToMeters(15); // NOT TUNEABLE [!]
+    public static final double MAX_SPEED  = Units.feetToMeters(10); // NOT TUNEABLE [!]
 
     public static final double MIN_SPEED  = Units.feetToMeters(4); // Non-restrictive
     public static final double CLIMB_SPEED = Units.feetToMeters(7);
 
     public static final double MAX_ROTATION_V = 4;
     public static final double MIN_ROTATION_V = 2; // Non-restrictive
+
+    // SysId
+    public static final double DriveSysIdQuasistatic = 1;
+    public static final double DriveSysIdDynamic = 7;
+    public static final double TurnSysIdQuasistatic = 1;
+    public static final double TurnSysIdDynamic = 7;
 
     // DriveToPose PIDs (DTP-General)
     public static final double KP = 2.2; // 2.5

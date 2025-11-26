@@ -3,6 +3,9 @@ package frc.robot.subsystems.Climb;
 public class ClimbConstants {
     public static final int ClimbMotorID = 3;
 
+    // public static final double SysIdQuasistatic = 0.5;
+    // public static final double SysIdDynamic = 2;
+
     public static final double kS = 0.25;
     public static final double kV = 0.12;
     public static final double kA = 0.01;

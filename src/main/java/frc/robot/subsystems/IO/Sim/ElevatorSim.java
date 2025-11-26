@@ -1,12 +1,15 @@
 package frc.robot.subsystems.IO.Sim;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.IO.ElevatorIO;
@@ -91,13 +94,19 @@ public class ElevatorSim implements ElevatorIO {
     }
 
     @Override
-    public void setLeadMotionMagic(MotionMagicVoltage request) {
+    public void setLeadMotionMagic(MotionMagicExpoVoltage request) {
         masterMotor.setControl(request);
     }
 
     @Override
     public void setFollowerMotionMagic(Follower request) {
         slaveMotor.setControl(request);
+    }
+
+    @Override
+    public void setVoltage(Voltage voltage) {
+        masterMotor.setVoltage(voltage.in(Volts));
+        slaveMotor.setVoltage(voltage.in(Volts));
     }
 
     @Override

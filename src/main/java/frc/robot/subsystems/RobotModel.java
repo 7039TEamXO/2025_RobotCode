@@ -8,11 +8,9 @@ import org.littletonrobotics.junction.mechanism.LoggedMechanismRoot2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import frc.robot.RobotContainer;
 import frc.robot.RobotState;
-import frc.robot.subsystems.Elevator.Elevator;
-import frc.robot.subsystems.Handler.Handler;
 import frc.robot.subsystems.IO.Sim.ElevatorSim.ElevatorSimConstants;
-import frc.robot.subsystems.Wrist.Wrist;
 
 public class RobotModel {
     public class RobotModelConstants {
@@ -105,17 +103,17 @@ public class RobotModel {
     
 
     public static void periodic() {
-        double cleanShift = Elevator.getCurrentPosition() * ElevatorSimConstants.MetersPerRotation;
+        double cleanShift = RobotContainer.elevator.getCurrentPosition() * ElevatorSimConstants.MetersPerRotation;
         double framePosition = cleanShift + RobotModelConstants.BaseHeight + RobotModelConstants.FrameTotalShift;
 
         elevator.setLength(RobotModelConstants.BaseHeight + RobotModelConstants.SecondElevatorShift + cleanShift / 2.0);
         elevator_top.setLength(RobotModelConstants.FrameUpwardShift + cleanShift / 2.0);
         
-        wrist_base.setAngle(Rotation2d.fromRotations(Wrist.getCurrentPosition() / RobotModelConstants.WristRealGearRatio).plus(Rotation2d.fromDegrees(RobotModelConstants.InitialWristAngle)));
-        wrist_back.setAngle(Rotation2d.fromRotations(Wrist.getCurrentPosition() / RobotModelConstants.WristRealGearRatio).plus(Rotation2d.fromDegrees(RobotModelConstants.InitialWristBackAngle)));
+        wrist_base.setAngle(Rotation2d.fromRotations(RobotContainer.wrist.getCurrentPosition() / RobotModelConstants.WristRealGearRatio).plus(Rotation2d.fromDegrees(RobotModelConstants.InitialWristAngle)));
+        wrist_back.setAngle(Rotation2d.fromRotations(RobotContainer.wrist.getCurrentPosition() / RobotModelConstants.WristRealGearRatio).plus(Rotation2d.fromDegrees(RobotModelConstants.InitialWristBackAngle)));
         
-        wrist_back_ligament.setAngle(Rotation2d.fromRotations(Wrist.getCurrentPosition() / RobotModelConstants.WristRealGearRatio).plus(Rotation2d.fromDegrees(RobotModelConstants.InitialWristBackLigamentAngle)));
-        wrist_front_ligament.setAngle(Rotation2d.fromRotations(Wrist.getCurrentPosition() / RobotModelConstants.WristRealGearRatio).plus(Rotation2d.fromDegrees(RobotModelConstants.InitialWristFrontLigamentAngle)));
+        wrist_back_ligament.setAngle(Rotation2d.fromRotations(RobotContainer.wrist.getCurrentPosition() / RobotModelConstants.WristRealGearRatio).plus(Rotation2d.fromDegrees(RobotModelConstants.InitialWristBackLigamentAngle)));
+        wrist_front_ligament.setAngle(Rotation2d.fromRotations(RobotContainer.wrist.getCurrentPosition() / RobotModelConstants.WristRealGearRatio).plus(Rotation2d.fromDegrees(RobotModelConstants.InitialWristFrontLigamentAngle)));
         double angle = Rotation2d.fromDegrees(wrist_back.getAngle()).getRadians();
 
         wrist_root.setPosition(RobotModelConstants.FrameWidth / 2.0 + RobotModelConstants.WristShift, framePosition + RobotModelConstants.WristRootElevation);
@@ -139,7 +137,7 @@ public class RobotModel {
                 break;
         }
 
-        if(Handler.isCoralIn() && SubsystemManager.getRobotState() == RobotState.TRAVEL) wrist_color = new Color8Bit(Color.kViolet);
+        if(RobotContainer.handler.isCoralIn() && SubsystemManager.getRobotState() == RobotState.TRAVEL) wrist_color = new Color8Bit(Color.kViolet);
 
         wrist_back_ligament.setColor(wrist_color);
         wrist_front_ligament.setColor(wrist_color);

@@ -9,26 +9,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Constants.TuningMode;
 import frc.robot.subsystems.RobotModel;
 import frc.robot.subsystems.SubsystemManager;
-import frc.robot.subsystems.IO.Real.CameraReal;
-import frc.robot.subsystems.IO.Real.ClimbReal;
-import frc.robot.subsystems.IO.Real.ElevatorReal;
-import frc.robot.subsystems.IO.Real.HandlerReal;
-import frc.robot.subsystems.IO.Real.TrayReal;
-import frc.robot.subsystems.IO.Real.WristReal;
-import frc.robot.subsystems.IO.Sim.CameraSim;
-import frc.robot.subsystems.IO.Sim.ClimbSim;
-import frc.robot.subsystems.IO.Sim.HandlerSim;
-import frc.robot.subsystems.IO.Sim.TraySim;
-import frc.robot.subsystems.IO.Sim.WristSim;
-import frc.robot.subsystems.IO.Stub.CameraStub;
-import frc.robot.subsystems.IO.Stub.ClimbStub;
-import frc.robot.subsystems.IO.Stub.ElevatorStub;
-import frc.robot.subsystems.IO.Stub.HandlerStub;
-import frc.robot.subsystems.IO.Stub.TrayStub;
-import frc.robot.subsystems.IO.Stub.WristStub;
 import edu.wpi.first.net.WebServer;
 
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -54,7 +36,6 @@ public class Robot extends LoggedRobot {
   private Command autoInitCommand;
   private boolean isFirstTimeAtDisabled = true;
 
-  private RobotContainer robotContainer;
   private static boolean onAuto;
 
   private Timer disabledTimer;
@@ -105,28 +86,10 @@ public class Robot extends LoggedRobot {
   {
     // Pathfinding.setPathfinder(new LocalADStarAK());
 
-    switch(Constants.CurrentMode) {
-      case REAL:
-        SubsystemManager.init(new ElevatorReal(), new HandlerReal(), new WristReal(), new ClimbReal(), new TrayReal());
-        Limelight.init(new CameraReal());
-        break;
-      case REPLAY: 
-        SubsystemManager.init(new ElevatorStub(), new HandlerStub(), new WristStub(), new ClimbStub(), new TrayStub());
-        Limelight.init(new CameraStub());
-        break;
-      case SIM:
-        SubsystemManager.init(new frc.robot.subsystems.IO.Sim.ElevatorSim(0.02), new HandlerSim(0.02), 
-          new WristSim(0.02), new ClimbSim(0.02), new TraySim(0.02));
-        Limelight.init(new CameraSim());
-        break;
-    }
-    
+    RobotContainer.init();
     Dashboard.init();
     // cameraSetup();
     LED.init();
-
-    // Instantiate our RobotContainer. This will perform all our button bindings, and put our [piska pashalko]
-    robotContainer = new RobotContainer();
 
     // Activate Elastic layout
     WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
@@ -152,10 +115,6 @@ public class Robot extends LoggedRobot {
     Dashboard.update();
     RobotModel.periodic();
 
-    if(Constants.GetTuningMode() == TuningMode.ACTIVE || !robotContainer.driveCommandConfigured) {
-      robotContainer.updateDriveCommand();
-    }
-
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
@@ -176,7 +135,7 @@ public class Robot extends LoggedRobot {
       System.out.println("First time at disabled!");
     }
 
-    robotContainer.setMotorBrake(true);
+    RobotContainer.setMotorBrake(true);
     disabledTimer.reset();
     disabledTimer.start();
   }
@@ -193,8 +152,8 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit()
   {
-    robotContainer.setMotorBrake(true);
-    autonomousCommand = robotContainer.getAutonomousCommand();
+    RobotContainer.setMotorBrake(true);
+    autonomousCommand = RobotContainer.getAutonomousCommand();
 
     // SubsystemManager.init();
     if (autonomousCommand != null) {
@@ -235,8 +194,8 @@ public class Robot extends LoggedRobot {
     {
       autoCommand.cancel();
     }
-    robotContainer.setDriveMode();
-    robotContainer.setMotorBrake(true);
+    RobotContainer.setDriveMode();
+    RobotContainer.setMotorBrake(true);
   }
 
   /**

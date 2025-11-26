@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.SwerveDrive;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -24,18 +25,21 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Limelight;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.TuningMode;
 import frc.robot.commands.RedLeftCoralAuto;
 import frc.robot.commands.RedRightCoralAuto;
 import frc.robot.commands.BlueLeftCoralAuto;
 import frc.robot.commands.BlueRightCoralAuto;
 import frc.robot.subsystems.SubsystemManager;
-import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorConstants;
 
 import static edu.wpi.first.units.Units.Meter;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
 
 import java.io.File;
 import java.io.IOException;
@@ -97,9 +101,30 @@ public class SwerveSubsystem extends SubsystemBase {
     
     setupPathPlanner();
 
-    // warm-up?
+    // Pathplanner warm-up
     localADStarAK.setStartPosition(new Pose2d().getTranslation());
     localADStarAK.setGoalPosition(new Pose2d().getTranslation());
+
+    // SysId
+    driveSysIdRoutine = new SysIdRoutine(
+      new SysIdRoutine.Config(
+        Volts.per(Second).of(SwerveDriveConstants.DriveSysIdQuasistatic), 
+        Volts.of(SwerveDriveConstants.DriveSysIdDynamic), null, state -> {
+          SignalLogger.writeString("state", state.toString());
+      }),
+      new SysIdRoutine.Mechanism(v -> {
+        // ...
+      }, null, this));
+
+    turnSysIdRoutine = new SysIdRoutine(
+      new SysIdRoutine.Config(
+        Volts.per(Second).of(SwerveDriveConstants.TurnSysIdQuasistatic), 
+        Volts.of(SwerveDriveConstants.TurnSysIdDynamic), null, state -> {
+          SignalLogger.writeString("state", state.toString());
+      }),
+      new SysIdRoutine.Mechanism(v -> {
+        // ...
+      }, null, this));
   }
 
   public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg) {
@@ -167,7 +192,6 @@ public class SwerveSubsystem extends SubsystemBase {
   @Override
   public void simulationPeriodic() {}
 
-  // UNUSED
   public void setupPathPlanner() {
     RobotConfig config;
     try {
@@ -188,8 +212,8 @@ public class SwerveSubsystem extends SubsystemBase {
           },
 
           new PPHolonomicDriveController(
-              new PIDConstants(SwerveDriveTuning.KP_get(), 0, SwerveDriveTuning.KD_get()),
-              new PIDConstants(SwerveDriveTuning.KP_ANGULAR_get(), 0, SwerveDriveTuning.KD_ANGULAR_get())
+              new PIDConstants(SwerveDriveTuning.KP_get(), SwerveDriveTuning.KI_get(), SwerveDriveTuning.KD_get()),
+              new PIDConstants(SwerveDriveTuning.KP_ANGULAR_get(), SwerveDriveTuning.KI_ANGULAR_get(), SwerveDriveTuning.KD_ANGULAR_get())
           ),
           config,
           () -> isRedAlliance(),
@@ -201,10 +225,10 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public boolean isCloseEnoughToPose(Pose2d pose) {
-    return Math.pow(getPose().getX() - pose.getX(), 2) + Math.pow(getPose().getY() - pose.getY(), 2) < Math.pow(SwerveDriveTuning.CLOSE_DISTANCE_ERROR_CAP_get(), 2) &&
-      Math.abs(getPose().getRotation().getDegrees() - pose.getRotation().getDegrees()) < SwerveDriveTuning.CLOSE_ANGLE_ERROR_CAP_get();
+    return Math.abs(getPose().getX() - pose.getX()) < SwerveDriveTuning.CLOSE_DISTANCE_ERROR_CAP_get() &&
+      Math.abs(getPose().getY() - pose.getY()) < SwerveDriveTuning.CLOSE_DISTANCE_ERROR_CAP_get();
   }
-
+  
   public Command getAutonomousCommand(String pathName) {
     switch(pathName) {
       default:
@@ -223,7 +247,6 @@ public class SwerveSubsystem extends SubsystemBase {
   LinearFilter xFilter = LinearFilter.singlePoleIIR(SwerveDriveConstants.FILTER_TIME_CONSTANT, 1);
   LinearFilter yFilter = LinearFilter.singlePoleIIR(SwerveDriveConstants.FILTER_TIME_CONSTANT, 1);
   
-  // TOO UNSTABLE FOR USE [5TH OCT 2025]
   public Command avoidToPose(Pose2d pose) {
     return run(() -> {
       localADStarAK.setStartPosition(getPose().getTranslation());
@@ -301,8 +324,8 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public static double getRotationFactorFromElevator() {
-    return Elevator.getCurrentPosition() > 14 ? 0.8 :
-      Elevator.getCurrentPosition() > 5 ? 0.8 : 1;
+    return RobotContainer.elevator.getCurrentPosition() > 14 ? 0.8 :
+      RobotContainer.elevator.getCurrentPosition() > 5 ? 0.8 : 1;
   }
 
   private PIDController driveXPID = new PIDController(SwerveDriveConstants.KP, 0, SwerveDriveConstants.KD);
@@ -682,12 +705,12 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public double calculateSpeedAccordingToElevator(double maxV, double minV) {
-    if (Elevator.getCurrentPosition() <= ElevatorConstants.ELEVATOR_POSE_SAFE_TO_ROTATE) {
+    if (RobotContainer.elevator.getCurrentPosition() <= ElevatorConstants.ELEVATOR_POSE_SAFE_TO_ROTATE) {
       return maxV;
     }
 
     return (maxV - minV) -
-        ((Elevator.getCurrentPosition() / ElevatorConstants.EncoderMaxPos) * (maxV - minV)) + minV;
+        ((RobotContainer.elevator.getCurrentPosition() / ElevatorConstants.EncoderMaxPos) * (maxV - minV)) + minV;
   }
 
   // public static boolean isRobotVBelowOne(boolean inAuto) {
@@ -699,4 +722,25 @@ public class SwerveSubsystem extends SubsystemBase {
   //     return true;
   //   }
   // }
+
+  // SysId routines //
+
+  private SysIdRoutine driveSysIdRoutine;    
+  private SysIdRoutine turnSysIdRoutine;    
+
+  public Command driveSysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return driveSysIdRoutine.quasistatic(direction);
+  }
+
+  public Command driveSysIdDynamic(SysIdRoutine.Direction direction) {
+    return driveSysIdRoutine.dynamic(direction);
+  }
+
+  public Command turnSysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return turnSysIdRoutine.quasistatic(direction);
+  }
+
+  public Command turnSysIdDynamic(SysIdRoutine.Direction direction) {
+    return turnSysIdRoutine.dynamic(direction);
+  }
 }

@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.subsystems.SubsystemManager;
-import frc.robot.subsystems.Handler.Handler;
 
 public class LED {
     // No simulation
@@ -28,14 +27,14 @@ public class LED {
 
     public static void setLedData() {
         color = Color.kOrangeRed;
-        if (Handler.isCoralIn()) {
+        if (RobotContainer.handler.isCoralIn()) {
             color = Color.kRed;
         }
         if (SubsystemManager.getIsGreen()) {
             color = Color.kGreen;
         }
         
-        if (Handler.isAlgaeInProcessor() || Handler.isAlgaeInNet()) {
+        if (RobotContainer.handler.isAlgaeInProcessor() || RobotContainer.handler.isAlgaeInNet()) {
             color = Color.kPurple;
         }
         

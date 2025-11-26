@@ -1,5 +1,7 @@
 package frc.robot.subsystems.IO.Sim;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -8,6 +10,7 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.subsystems.IO.WristIO;
@@ -61,6 +64,11 @@ public class WristSim implements WristIO {
     @Override
     public void setMotionMagic(MotionMagicVoltage request) {
         master.setControl(request);
+    }
+
+    @Override
+    public void setVoltage(Voltage voltage) {
+        master.setVoltage(voltage.in(Volts));
     }
 
     @Override

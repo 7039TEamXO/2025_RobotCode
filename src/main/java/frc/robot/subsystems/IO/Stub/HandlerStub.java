@@ -3,6 +3,7 @@ package frc.robot.subsystems.IO.Stub;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 
+import edu.wpi.first.units.measure.Voltage;
 import frc.robot.subsystems.IO.HandlerIO;
 
 public class HandlerStub implements HandlerIO {
@@ -19,6 +20,9 @@ public class HandlerStub implements HandlerIO {
 
     @Override
     public void setMotionMagic(DutyCycleOut request) {}
+
+    @Override
+    public void setVoltage(Voltage voltage) {}
 
     @Override
     public void simulationPeriodic() {}

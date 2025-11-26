@@ -55,6 +55,12 @@ public final class Constants
     IGNORE
   }
 
+  public static final SysIdMode CurrentSysIdMode = SysIdMode.INACTIVE;
+
+  public static enum SysIdMode {
+    ACTIVE, INACTIVE
+  }
+
   public static final AprilTagFieldLayout FIELD_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound

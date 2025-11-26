@@ -4,6 +4,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 
+import edu.wpi.first.units.measure.Voltage;
 import frc.robot.subsystems.IO.WristIO;
 
 public class WristStub implements WristIO {
@@ -23,6 +24,9 @@ public class WristStub implements WristIO {
 
     @Override
     public void setMotionMagic(MotionMagicVoltage request) {}
+
+    @Override
+    public void setVoltage(Voltage voltage) {}
 
     @Override
     public void simulationPeriodic() {}

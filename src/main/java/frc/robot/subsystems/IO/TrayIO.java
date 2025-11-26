@@ -6,6 +6,8 @@ import org.littletonrobotics.junction.inputs.LoggableInputs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 
+import edu.wpi.first.units.measure.Voltage;
+
 public interface TrayIO extends AutoCloseable {
     public static class TrayIOInputs implements LoggableInputs {
         public double position = 0.0;
@@ -35,6 +37,8 @@ public interface TrayIO extends AutoCloseable {
     public void setPosition(double newValue);
 
     public void setMotionMagic(MotionMagicVoltage request);
+
+    public void setVoltage(Voltage voltage);
 
     public void simulationPeriodic();
 }

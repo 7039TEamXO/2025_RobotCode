@@ -9,6 +9,9 @@ public class HandlerConstants {
     public static final int HandlerDigitalInputSensorID = 1;
     public static final int HandlerDigitalOutputSensorID = 0;
 
+    public static final double SysIdQuasistatic = 0.5;
+    public static final double SysIdDynamic = 2;
+
     public static final double HANDLER_POWER_INTAKE_ALGAE = 0.55; // 0.55
     public static final double HANDLER_POWER_DEPLETE_CORAL = 0.55;
     public static final double HANDLER_POWER_STOP = 0;

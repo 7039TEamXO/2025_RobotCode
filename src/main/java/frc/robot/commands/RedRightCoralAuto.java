@@ -7,10 +7,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Limelight;
+import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import frc.robot.RobotState;
 import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.Elevator.ElevatorState;
-import frc.robot.subsystems.Handler.Handler;
 
 public class RedRightCoralAuto extends SequentialCommandGroup {
     public final Pose2d START;
@@ -42,7 +43,7 @@ public class RedRightCoralAuto extends SequentialCommandGroup {
     private void setup() {
         addCommands(
             new InstantCommand(() -> {
-                if(!Limelight.hasTarget()) SubsystemManager.getDrivebase().resetOdometry(START);
+                if(!Limelight.hasTarget() || Robot.isSimulation()) SubsystemManager.getDrivebase().resetOdometry(START);
             }),
             SubsystemManager.operateAuto(RobotState.TRAVEL, ElevatorState.BASE),
             new ParallelDeadlineGroup(
@@ -66,7 +67,7 @@ public class RedRightCoralAuto extends SequentialCommandGroup {
             new ParallelDeadlineGroup(
                 new SequentialCommandGroup(
                     SubsystemManager.operateAuto(RobotState.TRAVEL, ElevatorState.LEVEL3)
-                        .onlyIf(() -> SubsystemManager.getDrivebase().getDistanceFromReef() < 4 && Handler.isCoralIn()).repeatedly()
+                        .onlyIf(() -> SubsystemManager.getDrivebase().getDistanceFromReef() < 4 && RobotContainer.handler.isCoralIn()).repeatedly()
                         .until(() -> SubsystemManager.getDrivebase().isCloseEnoughToPose(REEF_2)),
                     Commands.waitSeconds(0.1), // 0.3
                     SubsystemManager.operateAuto(RobotState.DEPLETE, null),
@@ -84,7 +85,7 @@ public class RedRightCoralAuto extends SequentialCommandGroup {
             new ParallelDeadlineGroup(
                 new SequentialCommandGroup(
                     SubsystemManager.operateAuto(RobotState.TRAVEL, ElevatorState.LEVEL3)
-                        .onlyIf(() -> SubsystemManager.getDrivebase().getDistanceFromReef() < 4 && Handler.isCoralIn()).repeatedly()
+                        .onlyIf(() -> SubsystemManager.getDrivebase().getDistanceFromReef() < 4 && RobotContainer.handler.isCoralIn()).repeatedly()
                         .until(() -> SubsystemManager.getDrivebase().isCloseEnoughToPose(REEF_3)),
                     Commands.waitSeconds(0.1),
                     SubsystemManager.operateAuto(RobotState.DEPLETE, null),

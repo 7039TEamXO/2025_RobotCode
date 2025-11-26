@@ -6,6 +6,8 @@ import org.littletonrobotics.junction.inputs.LoggableInputs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 
+import edu.wpi.first.units.measure.Voltage;
+
 public interface ClimbIO extends AutoCloseable {
     public static class ClimbIOInputs implements LoggableInputs {
         public double position = 0.0;
@@ -35,6 +37,8 @@ public interface ClimbIO extends AutoCloseable {
     public void setPosition(double newValue);
 
     public void setMotionMagic(DutyCycleOut request);
+
+    public void setVoltage(Voltage voltage);
 
     public void simulationPeriodic();
 }

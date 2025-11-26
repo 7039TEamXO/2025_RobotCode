@@ -4,17 +4,20 @@ public class ElevatorConstants {
     public static final int ElevatorRightMotorID = 8;
     public static final int ElevatorLeftMotorID = 10;
 
-    public static final double kS = 0.5;
-    public static final double kV = 0;
-    public static final double kA = 0;
+    public static final double SysIdQuasistatic = 0.5;
+    public static final double SysIdDynamic = 1.5;
+
+    public static final double kS = 0.1;
+    public static final double kV = 0.8 * 0.123;
+    public static final double kA = 0.007;
     public static final double kP = 2;
     public static final double kI = 0;
-    public static final double kD = 0.1;
-    public static final double kG = 0;
+    public static final double kD = 0;
+    public static final double kG = 0.57;
 
-    public static final double MotionMagicCruiseVelocity = 180;
-    public static final double MotionMagicAcceleration = 95;
-    public static final double MotionMagicJerk = 1000;
+    public static final double MMExpo_CV = 0;
+    public static final double MMExpo_kV = 0.1;
+    public static final double MMExpo_kA = 0.11;
 
     public static final double StatorCurrentLimit = 80;
     public static final double SupplyCurrentLimit = 60;

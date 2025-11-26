@@ -1,27 +1,35 @@
 package frc.robot.subsystems.Elevator;
 
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
+
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
+// import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Dashboard;
 import frc.robot.Constants.TuningMode;
 import frc.robot.subsystems.IO.ElevatorIO;
 import frc.robot.subsystems.IO.ElevatorIO.ElevatorIOInputs;
 
-public class Elevator {
-    private static double elevatorPosition; 
-    private static final MotionMagicVoltage motorRequest = new MotionMagicVoltage(0);
+public class Elevator implements Subsystem {
+    private double elevatorPosition; 
+    private final MotionMagicExpoVoltage motorRequest = new MotionMagicExpoVoltage(0);
 
-    private static ElevatorIO io;
-    private static ElevatorIOInputs inputs = new ElevatorIOInputs();
+    private ElevatorIO io;
+    private ElevatorIOInputs inputs = new ElevatorIOInputs();
 
-    public static void init(ElevatorIO _io) {
+    public Elevator(ElevatorIO _io) {
         io = _io;
 
         io.setLeadMotorPosition(0);
@@ -31,9 +39,17 @@ public class Elevator {
 
         io.updateInputs(inputs);
         Logger.processInputs("Elevator", inputs);
+
+        sysIdRoutine = new SysIdRoutine(
+            new SysIdRoutine.Config(
+                Volts.per(Second).of(ElevatorConstants.SysIdQuasistatic), 
+                Volts.of(ElevatorConstants.SysIdDynamic), null, state -> {
+                    SignalLogger.writeString("state", state.toString());
+            }),
+            new SysIdRoutine.Mechanism(v -> io.setVoltage(v.plus(Volts.of(ElevatorConstants.kG))), null, this));
     }
 
-    public static void operate(ElevatorState state) {
+    public void operate(ElevatorState state) {
         io.updateInputs(inputs);
         Logger.processInputs("Elevator", inputs);
 
@@ -94,19 +110,19 @@ public class Elevator {
         io.setLeadMotionMagic(motorRequest.withPosition(elevatorPosition));
     }
 
-    public static double getCurrentPosition() {
+    public double getCurrentPosition() {
         return inputs.masterPosition;
     }
 
-    public static double getCurrentVelocity() {
+    public double getCurrentVelocity() {
         return inputs.masterVelocity;
     }
 
-    public static double getCurrentVoltage() {
+    public double getCurrentVoltage() {
         return inputs.masterAppliedVolts;
     }
 
-    private static void setMotorConfigs() {
+    private void setMotorConfigs() {
         io.setFollowerMotionMagic(io.createFollower());
 
         var rightTalonFXConfigs = new TalonFXConfiguration();
@@ -122,9 +138,9 @@ public class Elevator {
         slot0Configs.kG = ElevatorTuning.kG_get();
 
         var motionMagicConfigs = rightTalonFXConfigs.MotionMagic;
-        motionMagicConfigs.MotionMagicCruiseVelocity = ElevatorTuning.MotionMagicCruiseVelocity_get();
-        motionMagicConfigs.MotionMagicAcceleration = ElevatorTuning.MotionMagicAcceleration_get();
-        motionMagicConfigs.MotionMagicJerk = ElevatorTuning.MotionMagicJerk_get();
+        motionMagicConfigs.MotionMagicCruiseVelocity = ElevatorTuning.MMExpo_CV_get();
+        motionMagicConfigs.MotionMagicExpo_kV = ElevatorTuning.MMExpo_kV_get();
+        motionMagicConfigs.MotionMagicExpo_kA = ElevatorTuning.MMExpo_kA_get();
         
         rightTalonFXConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         rightTalonFXConfigs.CurrentLimits.StatorCurrentLimit = ElevatorConstants.StatorCurrentLimit;
@@ -152,7 +168,19 @@ public class Elevator {
         io.applySlaveTalonFXConfig(leftTalonFXConfigs);
     }
 
-    public static void simulationPeriodic() {
-      io.simulationPeriodic();
+    public void simulationPeriodic() {
+        io.simulationPeriodic();
+    }
+    
+    // SysId routines //
+
+    private SysIdRoutine sysIdRoutine;    
+
+    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+        return sysIdRoutine.quasistatic(direction);
+    }
+
+    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+        return sysIdRoutine.dynamic(direction);
     }
 }

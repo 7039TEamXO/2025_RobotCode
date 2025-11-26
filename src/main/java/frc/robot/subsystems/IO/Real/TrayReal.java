@@ -1,9 +1,12 @@
 package frc.robot.subsystems.IO.Real;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.units.measure.Voltage;
 import frc.robot.subsystems.IO.TrayIO;
 import frc.robot.subsystems.Tray.TrayConstants;
 
@@ -35,6 +38,11 @@ public class TrayReal implements TrayIO {
     @Override
     public void setMotionMagic(MotionMagicVoltage request) {
         master.setControl(request);
+    }
+
+    @Override
+    public void setVoltage(Voltage voltage) {
+        master.setVoltage(voltage.in(Volts));
     }
 
     @Override

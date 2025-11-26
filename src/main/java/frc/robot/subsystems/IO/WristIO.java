@@ -7,6 +7,8 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 
+import edu.wpi.first.units.measure.Voltage;
+
 public interface WristIO extends AutoCloseable {
     public static class WristIOInputs implements LoggableInputs {
         public double position = 0.0;
@@ -38,6 +40,8 @@ public interface WristIO extends AutoCloseable {
     public void setMotionMagic(MotionMagicVoltage request);
 
     public void setMotionMagic(DutyCycleOut request);
+
+    public void setVoltage(Voltage voltage);
 
     public void simulationPeriodic();
 }

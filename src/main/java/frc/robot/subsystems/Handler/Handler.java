@@ -1,49 +1,55 @@
 package frc.robot.subsystems.Handler;
 
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
+
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.IO.HandlerIO;
 import frc.robot.subsystems.IO.HandlerIO.HandlerIOInputs;
-import frc.robot.subsystems.Wrist.Wrist;
 import frc.robot.Dashboard;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import frc.robot.RobotState;
-
-public class Handler {
-    private static HandlerIO io;
-    private static HandlerIOInputs inputs = new HandlerIOInputs();
+public class Handler implements Subsystem {
+    private HandlerIO io;
+    private HandlerIOInputs inputs = new HandlerIOInputs();
     
-    private static int algaeProcIRValue = -1;
-    private static boolean lastIsAlgaeInProcessor = false;
+    private int algaeProcIRValue = -1;
+    private boolean lastIsAlgaeInProcessor = false;
 
-    private static int algaeNetIRValue = -1;
-    private static boolean lastIsAlgaeInNet = false;
+    private int algaeNetIRValue = -1;
+    private boolean lastIsAlgaeInNet = false;
     
-    private static double power = HandlerConstants.HANDLER_POWER_STOP;
+    private double power = HandlerConstants.HANDLER_POWER_STOP;
 
-    private static boolean coralIRValue = false;
-    private static boolean isCoralIn = false;
-    private static boolean isAlgaeInProcessor = false;
-    private static boolean isAlgaeInNet = false;
+    private boolean coralIRValue = false;
+    private boolean isCoralIn = false;
+    private boolean isAlgaeInProcessor = false;
+    private boolean isAlgaeInNet = false;
 
-    // private static boolean lastCoralIn = false;
-    // private static boolean feedCoral = false;
-    private static int coralIntakeCounter = 0;
-    private static int algaeDepleteCounter = 0;
+    // private boolean lastCoralIn = false;
+    // private boolean feedCoral = false;
+    private int coralIntakeCounter = 0;
+    private int algaeDepleteCounter = 0;
 
-    private static double CurrentHandlerEncoderPosition = 0;
-    // private static boolean isReset = false;
-    private static boolean lastCoralIRValue = false;
-    private static boolean isFinishedDepletingAlgae = false;
-    // private static boolean isAlgaeDepleteCounting = false;
-
-    public static void init(HandlerIO _io) {        
+    private double CurrentHandlerEncoderPosition = 0;
+    // private boolean isReset = false;
+    private boolean lastCoralIRValue = false;
+    private boolean isFinishedDepletingAlgae = false;
+    // private boolean isAlgaeDepleteCounting = false;
+ 
+    public Handler(HandlerIO _io) {        
         io = _io;
 
         var talonFXConfigs = new TalonFXConfiguration();
@@ -53,9 +59,17 @@ public class Handler {
 
         io.updateInputs(inputs);
         Logger.processInputs("Handler", inputs);
+
+        sysIdRoutine = new SysIdRoutine(
+            new SysIdRoutine.Config(
+                Volts.per(Second).of(HandlerConstants.SysIdQuasistatic), 
+                Volts.of(HandlerConstants.SysIdDynamic), null, state -> {
+                    SignalLogger.writeString("state", state.toString());
+            }),
+            new SysIdRoutine.Mechanism(v -> io.setVoltage(v), null, this));
     }
 
-    public static void operate(HandlerState state) {
+    public void operate(HandlerState state) {
         io.updateInputs(inputs);
         Logger.processInputs("Handler", inputs);
 
@@ -123,7 +137,7 @@ public class Handler {
         }
     }
 
-    public static void updateHandlerIR(RobotState state, ElevatorState elevatorState, HandlerState handlerState) { // boolean isReset
+    public void updateHandlerIR(RobotState state, ElevatorState elevatorState, HandlerState handlerState) { // boolean isReset
         algaeProcIRValue = getAlgaeProcessorIR();
         algaeNetIRValue = getAlgaeNetIR();
         coralIRValue = getCoralIR();
@@ -163,7 +177,7 @@ public class Handler {
         // ALGAE PROCESSOR
         // || Math.abs(inputs.currentAmps) > 80
         if ((algaeProcIRValue > HandlerTuning.ALGAE_PROC_IR_IN_VALUE_get()) && state == RobotState.INTAKE 
-            && Wrist.isWristAtSetPoint() && (elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR || elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR) && !isCoralIn) {
+            && RobotContainer.wrist.isWristAtSetPoint() && (elevatorState == ElevatorState.ALGAE_LOW_PROCESSOR || elevatorState == ElevatorState.ALGAE_HIGH_PROCESSOR) && !isCoralIn) {
             isAlgaeInProcessor = true;
         } else if (algaeDepleteCounter > 35) {
             isAlgaeInProcessor = false;
@@ -171,7 +185,7 @@ public class Handler {
 
         // ALGAE NET
         // || Math.abs(inputs.currentAmps) > 80
-        if((algaeNetIRValue > HandlerTuning.ALGAE_NET_IR_IN_VALUE_get() && algaeNetIRValue < HandlerTuning.ALGAE_NET_IR_NOT_IN_VALUE_get()) && Wrist.isWristAtSetPoint()
+        if((algaeNetIRValue > HandlerTuning.ALGAE_NET_IR_IN_VALUE_get() && algaeNetIRValue < HandlerTuning.ALGAE_NET_IR_NOT_IN_VALUE_get()) && RobotContainer.wrist.isWristAtSetPoint()
             && state == RobotState.INTAKE && (elevatorState == ElevatorState.ALGAE_HIGH_NET || elevatorState == ElevatorState.ALGAE_LOW_NET) && !isCoralIn) {
             isAlgaeInNet = true;
         } else if(algaeDepleteCounter > 35 || SubsystemManager.getPSJoystick().getHID().getCrossButton()) {
@@ -191,48 +205,60 @@ public class Handler {
         lastIsAlgaeInNet = isAlgaeInNet;
     }
 
-    public static int getCoralIntakeCounter() {
+    public int getCoralIntakeCounter() {
         return coralIntakeCounter;
     }
 
-    public static boolean isAlgaeInProcessor() {
+    public boolean isAlgaeInProcessor() {
         return isAlgaeInProcessor;
     }
 
-    public static boolean isAlgaeInNet() {
+    public boolean isAlgaeInNet() {
         return isAlgaeInNet;
     }
 
-    public static boolean isCoralIn() {
+    public boolean isCoralIn() {
         return isCoralIn;
     }
     
-    // public static boolean getFeedCoral() {
+    // public boolean getFeedCoral() {
     //     return feedCoral;
     // }
 
-    public static boolean getCoralIR() {
+    public boolean getCoralIR() {
         return inputs.coralIR;
     }
 
-    public static int getAlgaeProcessorIR() {
+    public int getAlgaeProcessorIR() {
         return inputs.algaeProcessorIR;
     }
 
-    public static int getAlgaeNetIR() {
+    public int getAlgaeNetIR() {
         return inputs.algaeNetIR;
     }
 
-    public static double getHandlerMotorDistance() {
+    public double getHandlerMotorDistance() {
         return inputs.position;
     }
 
-    public static boolean isFinishedDepletingAlgae() {
+    public boolean isFinishedDepletingAlgae() {
         return isFinishedDepletingAlgae;
     }
 
-    public static void simulationPeriodic() {
+    public void simulationPeriodic() {
         io.simulationPeriodic();
+    }
+
+    // SysId routines //
+
+    private SysIdRoutine sysIdRoutine;    
+
+    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+        return sysIdRoutine.quasistatic(direction);
+    }
+
+    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+        return sysIdRoutine.dynamic(direction);
     }
 }
 

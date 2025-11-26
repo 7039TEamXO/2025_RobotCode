@@ -3,6 +3,9 @@ package frc.robot.subsystems.Wrist;
 public class WristConstants {
     public static final int WristMotorID = 2;
 
+    // public static final double SysIdQuasistatic = 0.5;
+    // public static final double SysIdDynamic = 2;
+
     public static final double kS = 0.25; // Add 0.25 V output to overcome static friction
     public static final double kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
     public static final double kA = 0.01; // An acceleration of 1 rps/s requires 0.01 V output

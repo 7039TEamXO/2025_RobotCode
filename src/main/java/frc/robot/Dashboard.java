@@ -6,13 +6,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.DeliveryManager;
 import frc.robot.subsystems.SubsystemManager;
-import frc.robot.subsystems.Climb.Climb;
-import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorState;
-import frc.robot.subsystems.Wrist.Wrist;
 import frc.robot.subsystems.Wrist.WristState;
 import frc.robot.subsystems.Handler.*;
-import frc.robot.subsystems.Tray.Tray;
 
 public class Dashboard {
     private final static SendableChooser<String> autoChooser = new SendableChooser<>();
@@ -105,13 +101,13 @@ public class Dashboard {
         SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Back Left", SubsystemManager.getDrivebase().getSwerveDriveConfiguration().modules[2].getPosition().angle.getDegrees()));
         SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Back Right", SubsystemManager.getDrivebase().getSwerveDriveConfiguration().modules[3].getPosition().angle.getDegrees()));
 
-        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Elevator Raw", Elevator.getCurrentPosition()));
-        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Wrist Raw", Wrist.getCurrentPosition()));
-        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Tray Raw", Tray.getCurrentPosition()));
-        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Climb Raw", Climb.getCurrentPosition()));
-        SmartDashboard.postListenerTask(() -> SmartDashboard.putBoolean("Coral IR", Handler.getCoralIR()));
-        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Algae IR (Processor)", Handler.getAlgaeProcessorIR()));
-        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Algae IR (Net)", Handler.getAlgaeNetIR()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Elevator Raw", RobotContainer.elevator.getCurrentPosition()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Wrist Raw", RobotContainer.wrist.getCurrentPosition()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Tray Raw", RobotContainer.tray.getCurrentPosition()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Climb Raw", RobotContainer.climb.getCurrentPosition()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putBoolean("Coral IR", RobotContainer.handler.getCoralIR()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Algae IR (Processor)", RobotContainer.handler.getAlgaeProcessorIR()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putNumber("Algae IR (Net)", RobotContainer.handler.getAlgaeNetIR()));
 
         SmartDashboard.postListenerTask(() -> SmartDashboard.putString("Elevator State", SubsystemManager.getElevatorState().name()));
         SmartDashboard.postListenerTask(() -> SmartDashboard.putString("Chosen Algae ES", SubsystemManager.getChosenAlgaeElevatorState().name()));
@@ -121,9 +117,9 @@ public class Dashboard {
         SmartDashboard.postListenerTask(() -> SmartDashboard.putString("Wrist State", DeliveryManager.getWristState().name()));
         SmartDashboard.postListenerTask(() -> SmartDashboard.putString("Climb State", SubsystemManager.getClimbState().name()));
 
-        SmartDashboard.postListenerTask(() -> SmartDashboard.putBoolean("Is Coral In", Handler.isCoralIn()));
-        SmartDashboard.postListenerTask(() -> SmartDashboard.putBoolean("Is Algae In (Processor)", Handler.isAlgaeInProcessor()));
-        SmartDashboard.postListenerTask(() -> SmartDashboard.putBoolean("Is Algae In (Net)", Handler.isAlgaeInNet()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putBoolean("Is Coral In", RobotContainer.handler.isCoralIn()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putBoolean("Is Algae In (Processor)", RobotContainer.handler.isAlgaeInProcessor()));
+        SmartDashboard.postListenerTask(() -> SmartDashboard.putBoolean("Is Algae In (Net)", RobotContainer.handler.isAlgaeInNet()));
 
         SmartDashboard.updateValues();
     }

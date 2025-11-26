@@ -1,5 +1,7 @@
 package frc.robot.subsystems.IO.Sim;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -10,6 +12,7 @@ import edu.wpi.first.hal.SimDevice;
 import edu.wpi.first.hal.SimInt;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotController;
@@ -91,6 +94,11 @@ public class HandlerSim implements HandlerIO {
     @Override
     public void setMotionMagic(DutyCycleOut request) {
         master.setControl(request);
+    }
+
+    @Override
+    public void setVoltage(Voltage voltage) {
+        master.setVoltage(voltage.in(Volts));
     }
 
     @Override
