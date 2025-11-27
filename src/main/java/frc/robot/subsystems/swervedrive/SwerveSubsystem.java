@@ -113,7 +113,10 @@ public class SwerveSubsystem extends SubsystemBase {
           SignalLogger.writeString("state", state.toString());
       }),
       new SysIdRoutine.Mechanism(v -> {
-        // ...
+        for(int i = 0; i < 4; i++) {
+          swerveDrive.getModules()[i].getDriveMotor().setVoltage(v.magnitude());
+          swerveDrive.getModules()[i].setAngle(0);
+        }
       }, null, this));
 
     turnSysIdRoutine = new SysIdRoutine(
@@ -123,7 +126,9 @@ public class SwerveSubsystem extends SubsystemBase {
           SignalLogger.writeString("state", state.toString());
       }),
       new SysIdRoutine.Mechanism(v -> {
-        // ...
+        for(int i = 0; i < 4; i++) {
+          swerveDrive.getModules()[i].getAngleMotor().setVoltage(v.magnitude());
+        }
       }, null, this));
   }
 

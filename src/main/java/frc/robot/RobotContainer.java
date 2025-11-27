@@ -98,10 +98,24 @@ public class RobotContainer {
 
       // Elevator SysId [General subsystem template]
 
-      SubsystemManager.getPSJoystick().circle().whileTrue(RobotContainer.elevator.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-      SubsystemManager.getPSJoystick().square().whileTrue(RobotContainer.elevator.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-      SubsystemManager.getPSJoystick().triangle().whileTrue(RobotContainer.elevator.sysIdDynamic(SysIdRoutine.Direction.kForward));
-      SubsystemManager.getPSJoystick().cross().whileTrue(RobotContainer.elevator.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+      // SubsystemManager.getPSJoystick().circle().whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+      // SubsystemManager.getPSJoystick().square().whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+      // SubsystemManager.getPSJoystick().triangle().whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kForward));
+      // SubsystemManager.getPSJoystick().cross().whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+      
+      // Swerves | Drive SysId
+
+      SubsystemManager.getPSJoystick().circle().whileTrue(SubsystemManager.getDrivebase().driveSysIdQuasistatic(SysIdRoutine.Direction.kForward));
+      SubsystemManager.getPSJoystick().square().whileTrue(SubsystemManager.getDrivebase().driveSysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+      SubsystemManager.getPSJoystick().triangle().whileTrue(SubsystemManager.getDrivebase().driveSysIdDynamic(SysIdRoutine.Direction.kForward));
+      SubsystemManager.getPSJoystick().cross().whileTrue(SubsystemManager.getDrivebase().driveSysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+      // Swerves | Turn SysId
+
+      // SubsystemManager.getPSJoystick().circle().whileTrue(SubsystemManager.getDrivebase().turnSysIdQuasistatic(SysIdRoutine.Direction.kForward));
+      // SubsystemManager.getPSJoystick().square().whileTrue(SubsystemManager.getDrivebase().turnSysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+      // SubsystemManager.getPSJoystick().triangle().whileTrue(SubsystemManager.getDrivebase().turnSysIdDynamic(SysIdRoutine.Direction.kForward));
+      // SubsystemManager.getPSJoystick().cross().whileTrue(SubsystemManager.getDrivebase().turnSysIdDynamic(SysIdRoutine.Direction.kReverse));
     }
   }
 
