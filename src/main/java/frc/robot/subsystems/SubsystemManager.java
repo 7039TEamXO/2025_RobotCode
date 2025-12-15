@@ -98,7 +98,7 @@ public class SubsystemManager {
 
         // solely to be used for DriveToPose testing
         if(psControllerHID.getL3Button()) {
-            testDrive = drivebase.avoidToPose(new Pose2d(SwerveDriveTuning.TEST_DRIVE_X_get(), SwerveDriveTuning.TEST_DRIVE_Y_get(),
+            testDrive = drivebase.driveToPoseAlt(new Pose2d(SwerveDriveTuning.TEST_DRIVE_X_get(), SwerveDriveTuning.TEST_DRIVE_Y_get(),
                 new Rotation2d(Math.toRadians(SwerveDriveTuning.TEST_DRIVE_ANGLE_get()))));
             testDrive.schedule();
         } else {

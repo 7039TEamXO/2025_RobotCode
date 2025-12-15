@@ -144,6 +144,8 @@ public class Robot extends LoggedRobot {
   public void disabledPeriodic()
   {
     onAuto = false;
+
+    RobotContainer.configureDriveCommand();
   }
 
   /**

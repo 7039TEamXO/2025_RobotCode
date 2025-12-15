@@ -13,9 +13,9 @@ import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
+import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -23,6 +23,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -63,11 +64,11 @@ import frc.robot.subsystems.Tray.TrayState;
 import frc.robot.utils.LocalADStarAK;
 
 public class SwerveSubsystem extends SubsystemBase {
-  private static SwerveDrive swerveDrive;
-  private static SwerveDrive swerveDriveOdometry; // Tuning
+  private SwerveDrive swerveDrive;
+  private SwerveDrive swerveDriveOdometry; // Tuning
   // private static boolean isCloseEnoughToReef = false;
 
-  private static LocalADStarAK localADStarAK = new LocalADStarAK();
+  private LocalADStarAK localADStarAK = new LocalADStarAK();
 
   public SwerveSubsystem(File directory) {
     // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
@@ -159,21 +160,8 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     if(Constants.GetTuningMode() == TuningMode.ACTIVE) {
-      driveXPID.setPID(SwerveDriveTuning.KP_get(), SwerveDriveTuning.KI_get(), SwerveDriveTuning.KD_get());
-      driveYPID.setPID(SwerveDriveTuning.KP_get(), SwerveDriveTuning.KI_get(), SwerveDriveTuning.KD_get());
+      drivePID.setPID(SwerveDriveTuning.KP_get(), SwerveDriveTuning.KI_get(), SwerveDriveTuning.KD_get());
       rotationPID.setPID(SwerveDriveTuning.KP_ANGULAR_get(), SwerveDriveTuning.KI_ANGULAR_get(), SwerveDriveTuning.KD_ANGULAR_get());
-
-      // ACTIVATE IN CASE OF EMERGENCY
-      // driveToFeederXPID.setPID(SwerveDriveTuning.KP_FEEDER_get(), 0, SwerveDriveTuning.KD_FEEDER_get());
-      // driveToFeederYPID.setPID(SwerveDriveTuning.KP_FEEDER_get(), 0, SwerveDriveTuning.KD_FEEDER_get());
-      // rotationToFeederPID.setPID(SwerveDriveTuning.KP_FEEDER_ANGULAR_get(), 0, SwerveDriveTuning.KD_FEEDER_ANGULAR_get());
-
-      driveToFeederXPID.setPID(SwerveDriveTuning.KP_get(), SwerveDriveTuning.KI_get(), SwerveDriveTuning.KD_get());
-      driveToFeederYPID.setPID(SwerveDriveTuning.KP_get(), SwerveDriveTuning.KI_get(), SwerveDriveTuning.KD_get());
-      rotationToFeederPID.setPID(SwerveDriveTuning.KP_ANGULAR_get(), SwerveDriveTuning.KI_ANGULAR_get(), SwerveDriveTuning.KD_ANGULAR_get());
-
-      xFilter = LinearFilter.singlePoleIIR(SwerveDriveTuning.FILTER_TIME_CONSTANT_get(), 1);
-      yFilter = LinearFilter.singlePoleIIR(SwerveDriveTuning.FILTER_TIME_CONSTANT_get(), 1);
     }
 
     // if(isAuto) filter by isRobotVBelowOne too
@@ -246,67 +234,66 @@ public class SwerveSubsystem extends SubsystemBase {
       case "Red Left Coral":
         return new RedLeftCoralAuto();
     }
-}
+  }
 
   PathPlannerTrajectory currentTrajectory = null;
-  LinearFilter xFilter = LinearFilter.singlePoleIIR(SwerveDriveConstants.FILTER_TIME_CONSTANT, 1);
-  LinearFilter yFilter = LinearFilter.singlePoleIIR(SwerveDriveConstants.FILTER_TIME_CONSTANT, 1);
-  
+  double startTimestamp = 0;
+
   public Command avoidToPose(Pose2d pose) {
     return run(() -> {
       localADStarAK.setStartPosition(getPose().getTranslation());
       localADStarAK.setGoalPosition(pose.getTranslation());
 
-      PathPlannerPath currentPath = localADStarAK.getCurrentPath(
-        new PathConstraints(SwerveDriveConstants.MAX_SPEED, 3.0, SwerveDriveTuning.MAX_ROTATION_V_get(), Math.toRadians(720)), 
-        new GoalEndState(0, pose.getRotation().rotateBy(Rotation2d.k180deg)));
-      
-      if(currentPath != null) {
-        try {
-          currentTrajectory = currentPath.generateTrajectory(getRobotVelocity(), getHeading(), RobotConfig.fromGUISettings());
-        } catch (IOException | ParseException e) {
-          e.printStackTrace();
-        } 
+      if(currentTrajectory == null) { 
+        PathPlannerPath currentPath = localADStarAK.getCurrentPath(
+          new PathConstraints(SwerveDriveConstants.MAX_SPEED, SwerveDriveConstants.MAX_ACCEL, SwerveDriveTuning.MAX_ROTATION_V_get(), Math.toRadians(720)), 
+          new GoalEndState(0, pose.getRotation()));
+
+        if(currentPath != null) {
+          try {
+            currentTrajectory = currentPath.generateTrajectory(getRobotVelocity(), getHeading(), RobotConfig.fromGUISettings());
+            startTimestamp = Timer.getFPGATimestamp();
+
+            System.out.println("Trajectory generated");
+          } catch (IOException | ParseException e) {
+            e.printStackTrace();
+          } 
+        }
       }
 
       if(currentTrajectory != null) {
         Logger.recordOutput("Odometry/RequestedPose", pose);
 
-        // Only used to determine direction, not magnitude
-        Pose2d targetPose = currentTrajectory.getStates().size() >= 3 ? currentTrajectory.getState(2).pose : pose;
+        PathPlannerTrajectoryState current = currentTrajectory.sample(Timer.getFPGATimestamp() - startTimestamp);
 
-        double slowdownCoefficient = 1;
+        Translation2d baseTranslation = new Translation2d(current.linearVelocity, current.heading);
+        // Use PID to account for errors during the motion
 
-        driveXPID.setSetpoint(pose.getX());
-        driveYPID.setSetpoint(pose.getY());
+        double errX = current.pose.getX() - getPose().getX();
+        double errY = current.pose.getY() - getPose().getY();
 
-        Translation2d PIDTranslation = new Translation2d(driveXPID.calculate(getPose().getX()), 
-          driveYPID.calculate(getPose().getY()));
-        slowdownCoefficient = PIDTranslation.getDistance(Translation2d.kZero) / swerveDrive.getMaximumChassisVelocity();
+        Translation2d PIDTranslation = new Translation2d(SwerveDriveTuning.KD_get() * errX, SwerveDriveTuning.KD_get() * errY);
 
-        double xValue = xFilter.calculate(targetPose.getX() - getPose().getX());
-        double yValue = yFilter.calculate(targetPose.getY() - getPose().getY());
-
-        // Cancel smoothing if close enough to the target
-        // isCloseEnoughToPose eliminates bounces when we disable and turn the command back on
-        if(slowdownCoefficient < 0.5) { 
-          xValue = pose.getX() - getPose().getX();
-          yValue = pose.getY() - getPose().getY();
-        }
-
-        Translation2d freshTranslation = new Translation2d(xValue, yValue);
-
-        Translation2d scaledTranslation = freshTranslation.times(swerveDrive.getMaximumChassisVelocity() * slowdownCoefficient / freshTranslation.getDistance(Translation2d.kZero));
-
-        rotationPID.setSetpoint(pose.getRotation().getRadians());
+        rotationPID.setSetpoint(current.pose.getRotation().getRadians());
 
         double robotAngle = getPose().getRotation().getRadians();
 
-        double angleError = robotAngle - pose.getRotation().getRadians();
+        double angleError = robotAngle - current.pose.getRotation().getRadians();
         if(angleError > Math.PI) robotAngle -= 2 * Math.PI;
         if(angleError < -Math.PI) robotAngle += 2 * Math.PI;
 
-        swerveDrive.drive(scaledTranslation, rotationPID.calculate(robotAngle) * getRotationFactorFromElevator(), true, false);
+        // Perform a reset in case the path's terrible
+        if(Math.abs(errX) > SwerveDriveConstants.MAXIMUM_DISTANCE_ERROR ||
+          Math.abs(errY) > SwerveDriveConstants.MAXIMUM_DISTANCE_ERROR) {
+            currentTrajectory = null;
+
+            // Logging
+            System.out.println("High (simple) deviation [X] " + Math.abs(errX));
+            System.out.println("High (simple) deviation [Y] " + Math.abs(errY));
+        }  else {
+          // getRotationFactorFromElevator? + rotationPID.calculate(robotAngle)?
+          swerveDrive.drive(baseTranslation.plus(PIDTranslation), current.fieldSpeeds.omegaRadiansPerSecond, true, false);
+        }
       }
     });
   }
@@ -333,49 +320,104 @@ public class SwerveSubsystem extends SubsystemBase {
       RobotContainer.elevator.getCurrentPosition() > 5 ? 0.8 : 1;
   }
 
-  private PIDController driveXPID = new PIDController(SwerveDriveConstants.KP, 0, SwerveDriveConstants.KD);
-  private PIDController driveYPID = new PIDController(SwerveDriveConstants.KP, 0, SwerveDriveConstants.KD);
-  private PIDController rotationPID = new PIDController(SwerveDriveConstants.KP_ANGULAR, 0, SwerveDriveConstants.KD_ANGULAR);
+  Boolean updatePath = false;
 
-  private PIDController driveToFeederXPID = new PIDController(SwerveDriveConstants.KP_FEEDER, 0, SwerveDriveConstants.KD_FEEDER);
-  private PIDController driveToFeederYPID = new PIDController(SwerveDriveConstants.KP_FEEDER, 0, SwerveDriveConstants.KD_FEEDER);
-  private PIDController rotationToFeederPID = new PIDController(SwerveDriveConstants.KP_FEEDER_ANGULAR, 0, SwerveDriveConstants.KD_FEEDER_ANGULAR);
-
-  public Command driveToPose(Pose2d pose, boolean useFeederPID) {
+  public Command driveToPoseAlt(Pose2d pose) {
     return run(() -> {
-      Logger.recordOutput("Odometry/RequestedPose", pose);
+      if(currentTrajectory == null) {
+        try {
+          PathPlannerPath currentPath = new PathPlannerPath(
+            PathPlannerPath.waypointsFromPoses(getPose(), pose), 
+            PathConstraints.unlimitedConstraints(12), 
+            null,
+            new GoalEndState(0.0, pose.getRotation()));
+          currentTrajectory = currentPath.generateTrajectory(getRobotVelocity(), getHeading(), RobotConfig.fromGUISettings());
+          startTimestamp = Timer.getFPGATimestamp();
 
-      PIDController X = driveXPID;
-      PIDController Y = driveYPID;
-      PIDController R = rotationPID;
-      if(useFeederPID) {
-        X = driveToFeederXPID;
-        Y = driveToFeederYPID;
-        R = rotationToFeederPID;
+          System.out.println("Trajectory [simple] generated");
+        } catch (IOException | ParseException e) {
+          e.printStackTrace();
+        } 
       }
 
-      X.setSetpoint(pose.getX());
-      Y.setSetpoint(pose.getY());
-      R.setSetpoint(pose.getRotation().getRadians());
-    
-      Translation2d freshTranslation = new Translation2d(X.calculate(getPose().getX()), 
-        Y.calculate(getPose().getY()));
-      Translation2d scaledTranslation = freshTranslation.times(Math.min(1, 
-        swerveDrive.getMaximumChassisVelocity() / freshTranslation.getDistance(Translation2d.kZero)));
+      if(currentTrajectory != null) {
+        Logger.recordOutput("Odometry/RequestedPose", pose);
 
-      // Ensuring that the error is in the -180 ... +180 degree range
-      double robotAngle = getPose().getRotation().getRadians();
+        PathPlannerTrajectoryState current = currentTrajectory.sample(Timer.getFPGATimestamp() - startTimestamp);
 
-      double angleError = robotAngle - R.getSetpoint();
-      if(angleError > Math.PI) robotAngle -= 2 * Math.PI;
-      if(angleError < -Math.PI) robotAngle += 2 * Math.PI;
+        Translation2d baseTranslation = new Translation2d(current.linearVelocity, current.heading);
+        // Use PID to account for errors during the motion
 
-      swerveDrive.drive(scaledTranslation, R.calculate(robotAngle) * getRotationFactorFromElevator(), true, false);
+        double errX = current.pose.getX() - getPose().getX();
+        double errY = current.pose.getY() - getPose().getY();
+
+        Translation2d PIDTranslation = new Translation2d(SwerveDriveTuning.KD_get() * errX, SwerveDriveTuning.KD_get() * errY);
+
+        rotationPID.setSetpoint(current.pose.getRotation().getRadians());
+
+        double robotAngle = getPose().getRotation().getRadians();
+
+        double angleError = robotAngle - current.pose.getRotation().getRadians();
+        if(angleError > Math.PI) robotAngle -= 2 * Math.PI;
+        if(angleError < -Math.PI) robotAngle += 2 * Math.PI;
+
+        // Perform a reset in case the path's terrible
+        if(Math.abs(errX) > SwerveDriveConstants.MAXIMUM_DISTANCE_ERROR ||
+          Math.abs(errY) > SwerveDriveConstants.MAXIMUM_DISTANCE_ERROR) {
+            currentTrajectory = null;
+
+            // Logging
+            System.out.println("High (simple) deviation [X] " + Math.abs(errX));
+            System.out.println("High (simple) deviation [Y] " + Math.abs(errY));
+        } else {
+          // getRotationFactorFromElevator? + rotationPID.calculate(robotAngle)?
+          swerveDrive.drive(baseTranslation.plus(PIDTranslation), current.fieldSpeeds.omegaRadiansPerSecond + rotationPID.calculate(robotAngle), true, false);
+        }
+      }
     });
   }
 
+  private PIDController drivePID = new PIDController(SwerveDriveConstants.KP, 0, SwerveDriveConstants.KD);
+  private PIDController rotationPID = new PIDController(SwerveDriveConstants.KP_ANGULAR, 0, 0);
+
   public Command driveToPose(Pose2d pose) {
-    return driveToPose(pose, false);
+    return run(() -> {
+      Logger.recordOutput("Odometry/RequestedPose", pose);
+
+      PIDController D = drivePID;
+      PIDController R = rotationPID;
+
+      double errX = pose.getX() - getPose().getX();
+      double errY = pose.getY() - getPose().getY();
+      double dist = Math.sqrt(errX * errX + errY * errY);
+
+      D.setSetpoint(0);
+      double vel = -D.calculate(dist);
+      if(dist * SwerveDriveConstants.KP_X > SwerveDriveConstants.MAX_SPEED) {
+        vel = SwerveDriveConstants.MAX_SPEED;
+      }
+      Rotation2d rot = new Translation2d(errX, errY).getAngle();
+   
+      // Ensuring that the error is in the -180 ... +180 degree range
+      double robotAngle = getPose().getRotation().getRadians();
+
+      R.setSetpoint(pose.getRotation().getRadians());
+      double angleError = robotAngle - R.getSetpoint();
+
+      if(angleError > Math.PI) robotAngle -= 2 * Math.PI;
+      if(angleError < -Math.PI) robotAngle += 2 * Math.PI;
+
+      Translation2d fieldRelative = new Translation2d(vel, rot);
+      double omegaRadiansPerSecond =  R.calculate(robotAngle);
+
+      ChassisSpeeds chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(
+        fieldRelative.getX(),
+        fieldRelative.getY(),
+        omegaRadiansPerSecond
+      ), getHeading());
+
+      swerveDrive.drive(chassisSpeeds, false, new Translation2d());
+    });
   }
 
   public Command driveToClosestReefPoint(ReefOrientation orientation) {
@@ -432,7 +474,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public Command driveToFeeder(final double wantedX, final double wantedY, final double wantedAngle) {
-    return driveToPose(new Pose2d(wantedX, wantedY, new Rotation2d(Math.toRadians(wantedAngle))), true);
+    return driveToPose(new Pose2d(wantedX, wantedY, new Rotation2d(Math.toRadians(wantedAngle))));
   }
 
   private Command driveToRedRightFeeder() {

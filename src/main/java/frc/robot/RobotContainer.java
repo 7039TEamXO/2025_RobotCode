@@ -84,7 +84,6 @@ public class RobotContainer {
 
     SubsystemManager.init();
 
-    configureDriveCommand();
     configureBindings();
   }
 
@@ -119,7 +118,7 @@ public class RobotContainer {
     }
   }
 
-  private static void configureDriveCommand() {
+  public static void configureDriveCommand() {
     if (teamColorIsBlue() == 0) {
       SubsystemManager.getDrivebase().zeroGyro();
       SubsystemManager.getDrivebase().resetOdometry(new Pose2d(SubsystemManager.getDrivebase().getPose().getTranslation(), Rotation2d.fromDegrees(180)));
